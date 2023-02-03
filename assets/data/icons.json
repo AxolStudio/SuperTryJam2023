@@ -1,0 +1,140 @@
+[
+  {
+    "name": "blank",
+    "upkeep": 0,
+    "effect": [""],
+    "death": [""]
+  },
+  {
+    "name": "human",
+    "upkeep": 1,
+    "effect": ["touch:human?create:infant"],
+    "death": [""]
+  },
+  {
+    "name": "infant",
+    "upkeep": 1,
+    "effect": ["after?replace:child"],
+    "death": [""]
+  },
+  {
+    "name": "child",
+    "upkeep": 1,
+    "effect": ["after?replace:human"],
+    "death": [""]
+  },
+  {
+    "name": "berry bush",
+    "upkeep": 0,
+    "effect": ["work?gen:1$food"],
+    "death": [""]
+  },
+  {
+    "name": "wolf",
+    "upkeep": 0,
+    "effect": ["work?wound", "chance:15?create:wolf"],
+    "death": ["create:meat*2"]
+  },
+  {
+    "name": "bear",
+    "upkeep": 0,
+    "effect": ["work?wound", "chance:10?create:bear"],
+    "death": ["create:meat*4"]
+  },
+  {
+    "name": "mammoth",
+    "upkeep": 0,
+    "effect": ["work?wound", "chance:5?create:mammoth"],
+    "death": ["create:meat*6"]
+  },
+  {
+    "name": "rock",
+    "upkeep": 0,
+    "effect": [],
+    "death": ["gen:2$prod", "create:coal*1-2"]
+  },
+  {
+    "name": "tree",
+    "upkeep": 0,
+    "effect": ["work?gen:1$food", "work?gen:1$prod"],
+    "death": ["gen:2$food", "create:log*2-5", "create:sapling*1-2"]
+  },
+  {
+    "name": "sapling",
+    "upkeep": 0,
+    "effect": ["timer:3?replace:tree"],
+    "death": []
+  },
+  {
+    "name": "wood",
+    "upkeep": 0,
+    "effect": [],
+    "death": ["gen:2$prod"]
+  },
+  {
+    "name": "coal",
+    "upkeep": 0,
+    "effect": ["touch:torch/campfire?die;gen:4$prod"],
+    "death": []
+  },
+  {
+    "name": "torch",
+    "upkeep": 0,
+    "effect": ["touch:animal?prevent:wound"],
+    "death": []
+  },
+  {
+    "name": "campfire",
+    "upkeep": 0,
+    "effect": ["work?gen:2$sci", "touch:meat?kill;mult:food*2"],
+    "death": []
+  },
+  {
+    "name": "meat",
+    "upkeep": 0,
+    "effect": ["work?die"],
+    "death": ["gen:2$food"]
+  },
+  {
+    "name": "boulder",
+    "upkeep": 0,
+    "effect": ["work?gen:2$prod"],
+    "death": ["gen:4$prod", "create:rock*2-5"]
+  },
+  {
+    "name": "axe",
+    "upkeep": 0,
+    "effect": ["touch:tree/log?convert:1$prod"],
+    "death": []
+  },
+  {
+    "name": "log",
+    "upkeep": 0,
+    "effect": ["work?gen:1$prod"],
+    "death": ["gen:2$prod", "create:wood*2-5"]
+  },
+  {
+    "name": "pickaxe",
+    "upkeep": 0,
+    "effect": ["touch:rock/boulder?convert:1$prod"],
+    "death": []
+  },
+  {
+    "name": "bow",
+    "upkeep": 0,
+    "effect": ["work?snipe:wolf/bear/mammoth"],
+    "death": []
+  },
+  {
+    "name": "club",
+    "upkeep": 0,
+    "effect": ["work?wound:wolf/beat/mammoth"],
+    "death": []
+  },
+  {
+    "name": "canoe",
+    "upkeep": 0,
+    "effect": ["touch:blank?gen:1$sci"],
+    "death": []
+  }
+]
