@@ -8,13 +8,7 @@
   {
     "name": "human",
     "upkeep": 1,
-    "effect": ["touch:human?create:infant"],
-    "death": [""]
-  },
-  {
-    "name": "infant",
-    "upkeep": 1,
-    "effect": ["after?replace:child"],
+    "effect": ["touch:human?create:child"],
     "death": [""]
   },
   {
@@ -120,13 +114,13 @@
     "death": []
   },
   {
-    "name": "bow",
+    "name": "sling",
     "upkeep": 0,
     "effect": ["work?snipe:wolf/bear/mammoth"],
     "death": []
   },
   {
-    "name": "club",
+    "name": "spear",
     "upkeep": 0,
     "effect": ["work?wound:wolf/beat/mammoth"],
     "death": []

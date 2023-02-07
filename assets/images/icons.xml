@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="boulder-sprites.png">
+	<!--
+	Created with ShoeBox
+	http://renderhjs.net/shoebox/
+	-->
+	<SubTexture name="axe.png"	x="355"	y="0"	width="111"	height="118" frameX="-7" frameY="-6" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="bear.png"	x="356"	y="119"	width="111"	height="112" frameX="-4" frameY="-8" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="berry_bush.png"	x="120"	y="323"	width="118"	height="110" frameX="-5" frameY="-13" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="blank.png"	x="358"	y="232"	width="105"	height="105" frameX="-12" frameY="-12" frameWidth="128" frameHeight="128"/>
+	<SubTexture name="boulder.png"	x="356"	y="416"	width="110"	height="118" frameX="-10" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="campfire.png"	x="464"	y="232"	width="99"	height="120" frameX="-18" frameY="-4" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="canoe.png"	x="120"	y="434"	width="118"	height="96" frameX="-5" frameY="-16" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="child.png"	x="239"	y="311"	width="118"	height="104" frameX="-5" frameY="-12" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="coal.png"	x="123"	y="0"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="human.png"	x="467"	y="0"	width="50"	height="118" frameX="-39" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="log.png"	x="0"	y="88"	width="122"	height="120" frameX="-3" frameY="-4" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="mammoth.png"	x="122"	y="209"	width="118"	height="101" frameX="-5" frameY="-14" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="meat.png"	x="0"	y="0"	width="122"	height="87" frameX="-4" frameY="-24" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="pickaxe.png"	x="241"	y="119"	width="114"	height="114" frameX="-7" frameY="-7" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="rock.png"	x="123"	y="119"	width="116"	height="88" frameX="-7" frameY="-27" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="sapling.png"	x="467"	y="353"	width="96"	height="120" frameX="-16" frameY="-4" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="spear.png"	x="0"	y="444"	width="119"	height="120" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="torch.png"	x="239"	y="416"	width="116"	height="120" frameX="-6" frameY="-4" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="tree.png"	x="0"	y="323"	width="119"	height="120" frameX="-4" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="wolf.png"	x="0"	y="209"	width="121"	height="113" frameX="-3" frameY="-9" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="wood.png"	x="242"	y="0"	width="112"	height="104" frameX="-8" frameY="-12" frameWidth="127" frameHeight="127"/>
+</TextureAtlas>
