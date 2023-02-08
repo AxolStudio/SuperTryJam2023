@@ -19,4 +19,9 @@ class Icon
 	{
 		return new Icon(Data.name, Data.upkeep, Data.effect, Data.death);
 	}
+
+	public function clone():Icon
+	{
+		return new Icon(name, upkeep, effect, death);
+	}
 }

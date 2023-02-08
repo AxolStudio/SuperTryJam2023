@@ -17,7 +17,7 @@ class IconsBuilder
 
 		for (icon in list)
 		{
-			e = macro gameObjects.Icon.fromData($v{icon});
+			e = macro $v{icon};
 			map.push(macro $v{icon.name} => $e{e});
 		}
 
@@ -25,7 +25,7 @@ class IconsBuilder
 			pos: Context.currentPos(),
 			name: "IconList",
 			meta: null,
-			kind: FieldType.FVar(macro :Map<String, gameObjects.Icon>, macro $a{map}),
+			kind: FieldType.FVar(macro :Map<String, Dynamic>, macro $a{map}),
 			doc: null,
 			access: [Access.APublic, Access.AStatic]
 		});
