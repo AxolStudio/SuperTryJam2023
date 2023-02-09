@@ -8,7 +8,7 @@
   {
     "name": "human",
     "upkeep": 1,
-    "effect": ["work?create:child"],
+    "effect": ["work?pair:child"],
     "death": [""]
   },
   {
@@ -74,7 +74,7 @@
   {
     "name": "torch",
     "upkeep": 0,
-    "effect": ["touch:wolf/bear/mammoth?protect"],
+    "effect": ["touch:wolf/bear/mammoth?protect:wolf/bear/mammoth"],
     "death": []
   },
   {

@@ -48,6 +48,8 @@ class PlayState extends FlxState
 
 	public var currentMode:String = "setting-up";
 
+	public var whosAdding:Array<String> = [];
+
 	override public function create()
 	{
 		initializeGame();
@@ -79,12 +81,12 @@ class PlayState extends FlxState
 		{
 			icon = new IconSprite((FlxG.width / 2)
 				- GRID_MID
-				+ (i % 5) * 128
-				+ ((i % 5) * GRID_SPACING),
+				+ Std.int(i / 5) * 128
+				+ (Std.int(i / 5) * GRID_SPACING),
 				(FlxG.height / 2)
 				- GRID_MID
-				+ Std.int(i / 5) * 128
-				+ (Std.int(i / 5) * GRID_SPACING));
+				+ Std.int(i % 5) * 128
+				+ (Std.int(i % 5) * GRID_SPACING));
 			screenIcons.push(icon);
 			add(icon);
 		}
@@ -123,6 +125,8 @@ class PlayState extends FlxState
 			screenIcons[i].icon = collection[i];
 		}
 
+		trace(collection);
+
 		currentMode = "did-spin";
 	}
 
@@ -140,6 +144,7 @@ class PlayState extends FlxState
 		willWound = [];
 		preventedWound = [];
 		iconsToKill = [];
+		whosAdding = [];
 
 		for (i in 0...25)
 		{
@@ -165,19 +170,32 @@ class PlayState extends FlxState
 		// kill off iconsToKill
 
 		// remove any duplicates in iconsToKill
-
-		trace("pre:", iconsToKill);
-		iconsToKill = iconsToKill.filter((value) -> iconsToKill.indexOf(value) == iconsToKill.lastIndexOf(value));
-		trace("post:", iconsToKill);
-
-		for (i in 0...iconsToKill.length)
+		var toRemove:Array<Int> = [];
+		while (iconsToKill.length > 0)
 		{
-			killIcon(iconsToKill[i]);
+			var tmpIconsToKill:Array<Int> = [];
+
+			tmpIconsToKill = iconsToKill.filter((value) -> iconsToKill.indexOf(value) == iconsToKill.lastIndexOf(value));
+			iconsToKill = [];
+
+			for (i in 0...tmpIconsToKill.length)
+			{
+				killIcon(tmpIconsToKill[i]);
+				toRemove.push(i);
+			}
 		}
+
+		var newCollection:Array<String> = [for (i in 0...collection.length) if (!iconsToKill.contains(i)) collection[i]];
+		collection = newCollection.copy();
 
 		for (i in iconsToAdd)
 		{
 			addNewIcon(i);
+		}
+
+		for (i in collection.length...25)
+		{
+			collection.push("blank");
 		}
 
 		currentMode = "waiting-for-spin";
@@ -187,10 +205,7 @@ class PlayState extends FlxState
 	public function parseEffect(IconPos:Int, Effect:String):Void
 	{
 		var split:Array<String> = Effect.split("?");
-		if (checkEffect(IconPos, split[0]))
-		{
-			doEffect(IconPos, split[1]);
-		}
+		checkEffect(IconPos, split[0], split[1]);
 	}
 
 	public function doEffect(IconPos:Int, Effect:String):Void
@@ -198,8 +213,25 @@ class PlayState extends FlxState
 		var split:Array<String> = Effect.split(":");
 		switch (split[0])
 		{
+			case "pair": // for each 2 of the same icons, create a new icon
+				var type:String = collection[IconPos];
+				var neighbors:Array<Int> = getNeighborsOfType(IconPos, type);
+				var newType:String = split[1];
+				for (n in neighbors)
+				{
+					if (whosAdding.contains('$IconPos:$n:$type') || whosAdding.contains('$n:$IconPos:$type'))
+						continue;
+					whosAdding.push('$IconPos:$n:$type');
+					iconsToAdd.push(newType);
+
+					trace("pair: " + IconPos + " : " + collection[IconPos] + " + " + collection[n] + " = " + newType);
+				}
+
 			case "create": // create a new icon
+
 				var type:String = split[1];
+				if (whosAdding.contains('$IconPos:$type'))
+					return;
 				var count:Int = 1;
 				if (split[1].contains("*"))
 				{
@@ -217,9 +249,15 @@ class PlayState extends FlxState
 					}
 				}
 				for (i in 0...count)
+				{
 					iconsToAdd.push(type);
+					whosAdding.push('$IconPos:$type');
+
+					trace("create: " + IconPos + " : " + collection[IconPos] + " = " + type);
+				}
 			case "replace": // replace this icon with another
 				replaceIcon(IconPos, split[1]);
+				trace("replace: " + IconPos + " : " + collection[IconPos] + " = " + split[1]);
 			case "gen": // generate a resource
 				var details:Array<String> = split[1].split("$");
 				switch (details[1])
@@ -228,21 +266,33 @@ class PlayState extends FlxState
 					case "prod": production += Std.parseFloat(details[0]);
 					case "sci": science += Std.parseFloat(details[0]);
 				}
+				trace("gen: " + IconPos + " : " + collection[IconPos] + " = " + split[1]);
 			case "die": // remove this icon from the collection
 				iconsToKill.push(IconPos);
-
+				trace("die: " + IconPos + " : " + collection[IconPos]);
 			case "wound": // wound all humans touching this tile - UNLESS it is prevented from doing so...
 				var neighbors:Array<Int> = getNeighborsOfType(IconPos, "human");
 
 				willWound.concat(neighbors); // we will actually do the wounding later
+				trace("wound: " + IconPos + " : " + collection[IconPos] + " = " + neighbors);
 
 			case "protect":
-				preventedWound.push(IconPos);
+				var types:Array<String> = split[1].split("/");
+				for (t in types)
+				{
+					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
+					preventedWound.concat(neighbors);
+
+					trace("protect: " + IconPos + " : " + collection[IconPos] + " = " + neighbors);
+				}
+
 			case "kill": // kill the types touching this icon
 				var types:Array<String> = split[1].split("/");
 				for (t in types)
 				{
-					iconsToKill.concat(getNeighborsOfType(IconPos, t));
+					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
+					iconsToKill.concat(neighbors);
+					trace("kill: " + IconPos + " : " + collection[IconPos] + " = " + neighbors);
 				}
 			case "change": // change touching tile to another tile
 				var types:Array<String> = split[1].split("/");
@@ -252,6 +302,7 @@ class PlayState extends FlxState
 					for (n in neighbors)
 					{
 						replaceIcon(n, split[2]);
+						trace("change: " + IconPos + " : " + collection[IconPos] + " : " + collection[n] + " = " + split[2]);
 					}
 				}
 			case "snipe": // find a random tile of type on the board, kill it
@@ -262,6 +313,7 @@ class PlayState extends FlxState
 					icons.concat(getIconsOfType(IconPos, t));
 				}
 				iconsToKill.push(icons[FlxG.random.int(0, icons.length - 1)]);
+				trace("snipe: " + IconPos + " : " + collection[IconPos] + " = " + icons);
 		}
 	}
 
@@ -337,7 +389,7 @@ class PlayState extends FlxState
 		iconsToAdd.push(NewIcon);
 	}
 
-	public function checkEffect(IconPos:Int, Effect:String):Bool
+	public function checkEffect(IconPos:Int, Effect:String, DoEffect:String):Void
 	{
 		var check:Bool = false;
 		var keyWord:String = "";
@@ -357,15 +409,18 @@ class PlayState extends FlxState
 		switch (keyWord)
 		{
 			case "work": // a human is touching this tile
-				check = hasNeighborType(IconPos, "human");
+				for (n in getNeighborsOfType(IconPos, "human"))
+				{
+					doEffect(IconPos, DoEffect);
+				}
 
 			case "chance": // a percentage of happening
-				check = FlxG.random.bool(Std.parseFloat(value));
-
+				if (FlxG.random.bool(Std.parseFloat(value)))
+					doEffect(IconPos, DoEffect);
 			case "timer": // count down to 0 and then do the effect...
 
 			case "after": // after this spin, do this effect
-				check = true;
+				doEffect(IconPos, DoEffect);
 
 			case "touch": // is touching a tile of a speficic type
 				var types:Array<String> = value.split("/");
@@ -377,9 +432,9 @@ class PlayState extends FlxState
 						break;
 					}
 				}
+				if (check)
+					doEffect(IconPos, DoEffect);
 		}
-
-		return check;
 	}
 
 	public function killIcon(IconPos:Int):Void
@@ -392,9 +447,6 @@ class PlayState extends FlxState
 				doEffect(IconPos, e);
 			}
 		}
-		collection.splice(IconPos, 1);
-		if (collection.length < 25)
-			collection.push("blank");
 	}
 
 	public function hasNeighborType(IconPos:Int, Value:String):Bool
@@ -442,13 +494,14 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float)
 	{
-		super.update(elapsed);
-
 		switch (currentMode)
 		{
 			case "did-spin":
+				draw();
 				checkEffects();
 		}
+
+		super.update(elapsed);
 	}
 
 	private function set_food(Value:Float):Float
