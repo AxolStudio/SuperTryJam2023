@@ -2,6 +2,7 @@ package states;
 
 import axollib.TitleCase.Roman;
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.math.FlxMath;
 import flixel.text.FlxText.FlxTextBorderStyle;
@@ -22,7 +23,7 @@ class PlayState extends FlxState
 	public static inline var GRID_MID:Float = 324;
 	public static inline var GRID_SPACING:Float = 2;
 
-	public var collection:Array<String> = [];
+	public var collection:Array<GridIcon> = [];
 	public var screenIcons:Array<IconSprite> = [];
 
 	public var spinButton:FlxButton;
@@ -46,6 +47,8 @@ class PlayState extends FlxState
 	public var iconsToKill:Array<Int> = [];
 	public var iconsToAdd:Array<String> = [];
 
+	public var wounds:Array<FlxSprite> = [];
+
 	public var currentMode:String = "setting-up";
 
 	public var whosAdding:Array<String> = [];
@@ -65,7 +68,7 @@ class PlayState extends FlxState
 
 		for (b in 0...Globals.BLANKS_PER_AGE)
 		{
-			collection.push("blank");
+			collection.push(new GridIcon("blank"));
 		}
 
 		for (n => v in Globals.STARTING_ICONS)
@@ -74,6 +77,22 @@ class PlayState extends FlxState
 			{
 				addNewIcon(n);
 			}
+		}
+
+		var wound:FlxSprite;
+		for (i in 0...25)
+		{
+			wound = new FlxSprite((FlxG.width / 2)
+				- GRID_MID
+				+ Std.int(i / 5) * 128
+				+ (Std.int(i / 5) * GRID_SPACING),
+				(FlxG.height / 2)
+				- GRID_MID
+				+ Std.int(i % 5) * 128
+				+ (Std.int(i % 5) * GRID_SPACING), "assets/images/wound.png");
+			wound.kill();
+			wounds.push(wound);
+			add(wound);
 		}
 
 		var icon:IconSprite;
@@ -119,28 +138,6 @@ class PlayState extends FlxState
 		spinButton.active = canSpin = false;
 		// some kind of animation!
 
-		FlxG.random.shuffle(collection);
-		for (i in 0...25)
-		{
-			screenIcons[i].icon = collection[i];
-		}
-
-		trace(collection);
-
-		currentMode = "did-spin";
-	}
-
-	public function addNewIcon(Value:String):Void
-	{
-		if (collection.contains("blank"))
-			collection.remove("blank");
-		collection.push(Value);
-	}
-
-	private function checkEffects():Void
-	{
-		// perform each icon's effect
-
 		willWound = [];
 		preventedWound = [];
 		iconsToKill = [];
@@ -148,7 +145,62 @@ class PlayState extends FlxState
 
 		for (i in 0...25)
 		{
-			var icon:Icon = Icon.fromData(Globals.IconList.get(collection[i]));
+			wounds[i].kill();
+		}
+
+		if (age == 1)
+		{
+			addRandomAnimal();
+		}
+
+		FlxG.random.shuffle(collection);
+
+		currentMode = "did-spin";
+	}
+
+	public function addRandomAnimal():Void
+	{
+		var newAnimal:String = Globals.WILD_ANIMALS[FlxG.random.weightedPick(Globals.WILD_ANIMAL_WEIGHTS)];
+		trace("Adding " + newAnimal + " to the collection.");
+		addNewIcon(newAnimal);
+	}
+
+	public function addNewIcon(Value:String):Void
+	{
+		if (collectionContains("blank"))
+			collectionRemoveFirst("blank");
+		collection.push(new GridIcon(Value));
+	}
+
+	public function collectionContains(Name:String):Bool
+	{
+		for (i in 0...collection.length)
+		{
+			if (collection[i].name == Name)
+				return true;
+		}
+		return false;
+	}
+
+	public function collectionRemoveFirst(Name:String):Void
+	{
+		for (i in 0...collection.length)
+		{
+			if (collection[i].name == Name)
+			{
+				collection.splice(i, 1);
+				return;
+			}
+		}
+	}
+
+	private function checkEffects():Void
+	{
+		// perform each icon's effect
+
+		for (i in 0...25)
+		{
+			var icon:Icon = Icon.fromData(Globals.IconList.get(collection[i].name));
 			if (icon.effect != null)
 			{
 				for (e in icon.effect)
@@ -159,35 +211,57 @@ class PlayState extends FlxState
 		}
 
 		// wound icons unless they are protected
+		trace(willWound);
 		for (i in 0...willWound.length)
 		{
 			if (!preventedWound.contains(willWound[i]))
 			{
-				iconsToKill.push(willWound[i]);
+				if (collection[willWound[i]].wounded)
+					iconsToKill.push(willWound[i]);
+				else
+					collection[willWound[i]].wounded = true;
 			}
 		}
-		// add any double-wounded to 		iconsToKill // this might need to be removed
+		// add any double-wounded to 		iconsToKill
 		// kill off iconsToKill
 
-		// remove any duplicates in iconsToKill
-		var toRemove:Array<Int> = [];
-		while (iconsToKill.length > 0)
+		for (i in 0...25)
 		{
-			var tmpIconsToKill:Array<Int> = [];
+			screenIcons[i].icon = collection[i].name;
 
-			tmpIconsToKill = iconsToKill.filter((value) -> iconsToKill.indexOf(value) == iconsToKill.lastIndexOf(value));
-			iconsToKill = [];
-
-			for (i in 0...tmpIconsToKill.length)
-			{
-				killIcon(tmpIconsToKill[i]);
-				toRemove.push(i);
-			}
+			if (collection[i].wounded)
+				wounds[i].revive();
 		}
 
-		var newCollection:Array<String> = [for (i in 0...collection.length) if (!iconsToKill.contains(i)) collection[i]];
-		collection = newCollection.copy();
+		var toKill:Array<Int> = [];
+		var toRemove:Array<Int> = [];
+		trace("iconsToKill", iconsToKill);
+		while (iconsToKill.length > 0)
+		{
+			toKill = [];
+			for (i in 0...iconsToKill.length)
+			{
+				if (!toKill.contains(iconsToKill[i]) && !toRemove.contains(iconsToKill[i]))
+					toKill.push(iconsToKill[i]);
+			}
+			iconsToKill = [];
+			for (i in 0...toKill.length)
+			{
+				killIcon(toKill[i]);
+				toRemove.push(toKill[i]);
+			}
+		}
+		var tmpCollection:Array<GridIcon> = [];
+		trace("toRemove", toRemove);
+		for (i in 0...collection.length)
+		{
+			if (!toRemove.contains(i))
+				tmpCollection.push(collection[i]);
+		}
 
+		collection = tmpCollection.copy();
+
+		trace("iconsToAdd", iconsToAdd);
 		for (i in iconsToAdd)
 		{
 			addNewIcon(i);
@@ -195,8 +269,13 @@ class PlayState extends FlxState
 
 		for (i in collection.length...25)
 		{
-			collection.push("blank");
+			collection.push(new GridIcon("blank"));
 		}
+
+		var collTmp:String = "";
+		for (i in 0...collection.length)
+			collTmp += collection[i].name + ",";
+		trace("collection", collTmp);
 
 		currentMode = "waiting-for-spin";
 		spinButton.active = canSpin = true;
@@ -208,25 +287,11 @@ class PlayState extends FlxState
 		checkEffect(IconPos, split[0], split[1]);
 	}
 
-	public function doEffect(IconPos:Int, Effect:String):Void
+	public function doEffect(IconPos:Int, Effect:String, ?Source:Int = -1):Void
 	{
 		var split:Array<String> = Effect.split(":");
 		switch (split[0])
 		{
-			case "pair": // for each 2 of the same icons, create a new icon
-				var type:String = collection[IconPos];
-				var neighbors:Array<Int> = getNeighborsOfType(IconPos, type);
-				var newType:String = split[1];
-				for (n in neighbors)
-				{
-					if (whosAdding.contains('$IconPos:$n:$type') || whosAdding.contains('$n:$IconPos:$type'))
-						continue;
-					whosAdding.push('$IconPos:$n:$type');
-					iconsToAdd.push(newType);
-
-					trace("pair: " + IconPos + " : " + collection[IconPos] + " + " + collection[n] + " = " + newType);
-				}
-
 			case "create": // create a new icon
 
 				var type:String = split[1];
@@ -253,11 +318,11 @@ class PlayState extends FlxState
 					iconsToAdd.push(type);
 					whosAdding.push('$IconPos:$type');
 
-					trace("create: " + IconPos + " : " + collection[IconPos] + " = " + type);
+					trace("create: " + IconPos + " : " + collection[IconPos].name + " = " + type);
 				}
 			case "replace": // replace this icon with another
 				replaceIcon(IconPos, split[1]);
-				trace("replace: " + IconPos + " : " + collection[IconPos] + " = " + split[1]);
+				trace("replace: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
 			case "gen": // generate a resource
 				var details:Array<String> = split[1].split("$");
 				switch (details[1])
@@ -266,24 +331,23 @@ class PlayState extends FlxState
 					case "prod": production += Std.parseFloat(details[0]);
 					case "sci": science += Std.parseFloat(details[0]);
 				}
-				trace("gen: " + IconPos + " : " + collection[IconPos] + " = " + split[1]);
+				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
 			case "die": // remove this icon from the collection
 				iconsToKill.push(IconPos);
-				trace("die: " + IconPos + " : " + collection[IconPos]);
+				trace("die: " + IconPos + " : " + collection[IconPos].name);
 			case "wound": // wound all humans touching this tile - UNLESS it is prevented from doing so...
-				var neighbors:Array<Int> = getNeighborsOfType(IconPos, "human");
 
-				willWound.concat(neighbors); // we will actually do the wounding later
-				trace("wound: " + IconPos + " : " + collection[IconPos] + " = " + neighbors);
+				willWound.push(Source);
+				trace("wound: " + IconPos + " : " + collection[IconPos].name + " = " + Source + " / " + willWound);
 
 			case "protect":
 				var types:Array<String> = split[1].split("/");
 				for (t in types)
 				{
 					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
-					preventedWound.concat(neighbors);
+					preventedWound = preventedWound.concat(neighbors);
 
-					trace("protect: " + IconPos + " : " + collection[IconPos] + " = " + neighbors);
+					trace("protect: " + IconPos + " : " + collection[IconPos].name + " = " + neighbors);
 				}
 
 			case "kill": // kill the types touching this icon
@@ -291,8 +355,8 @@ class PlayState extends FlxState
 				for (t in types)
 				{
 					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
-					iconsToKill.concat(neighbors);
-					trace("kill: " + IconPos + " : " + collection[IconPos] + " = " + neighbors);
+					iconsToKill = iconsToKill.concat(neighbors);
+					trace("kill: " + IconPos + " : " + collection[IconPos].name + " = " + neighbors);
 				}
 			case "change": // change touching tile to another tile
 				var types:Array<String> = split[1].split("/");
@@ -302,7 +366,7 @@ class PlayState extends FlxState
 					for (n in neighbors)
 					{
 						replaceIcon(n, split[2]);
-						trace("change: " + IconPos + " : " + collection[IconPos] + " : " + collection[n] + " = " + split[2]);
+						trace("change: " + IconPos + " : " + collection[IconPos].name + " : " + collection[n].name + " = " + split[2]);
 					}
 				}
 			case "snipe": // find a random tile of type on the board, kill it
@@ -310,10 +374,10 @@ class PlayState extends FlxState
 				var icons:Array<Int> = [];
 				for (t in types)
 				{
-					icons.concat(getIconsOfType(IconPos, t));
+					icons = icons.concat(getIconsOfType(IconPos, t));
 				}
 				iconsToKill.push(icons[FlxG.random.int(0, icons.length - 1)]);
-				trace("snipe: " + IconPos + " : " + collection[IconPos] + " = " + icons);
+				trace("snipe: " + IconPos + " : " + collection[IconPos].name + " = " + icons);
 		}
 	}
 
@@ -322,7 +386,7 @@ class PlayState extends FlxState
 		var icons:Array<Int> = [];
 		for (i in 0...25)
 		{
-			if (collection[i] == Type && i != IconPos)
+			if (collection[i].name == Type && i != IconPos)
 				icons.push(i);
 		}
 		return icons;
@@ -332,52 +396,40 @@ class PlayState extends FlxState
 	{
 		var neighbors:Array<Int> = [];
 
-		var x:Int = IconPos % 5;
-		var y:Int = Std.int(IconPos / 5);
+		var l:Int = IconPos >= 5 ? IconPos - 5 : -1;
+		var r:Int = IconPos < 20 ? IconPos + 5 : -1;
 
-		var l:Int = x - 1;
-		var r:Int = x + 1;
-		var u:Int = y - 1;
-		var d:Int = y + 1;
-		var ul:Int = u * 5 + l;
-		var ur:Int = u * 5 + r;
-		var dl:Int = d * 5 + l;
-		var dr:Int = d * 5 + r;
+		var u:Int = IconPos % 5 != 0 ? IconPos - 1 : -1;
+		var d:Int = IconPos % 5 != 4 ? IconPos + 1 : -1;
 
-		var x:Int = IconPos % 5;
-		var y:Int = Std.int(IconPos / 5);
+		var ul:Int = l >= 0 && u >= 0 ? l - 1 : -1;
+		var ur:Int = r >= 0 && u >= 0 ? r - 1 : -1;
 
-		var l:Int = x - 1;
-		var r:Int = x + 1;
-		var u:Int = y - 1;
-		var d:Int = y + 1;
-		var ul:Int = u * 5 + l;
-		var ur:Int = u * 5 + r;
-		var dl:Int = d * 5 + l;
-		var dr:Int = d * 5 + r;
+		var dl:Int = l >= 0 && d >= 0 ? l + 1 : -1;
+		var dr:Int = r >= 0 && d >= 0 ? r + 1 : -1;
 
-		if (l >= 0 && collection[l] == Type)
+		if (l > -1 && collection[l].name == Type)
 			neighbors.push(l);
 
-		if (r < 5 && collection[r] == Type)
+		if (r > -1 && collection[r].name == Type)
 			neighbors.push(r);
 
-		if (u >= 0 && collection[u] == Type)
+		if (u > -1 && collection[u].name == Type)
 			neighbors.push(u);
 
-		if (d < 5 && collection[d] == Type)
+		if (d > -1 && collection[d].name == Type)
 			neighbors.push(d);
 
-		if (l >= 0 && u >= 0 && collection[ul] == Type)
+		if (ul > -1 && collection[ul].name == Type)
 			neighbors.push(ul);
 
-		if (r < 5 && u >= 0 && collection[ur] == Type)
+		if (ur > -1 && collection[ur].name == Type)
 			neighbors.push(ur);
 
-		if (l >= 0 && d < 5 && collection[dl] == Type)
+		if (dl > -1 && collection[dl].name == Type)
 			neighbors.push(dl);
 
-		if (r < 5 && d < 5 && collection[dr] == Type)
+		if (dr > -1 && collection[dr].name == Type)
 			neighbors.push(dr);
 
 		return neighbors;
@@ -411,35 +463,58 @@ class PlayState extends FlxState
 			case "work": // a human is touching this tile
 				for (n in getNeighborsOfType(IconPos, "human"))
 				{
-					doEffect(IconPos, DoEffect);
+					doEffect(IconPos, DoEffect, n);
 				}
+			case "pair": // a pair of tiles of this type are touching
+				var split:Array<String> = DoEffect.split(":");
+				var type:String = split[1];
 
+				for (n in getNeighborsOfType(IconPos, "human"))
+				{
+					if (!whosAdding.contains('$IconPos:$n:$type') && !whosAdding.contains('$n:$IconPos:$type'))
+					{
+						whosAdding.push('$IconPos:$n:$type');
+						doEffect(IconPos, DoEffect, n);
+					}
+				}
 			case "chance": // a percentage of happening
 				if (FlxG.random.bool(Std.parseFloat(value)))
 					doEffect(IconPos, DoEffect);
 			case "timer": // count down to 0 and then do the effect...
+				var split:Array<String> = Effect.split(":");
+				var time:Int = Std.parseInt(split[1]);
+				if (collection[IconPos].timer == 0)
+				{
+					doEffect(IconPos, DoEffect);
+				}
+				else if (collection[IconPos].timer > 0)
+				{
+					collection[IconPos].timer--;
+				}
+				else
+				{
+					collection[IconPos].timer = time;
+				}
 
 			case "after": // after this spin, do this effect
 				doEffect(IconPos, DoEffect);
 
 			case "touch": // is touching a tile of a speficic type
 				var types:Array<String> = value.split("/");
+
 				for (t in types)
 				{
-					if (hasNeighborType(IconPos, t))
+					for (n in getNeighborsOfType(IconPos, t))
 					{
-						check = true;
-						break;
+						doEffect(IconPos, DoEffect, n);
 					}
 				}
-				if (check)
-					doEffect(IconPos, DoEffect);
 		}
 	}
 
 	public function killIcon(IconPos:Int):Void
 	{
-		var def:Icon = Icon.fromData(Globals.IconList.get(collection[IconPos]));
+		var def:Icon = Icon.fromData(Globals.IconList.get(collection[IconPos].name));
 		if (def.death != null)
 		{
 			for (e in def.death)
@@ -453,40 +528,40 @@ class PlayState extends FlxState
 	{
 		// look at the neighbors of this icon and return true if any of them are Value
 
-		var x:Int = IconPos % 5;
-		var y:Int = Std.int(IconPos / 5);
+		var l:Int = IconPos >= 5 ? IconPos - 5 : -1;
+		var r:Int = IconPos < 20 ? IconPos + 5 : -1;
 
-		var l:Int = x - 1;
-		var r:Int = x + 1;
-		var u:Int = y - 1;
-		var d:Int = y + 1;
-		var ul:Int = u * 5 + l;
-		var ur:Int = u * 5 + r;
-		var dl:Int = d * 5 + l;
-		var dr:Int = d * 5 + r;
+		var u:Int = IconPos % 5 != 0 ? IconPos - 1 : -1;
+		var d:Int = IconPos % 5 != 4 ? IconPos + 1 : -1;
 
-		if (l >= 0 && collection[l] == Value)
+		var ul:Int = l >= 0 && u >= 0 ? l - 1 : -1;
+		var ur:Int = r >= 0 && u >= 0 ? r - 1 : -1;
+
+		var dl:Int = l >= 0 && d >= 0 ? l + 1 : -1;
+		var dr:Int = r >= 0 && d >= 0 ? r + 1 : -1;
+
+		if (l > -1 && collection[l].name == Value)
 			return true;
 
-		if (r < 5 && collection[r] == Value)
+		if (r > -1 && collection[r].name == Value)
 			return true;
 
-		if (u >= 0 && collection[u] == Value)
+		if (u > -1 && collection[u].name == Value)
 			return true;
 
-		if (d < 5 && collection[d] == Value)
+		if (d > -1 && collection[d].name == Value)
 			return true;
 
-		if (l >= 0 && u >= 0 && collection[ul] == Value)
+		if (ul > -1 && collection[ul].name == Value)
 			return true;
 
-		if (r < 5 && u >= 0 && collection[ur] == Value)
+		if (ur > -1 && collection[ur].name == Value)
 			return true;
 
-		if (l >= 0 && d < 5 && collection[dl] == Value)
+		if (dl > -1 && collection[dl].name == Value)
 			return true;
 
-		if (r < 5 && d < 5 && collection[dr] == Value)
+		if (dr > -1 && collection[dr].name == Value)
 			return true;
 
 		return false;

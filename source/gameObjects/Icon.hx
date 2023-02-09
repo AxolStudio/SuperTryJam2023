@@ -25,3 +25,15 @@ class Icon
 		return new Icon(name, upkeep, effect, death);
 	}
 }
+
+class GridIcon
+{
+	public var name:String;
+	public var wounded:Bool = false;
+	public var timer:Int = -1;
+
+	public function new(Name:String):Void
+	{
+		name = Name;
+	}
+}

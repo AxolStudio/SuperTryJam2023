@@ -2,43 +2,55 @@
   {
     "name": "blank",
     "upkeep": 0,
-    "effect": [""],
-    "death": [""]
+    "effect": [],
+    "death": []
   },
   {
     "name": "human",
     "upkeep": 1,
-    "effect": ["work?pair:child"],
-    "death": [""]
+    "effect": [],
+    "death": []
   },
   {
     "name": "child",
     "upkeep": 1,
-    "effect": ["after?replace:human"],
-    "death": [""]
+    "effect": ["timer:3?replace:human"],
+    "death": []
   },
   {
     "name": "berry bush",
     "upkeep": 0,
     "effect": ["work?gen:1$food"],
-    "death": [""]
+    "death": []
+  },
+  {
+    "name": "deer",
+    "upkeep": 0,
+    "effect": [],
+    "death": ["create:meat*3"]
+  },
+  {
+    "name": "hare",
+    "upkeep": 0,
+    "effect": [],
+    "death": ["create:meat*1"]
   },
   {
     "name": "wolf",
     "upkeep": 0,
-    "effect": ["work?wound", "chance:15?create:wolf"],
+    "effect": ["touch:human?wound", "touch:child?kill"],
     "death": ["create:meat*2"]
   },
   {
     "name": "bear",
     "upkeep": 0,
-    "effect": ["work?wound", "chance:10?create:bear"],
+    "effect": ["touch:human?wound", "touch:child?kill"],
     "death": ["create:meat*4"]
   },
   {
     "name": "mammoth",
     "upkeep": 0,
-    "effect": ["work?wound", "chance:5?create:mammoth"],
+    "effect": ["touch:human?wound", "touch:child?kill"],
     "death": ["create:meat*6"]
   },
   {
@@ -56,7 +68,7 @@
   {
     "name": "sapling",
     "upkeep": 0,
-    "effect": ["after?replace:tree"],
+    "effect": ["timer:3?replace:tree"],
     "death": []
   },
   {
@@ -116,13 +128,13 @@
   {
     "name": "sling",
     "upkeep": 0,
-    "effect": ["work?snipe:wolf/bear/mammoth"],
+    "effect": ["work?snipe:hare/deer/wolf/bear/mammoth"],
     "death": []
   },
   {
     "name": "spear",
     "upkeep": 0,
-    "effect": ["work?kill:wolf/bear/mammoth"],
+    "effect": ["work?kill:hare/deer/wolf/bear/mammoth"],
     "death": []
   },
   {
