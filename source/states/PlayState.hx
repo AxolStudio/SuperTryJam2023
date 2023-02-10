@@ -46,12 +46,17 @@ class PlayState extends FlxState
 	public var preventedWound:Array<Int> = [];
 	public var iconsToKill:Array<Int> = [];
 	public var iconsToAdd:Array<String> = [];
+	public var iconsToDelete:Array<Int> = [];
 
 	public var wounds:Array<FlxSprite> = [];
 
 	public var currentMode:String = "setting-up";
 
 	public var whosAdding:Array<String> = [];
+
+	public var txtPopulation:FlxText;
+
+	public var checkingIcon:Int = -1;
 
 	override public function create()
 	{
@@ -121,13 +126,25 @@ class PlayState extends FlxState
 		txtAge.setFormat(null, 32, FlxColor.BLACK, "center");
 		txtAge.screenCenter(FlxAxes.X);
 
-		add(foodBar = new CurrencyDisplay(10, 10, "Food", 10));
+		add(foodBar = new CurrencyDisplay(10, 10, "Food", 25));
 		add(productionBar = new CurrencyDisplay(10, 50, "Production", 25));
 		add(scienceBar = new CurrencyDisplay(10, 90, "Science", 50));
+
+		add(txtPopulation = new FlxText(FlxG.width - 200, 10, 0, "Population: 0"));
+		txtPopulation.setFormat(null, 18, FlxColor.BLACK, "right");
+
+		food = 10;
+
+		updatePopText();
 
 		currentMode = "waiting-for-spin";
 
 		spinButton.active = canSpin = true;
+	}
+
+	public function updatePopText()
+	{
+		txtPopulation.text = "Population: " + Std.string(getIconsOfType(-1, "human").length);
 	}
 
 	public function spin():Void
@@ -142,6 +159,8 @@ class PlayState extends FlxState
 		preventedWound = [];
 		iconsToKill = [];
 		whosAdding = [];
+		iconsToAdd = [];
+		iconsToDelete = [];
 
 		for (i in 0...25)
 		{
@@ -151,11 +170,26 @@ class PlayState extends FlxState
 		if (age == 1)
 		{
 			addRandomAnimal();
+			addRandomResources();
 		}
 
 		FlxG.random.shuffle(collection);
 
 		currentMode = "did-spin";
+	}
+
+	public function addRandomResources():Void
+	{
+		var saplings:Int = FlxMath.maxInt(0, FlxG.random.int(-10, 2));
+		var berries:Int = FlxMath.maxInt(0, FlxG.random.int(-1, 2));
+		var boulders:Int = FlxMath.maxInt(0, FlxG.random.int(-10, 1));
+
+		for (i in 0...saplings)
+			addNewIcon("sapling");
+		for (i in 0...berries)
+			addNewIcon("berry bush");
+		for (i in 0...boulders)
+			addNewIcon("boulder");
 	}
 
 	public function addRandomAnimal():Void
@@ -198,28 +232,32 @@ class PlayState extends FlxState
 	{
 		// perform each icon's effect
 
-		for (i in 0...25)
+		var icon:Icon = Icon.fromData(Globals.IconList.get(collection[checkingIcon].name));
+		if (icon.effect != null)
 		{
-			var icon:Icon = Icon.fromData(Globals.IconList.get(collection[i].name));
-			if (icon.effect != null)
+			for (e in icon.effect)
 			{
-				for (e in icon.effect)
-				{
-					parseEffect(i, e);
-				}
+				parseEffect(checkingIcon, e);
 			}
 		}
 
+		checkingIcon++;
+	}
+
+	public function finishChecking():Void
+	{
+		checkingIcon = -1;
+
 		// wound icons unless they are protected
 		trace(willWound);
-		for (i in 0...willWound.length)
+		for (i in willWound)
 		{
-			if (!preventedWound.contains(willWound[i]))
+			if (!preventedWound.contains(i))
 			{
-				if (collection[willWound[i]].wounded)
-					iconsToKill.push(willWound[i]);
+				if (collection[i].wounded)
+					iconsToKill.push(i);
 				else
-					collection[willWound[i]].wounded = true;
+					collection[i].wounded = true;
 			}
 		}
 		// add any double-wounded to 		iconsToKill
@@ -239,18 +277,56 @@ class PlayState extends FlxState
 		while (iconsToKill.length > 0)
 		{
 			toKill = [];
-			for (i in 0...iconsToKill.length)
+			for (i in iconsToKill)
 			{
-				if (!toKill.contains(iconsToKill[i]) && !toRemove.contains(iconsToKill[i]))
-					toKill.push(iconsToKill[i]);
+				if (!toKill.contains(i) && !toRemove.contains(i))
+					toKill.push(i);
 			}
 			iconsToKill = [];
-			for (i in 0...toKill.length)
+			for (i in toKill)
 			{
-				killIcon(toKill[i]);
-				toRemove.push(toKill[i]);
+				killIcon(i);
+				toRemove.push(i);
 			}
 		}
+
+		var starved:Int = 0;
+		for (h in 0...collection.length)
+		{
+			if (collection[h].name == "child" && !toRemove.contains(h))
+			{
+				// feed this human or kill it!
+				if (food > 0)
+				{
+					food--;
+				}
+				else
+				{
+					toRemove.push(h);
+					starved++;
+				}
+			}
+			if (collection[h].name == "human" && !toRemove.contains(h))
+			{
+				// feed this human or kill it!
+				if (food > 0)
+				{
+					food--;
+				}
+				else
+				{
+					toRemove.push(h);
+					starved++;
+				}
+			}
+		}
+		trace(starved + " humans starved to death.");
+
+		for (i in iconsToDelete)
+		{
+			toRemove.push(i);
+		}
+
 		var tmpCollection:Array<GridIcon> = [];
 		trace("toRemove", toRemove);
 		for (i in 0...collection.length)
@@ -277,6 +353,8 @@ class PlayState extends FlxState
 			collTmp += collection[i].name + ",";
 		trace("collection", collTmp);
 
+		updatePopText();
+
 		currentMode = "waiting-for-spin";
 		spinButton.active = canSpin = true;
 	}
@@ -292,6 +370,9 @@ class PlayState extends FlxState
 		var split:Array<String> = Effect.split(":");
 		switch (split[0])
 		{
+			case "delete": // remove icon without it's death effect
+				iconsToDelete.push(Source);
+				trace("delete: " + IconPos + " : " + collection[IconPos].name + " = " + collection[Source].name);
 			case "create": // create a new icon
 
 				var type:String = split[1];
@@ -332,6 +413,7 @@ class PlayState extends FlxState
 					case "sci": science += Std.parseFloat(details[0]);
 				}
 				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
+				trace("food: " + food + " prod: " + production + " sci: " + science);
 			case "die": // remove this icon from the collection
 				iconsToKill.push(IconPos);
 				trace("die: " + IconPos + " : " + collection[IconPos].name);
@@ -466,16 +548,19 @@ class PlayState extends FlxState
 					doEffect(IconPos, DoEffect, n);
 				}
 			case "pair": // a pair of tiles of this type are touching
+				var splitA:Array<String> = Effect.split(":");
+				var match:String = splitA[1];
 				var split:Array<String> = DoEffect.split(":");
 				var type:String = split[1];
 
-				for (n in getNeighborsOfType(IconPos, "human"))
+				for (n in getNeighborsOfType(IconPos, match))
 				{
-					if (!whosAdding.contains('$IconPos:$n:$type') && !whosAdding.contains('$n:$IconPos:$type'))
-					{
-						whosAdding.push('$IconPos:$n:$type');
-						doEffect(IconPos, DoEffect, n);
-					}
+					// if (!whosAdding.contains('$IconPos:$type') && !whosAdding.contains('$n:$type'))
+					// {
+					// whosAdding.push('$IconPos:$type');
+					whosAdding.push('$n:$type');
+					doEffect(IconPos, DoEffect, n);
+					// }
 				}
 			case "chance": // a percentage of happening
 				if (FlxG.random.bool(Std.parseFloat(value)))
@@ -573,7 +658,13 @@ class PlayState extends FlxState
 		{
 			case "did-spin":
 				draw();
+				checkingIcon = 0;
+				currentMode = "checking";
+
+			case "checking":
 				checkEffects();
+				if (checkingIcon >= 25)
+					finishChecking();
 		}
 
 		super.update(elapsed);

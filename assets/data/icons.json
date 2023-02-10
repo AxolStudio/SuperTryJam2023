@@ -8,7 +8,7 @@
   {
     "name": "human",
     "upkeep": 1,
-    "effect": [],
+    "effect": ["pair:human?create:child"],
     "death": []
   },
   {
@@ -20,14 +20,14 @@
   {
     "name": "berry bush",
     "upkeep": 0,
-    "effect": ["work?gen:1$food"],
-    "death": []
+    "effect": ["work?die"],
+    "death": ["gen:5$food"]
   },
   {
     "name": "deer",
     "upkeep": 0,
     "effect": [],
-    "death": ["create:meat*3"]
+    "death": ["create:meat*2"]
   },
   {
     "name": "hare",
@@ -38,20 +38,20 @@
   {
     "name": "wolf",
     "upkeep": 0,
-    "effect": ["touch:human?wound", "touch:child?kill"],
+    "effect": ["touch:human?wound", "touch:child/deer/hare/meat?delete"],
     "death": ["create:meat*2"]
   },
   {
     "name": "bear",
     "upkeep": 0,
-    "effect": ["touch:human?wound", "touch:child?kill"],
-    "death": ["create:meat*4"]
+    "effect": ["touch:human?wound", "touch:child/deer/hare/meat?delete"],
+    "death": ["create:meat*3"]
   },
   {
     "name": "mammoth",
     "upkeep": 0,
-    "effect": ["touch:human?wound", "touch:child?kill"],
-    "death": ["create:meat*6"]
+    "effect": ["touch:human?wound"],
+    "death": ["create:meat*4"]
   },
   {
     "name": "rock",
@@ -62,7 +62,7 @@
   {
     "name": "tree",
     "upkeep": 0,
-    "effect": ["work?gen:1$food", "work?gen:1$prod"],
+    "effect": ["work?gen:2$food", "work?gen:1$prod"],
     "death": ["gen:2$food", "create:log*2-5", "create:sapling*1-2"]
   },
   {
@@ -99,7 +99,7 @@
     "name": "meat",
     "upkeep": 0,
     "effect": ["work?die"],
-    "death": ["gen:2$food"]
+    "death": ["gen:5$food"]
   },
   {
     "name": "boulder",
@@ -147,6 +147,6 @@
     "name": "meal",
     "upkeep": 0,
     "effect": ["work?die"],
-    "death": ["gen:8$food"]
+    "death": ["gen:15$food"]
   }
 ]
