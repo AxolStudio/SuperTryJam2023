@@ -69,8 +69,6 @@ class PlayState extends FlxState
 	{
 		bgColor = FlxColor.WHITE;
 
-		var iconData:Dynamic = Globals.IconList.get("blank");
-
 		for (b in 0...Globals.BLANKS_PER_AGE)
 		{
 			collection.push(new GridIcon("blank"));
@@ -232,7 +230,7 @@ class PlayState extends FlxState
 	{
 		// perform each icon's effect
 
-		var icon:Icon = Icon.fromData(Globals.IconList.get(collection[checkingIcon].name));
+		var icon:Icon = Globals.IconList.get(collection[checkingIcon].name);
 		if (icon.effect != null)
 		{
 			for (e in icon.effect)
@@ -599,7 +597,7 @@ class PlayState extends FlxState
 
 	public function killIcon(IconPos:Int):Void
 	{
-		var def:Icon = Icon.fromData(Globals.IconList.get(collection[IconPos].name));
+		var def:Icon = Globals.IconList.get(collection[IconPos].name);
 		if (def.death != null)
 		{
 			for (e in def.death)

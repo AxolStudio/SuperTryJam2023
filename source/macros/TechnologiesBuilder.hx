@@ -5,7 +5,7 @@ import haxe.macro.Expr;
 
 using StringTools;
 
-class IconsBuilder
+class TechnologiesBuilder
 {
 	public static macro function build():Array<Field>
 	{
@@ -13,19 +13,19 @@ class IconsBuilder
 		var map:Array<Expr> = [];
 		var e:Expr;
 
-		var list:Array<Dynamic> = tjson.TJSON.parse(sys.io.File.getContent("assets/data/icons.json"));
+		var list:Array<Dynamic> = tjson.TJSON.parse(sys.io.File.getContent("assets/data/technologies.json"));
 
-		for (icon in list)
+		for (tech in list)
 		{
-			e = macro gameObjects.Icon.fromData($v{icon});
-			map.push(macro $v{icon.name} => $e{e});
+			e = macro gameObjects.Technology.fromData($v{tech});
+			map.push(macro $v{tech.name} => $e{e});
 		}
 
 		fields.push({
 			pos: Context.currentPos(),
-			name: "IconList",
+			name: "TechnologiesList",
 			meta: null,
-			kind: FieldType.FVar(macro :Map<String, gameObjects.Icon>, macro $a{map}),
+			kind: FieldType.FVar(macro :Map<String, gameObjects.Technology>, macro $a{map}),
 			doc: null,
 			access: [Access.APublic, Access.AStatic]
 		});

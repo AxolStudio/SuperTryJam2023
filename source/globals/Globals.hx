@@ -8,11 +8,10 @@ class Globals
 	public static var STARTING_ICONS:Map<String, Int> = [
 		"human" => 5,
 		"spear" => 3,
-		"torch" => 2,
-		"berry bush" => 7,
-		"tree" => 1,
-		"boulder" => 2
+		"berry bush" => 5
 	];
 	public static var WILD_ANIMALS:Array<String> = ["hare", "deer", "wolf", "bear", "mammoth"];
 	public static var WILD_ANIMAL_WEIGHTS:Array<Float> = [50, 30, 14, 5, 1];
+
+	public static var SHOP_ITEMS:Array<String> = ["child", "berry bush"];
 }

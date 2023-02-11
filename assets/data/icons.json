@@ -1,152 +1,182 @@
 [
   {
     "name": "blank",
-    "upkeep": 0,
-    "effect": [],
+    "cost": 0,
+    "effect": ["work?gen:2$sci"],
     "death": []
   },
   {
     "name": "human",
-    "upkeep": 1,
-    "effect": ["pair:human?create:child"],
+    "cost": 0,
+    "effect": ["pair?gen:3$sci"],
     "death": []
   },
   {
     "name": "child",
-    "upkeep": 1,
-    "effect": ["timer:3?replace:human"],
+    "cost": 20,
+    "effect": ["timer:2?replace:human"],
     "death": []
   },
   {
     "name": "berry bush",
-    "upkeep": 0,
+    "cost": 5,
     "effect": ["work?die"],
     "death": ["gen:5$food"]
   },
   {
     "name": "deer",
-    "upkeep": 0,
+    "cost": 0,
     "effect": [],
     "death": ["create:meat*2"]
   },
   {
     "name": "hare",
-    "upkeep": 0,
+    "cost": 0,
     "effect": [],
     "death": ["create:meat*1"]
   },
   {
     "name": "wolf",
-    "upkeep": 0,
-    "effect": ["touch:human?wound", "touch:child/deer/hare/meat?delete"],
+    "cost": 0,
+    "effect": ["touch:human?wound", "touch:child/deer/hare/meat/pig/sheep?delete"],
+    "death": ["create:meat*2"]
+  },
+  {
+    "name": "boar",
+    "cost": 0,
+    "effect": ["touch:human?wound"],
     "death": ["create:meat*2"]
   },
   {
     "name": "bear",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["touch:human?wound", "touch:child/deer/hare/meat?delete"],
     "death": ["create:meat*3"]
   },
   {
     "name": "mammoth",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["touch:human?wound"],
     "death": ["create:meat*4"]
   },
   {
     "name": "rock",
-    "upkeep": 0,
+    "cost": 0,
     "effect": [],
     "death": ["gen:2$prod", "create:coal*1-2"]
   },
   {
     "name": "tree",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["work?gen:2$food", "work?gen:1$prod"],
     "death": ["gen:2$food", "create:log*2-5", "create:sapling*1-2"]
   },
   {
     "name": "sapling",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["timer:3?replace:tree"],
     "death": []
   },
   {
     "name": "wood",
-    "upkeep": 0,
+    "cost": 0,
     "effect": [],
     "death": ["gen:2$prod"]
   },
   {
     "name": "coal",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["touch:torch/campfire?die"],
     "death": ["gen:4$prod"]
   },
   {
     "name": "torch",
-    "upkeep": 0,
+    "cost": 5,
     "effect": ["touch:wolf/bear/mammoth?protect:wolf/bear/mammoth"],
     "death": []
   },
   {
     "name": "campfire",
-    "upkeep": 0,
-    "effect": ["work?gen:2$sci", "work?change:meat$meal"],
+    "cost": 15,
+    "effect": ["work?gen:5$sci", "work?change:meat$meal"],
     "death": []
   },
   {
     "name": "meat",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["work?die"],
     "death": ["gen:5$food"]
   },
   {
     "name": "boulder",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["work?gen:2$prod"],
     "death": ["gen:4$prod", "create:rock*2-5"]
   },
   {
     "name": "axe",
-    "upkeep": 0,
+    "cost": 10,
     "effect": ["work?kill:tree/log"],
     "death": []
   },
   {
     "name": "log",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["work?gen:1$prod"],
     "death": ["gen:2$prod", "create:wood*2-5"]
   },
   {
     "name": "pickaxe",
-    "upkeep": 0,
+    "cost": 10,
     "effect": ["work?kill:rock/boulder"],
     "death": []
   },
   {
     "name": "sling",
-    "upkeep": 0,
-    "effect": ["work?snipe:hare/deer/wolf/bear/mammoth"],
+    "cost": 15,
+    "effect": ["work?snipe:hare/deer/wolf/bear/mammoth/boar"],
     "death": []
   },
   {
     "name": "spear",
-    "upkeep": 0,
-    "effect": ["work?kill:hare/deer/wolf/bear/mammoth"],
+    "cost": 10,
+    "effect": ["work?kill:hare/deer/wolf/bear/mammoth/boar/pig/cow/sheep"],
     "death": []
   },
   {
     "name": "canoe",
-    "upkeep": 0,
-    "effect": ["touch:blank?gen:1$sci"],
+    "cost": 10,
+    "effect": ["touch:blank?gen:5$sci", "work?kill:fish"],
     "death": []
   },
   {
     "name": "meal",
-    "upkeep": 0,
+    "cost": 0,
     "effect": ["work?die"],
     "death": ["gen:15$food"]
+  },
+  {
+    "name": "fish",
+    "cost": 0,
+    "effect": [],
+    "death": ["create:meat*3"]
+  },
+  {
+    "name": "pig",
+    "cost": 5,
+    "effect": [],
+    "death": ["create:meat*3"]
+  },
+  {
+    "name": "sheep",
+    "cost": 5,
+    "effect": ["work?gen:5$prod"],
+    "death": ["create:meat*2"]
+  },
+  {
+    "name": "cow",
+    "cost": 10,
+    "effect": ["work?gen:2$food"],
+    "death": ["create:meat*5"]
   }
 ]

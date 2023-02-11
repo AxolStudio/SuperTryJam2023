@@ -1,0 +1,72 @@
+[
+  {
+    "name": "planting",
+    "age": 1,
+    "science": 10,
+    "effect": ["i:berry bush:d!gen:5$food", "i:berry bush:d!chance:10?create:berry bush"],
+    "requires": []
+  },
+  {
+    "name": "lumberjacking",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:axe"],
+    "requires": []
+  },
+  {
+    "name": "horticulture",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:pickaxe"],
+    "requires": []
+  },
+  {
+    "name": "torches",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:torch"],
+    "requires": ["campfire"]
+  },
+  {
+    "name": "fire",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:campfire"],
+    "requires": []
+  },
+  {
+    "name": "weaponry",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:spear"],
+    "requires": []
+  },
+  {
+    "name": "archery",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:sling"],
+    "requires": ["weaponry"]
+  },
+  {
+    "name": "exploration",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:canoe"],
+    "requires": ["axe"]
+  },
+  {
+    "name": "fishing",
+    "age": 1,
+    "science": 10,
+    "effect": ["e:fish"],
+    "requires": ["exploration"]
+  },
+  {
+    "name": "husbandry",
+    "age": 1,
+    "science": 10,
+    "effect": ["u:pig", "u:sheep", "u:cow"],
+    "requires": ["campfire"]
+  }
+]
