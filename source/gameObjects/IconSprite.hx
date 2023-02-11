@@ -26,4 +26,6 @@ class IconSprite extends FlxSprite
 	{
 		return animation.frameName;
 	}
+
+	// TODO: add a mouse-over effect that shows a tooltip
 }

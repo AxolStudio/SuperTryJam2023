@@ -14,10 +14,11 @@ import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
 import ui.CurrencyDisplay;
+import ui.ShopScreen;
 
 using StringTools;
 
-class PlayState extends FlxState
+class PlayState extends GameState
 {
 	public static inline var GRID_SIZE:Float = 648;
 	public static inline var GRID_MID:Float = 324;
@@ -57,6 +58,8 @@ class PlayState extends FlxState
 	public var txtPopulation:FlxText;
 
 	public var checkingIcon:Int = -1;
+
+	public var shopButton:FlxButton;
 
 	override public function create()
 	{
@@ -119,6 +122,12 @@ class PlayState extends FlxState
 		spinButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		spinButton.active = false;
 
+		add(shopButton = new FlxButton(spinButton.x - 210, spinButton.y, "Shop", openShop));
+		shopButton.makeGraphic(200, 50, FlxColor.GREEN);
+		shopButton.label.setFormat(null, 32, FlxColor.WHITE, "center");
+		shopButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+		shopButton.active = false;
+
 		age = 1;
 		add(txtAge = new FlxText(0, 10, 0, "Age " + Roman.arabic2Roman(age)));
 		txtAge.setFormat(null, 32, FlxColor.BLACK, "center");
@@ -137,7 +146,12 @@ class PlayState extends FlxState
 
 		currentMode = "waiting-for-spin";
 
-		spinButton.active = canSpin = true;
+		shopButton.active = spinButton.active = canSpin = true;
+	}
+
+	public function openShop():Void
+	{
+		openSubState(new ShopScreen());
 	}
 
 	public function updatePopText()
@@ -150,7 +164,7 @@ class PlayState extends FlxState
 		if (!spinButton.active || !canSpin)
 			return;
 		currentMode = "spinning";
-		spinButton.active = canSpin = false;
+		shopButton.active = spinButton.active = canSpin = false;
 		// some kind of animation!
 
 		willWound = [];
@@ -179,13 +193,13 @@ class PlayState extends FlxState
 	public function addRandomResources():Void
 	{
 		var saplings:Int = FlxMath.maxInt(0, FlxG.random.int(-10, 2));
-		var berries:Int = FlxMath.maxInt(0, FlxG.random.int(-1, 2));
-		var boulders:Int = FlxMath.maxInt(0, FlxG.random.int(-10, 1));
+		// var berries:Int = FlxMath.maxInt(0, FlxG.random.int(-1, 2));
+		var boulders:Int = FlxMath.maxInt(0, FlxG.random.int(-10, 2));
 
 		for (i in 0...saplings)
 			addNewIcon("sapling");
-		for (i in 0...berries)
-			addNewIcon("berry bush");
+		// for (i in 0...berries)
+		// 	addNewIcon("berry bush");
 		for (i in 0...boulders)
 			addNewIcon("boulder");
 	}
@@ -354,7 +368,7 @@ class PlayState extends FlxState
 		updatePopText();
 
 		currentMode = "waiting-for-spin";
-		spinButton.active = canSpin = true;
+		shopButton.active = spinButton.active = canSpin = true;
 	}
 
 	public function parseEffect(IconPos:Int, Effect:String):Void
