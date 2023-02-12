@@ -72,6 +72,8 @@ class PlayState extends GameState
 	{
 		bgColor = FlxColor.WHITE;
 
+		Globals.PlayState = this;
+
 		for (b in 0...Globals.BLANKS_PER_AGE)
 		{
 			collection.push(new GridIcon("blank"));
@@ -133,9 +135,9 @@ class PlayState extends GameState
 		txtAge.setFormat(null, 32, FlxColor.BLACK, "center");
 		txtAge.screenCenter(FlxAxes.X);
 
-		add(foodBar = new CurrencyDisplay(10, 10, "Food", 25));
-		add(productionBar = new CurrencyDisplay(10, 50, "Production", 25));
-		add(scienceBar = new CurrencyDisplay(10, 90, "Science", 50));
+		add(foodBar = new CurrencyDisplay(10, 10, "{{food}} Food", 25));
+		add(productionBar = new CurrencyDisplay(10, 50, "{{production}} Production", 25));
+		add(scienceBar = new CurrencyDisplay(10, 90, "{{science}} Science", 50));
 
 		add(txtPopulation = new FlxText(FlxG.width - 200, 10, 0, "Population: 0"));
 		txtPopulation.setFormat(null, 18, FlxColor.BLACK, "right");

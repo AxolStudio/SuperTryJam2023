@@ -7,8 +7,8 @@ import flixel.ui.FlxBar;
 
 class CurrencyDisplay extends FlxGroup
 {
-	public var txtLabel:FlxText;
-	public var txtAmount:FlxText;
+	public var txtLabel:GameText;
+	public var txtAmount:GameText;
 
 	public var bar:FlxBar;
 	public var max(get, set):Float;
@@ -26,13 +26,13 @@ class CurrencyDisplay extends FlxGroup
 	{
 		super();
 
-		add(txtLabel = new FlxText(X, Y, 120, Label));
-		txtLabel.setFormat(null, 18, 0x000000, "left");
+		add(txtLabel = new GameText(X, Y, 150, Label));
+		// txtLabel.setFormat(null, 18, 0x000000, "left");
 
 		add(bar = new FlxBar(X + txtLabel.width + 2, Y + 1, FlxBarFillDirection.LEFT_TO_RIGHT, 200, 18, this, "value", 0, Max, true));
 
-		add(txtAmount = new FlxText(X + txtLabel.width + 2 + bar.width + 2, Y, 100, "0/" + Std.string(Max)));
-		txtAmount.setFormat(null, 18, 0x000000, "left");
+		add(txtAmount = new GameText(X + txtLabel.width + 2 + bar.width + 2, Y, 100, "0/" + Std.string(Max)));
+		// txtAmount.setFormat(null, 18, 0x000000, "left");
 
 		value = 0;
 	}

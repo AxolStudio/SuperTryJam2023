@@ -14,10 +14,15 @@ class GameState extends FlxState
 
 	override function update(elapsed:Float):Void
 	{
-		super.update(elapsed);
-
-		if (subState == null)
-			Tooltips.update(elapsed);
+		if (Tooltips.tooltips.length == 0)
+		{
+			super.update(elapsed);
+		}
+		else
+		{
+			if (subState == null)
+				Tooltips.update(elapsed);
+		}
 	}
 }
 
@@ -31,7 +36,13 @@ class GameSubState extends FlxSubState
 
 	override function update(elapsed:Float):Void
 	{
-		super.update(elapsed);
-		Tooltips.update(elapsed);
+		if (Tooltips.tooltips.length == 0)
+		{
+			super.update(elapsed);
+		}
+		else
+		{
+			Tooltips.update(elapsed);
+		}
 	}
 }

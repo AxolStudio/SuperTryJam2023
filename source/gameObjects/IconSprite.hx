@@ -1,7 +1,9 @@
 package gameObjects;
 
 import axollib.GraphicsCache;
+import flixel.FlxG;
 import flixel.FlxSprite;
+import ui.Tooltips;
 
 class IconSprite extends FlxSprite
 {
@@ -27,5 +29,11 @@ class IconSprite extends FlxSprite
 		return animation.frameName;
 	}
 
-	// TODO: add a mouse-over effect that shows a tooltip
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		if (FlxG.mouse.overlaps(this))
+			Tooltips.showTooltip(icon, this);
+	}
 }

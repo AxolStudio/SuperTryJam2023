@@ -1,6 +1,5 @@
 package ui;
 
-import states.GameState.GameSubState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -11,6 +10,7 @@ import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import gameObjects.IconSprite;
 import globals.Globals;
+import states.GameState.GameSubState;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -35,8 +35,8 @@ class ShopScreen extends GameSubState
 		add(background);
 
 		var title:FlxText = new FlxText(0, 0, 0, "Choose Elements to Add");
-		title.setFormat(null, 32, FlxColor.BLACK, "center");
-		title.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 2);
+		title.setFormat(null, 32, FlxColor.WHITE, "center");
+		title.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		title.screenCenter(FlxAxes.X);
 		title.y = background.y + 10;
 		add(title);
@@ -46,14 +46,33 @@ class ShopScreen extends GameSubState
 		var shopItem:ShopItem;
 		for (s in Globals.SHOP_ITEMS)
 		{
-			shopItem = new ShopItem();
+			shopItem = new ShopItem(this);
 			shopItem.x = background.x + 10 + (shopItems.length % 2) * (shopItem.width + 10);
 			shopItem.y = background.y + 60 + Std.int(shopItems.length / 2) * (shopItem.height + 10);
 			shopItem.setIcon(s);
 			shopItems.add(shopItem);
 		}
 
+		var closeButton:FlxButton = new FlxButton(background.x + background.width - 42, background.y + 8, "X", onClose);
+		closeButton.makeGraphic(32, 32, FlxColor.RED);
+		closeButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
+		closeButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		add(closeButton);
+
 		super.create();
+	}
+
+	public function onClose():Void
+	{
+		close();
+	}
+
+	public function updateButtons():Void
+	{
+		for (shopItem in shopItems)
+		{
+			shopItem.buyButton.active = Globals.PlayState.production >= Globals.IconList.get(shopItem.icon.icon).cost;
+		}
 	}
 }
 
@@ -71,9 +90,13 @@ class ShopItem extends FlxGroup
 	public var cost:FlxText;
 	public var buyButton:FlxButton;
 
-	public function new():Void
+	public var parent:ShopScreen;
+
+	public function new(Parent:ShopScreen):Void
 	{
 		super();
+
+		parent = Parent;
 
 		add(background = new FlxSprite());
 		background.makeGraphic(136, 200, FlxColor.BLACK);
@@ -87,8 +110,9 @@ class ShopItem extends FlxGroup
 
 		add(buyButton = new FlxButton(background.x + 4, cost.y + cost.height + 2, "Buy", onBuy));
 		buyButton.makeGraphic(Std.int(background.width - 8), 32, FlxColor.BLUE);
-		buyButton.label.setFormat(null, 16, FlxColor.BLACK, "center");
-		buyButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 1);
+		buyButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
+		buyButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		buyButton.active = Globals.PlayState.production >= Globals.IconList.get(icon.icon).cost;
 	}
 
 	public function setIcon(Icon:String):Void
@@ -97,7 +121,20 @@ class ShopItem extends FlxGroup
 		cost.text = "Cost: " + Std.string(Globals.IconList.get(Icon).cost);
 	}
 
-	public function onBuy():Void {}
+	public function onBuy():Void
+	{
+		// deduct cost from production
+
+		Globals.PlayState.production -= Globals.IconList.get(icon.icon).cost;
+
+		// add the new icon to the player's collection
+
+		Globals.PlayState.addNewIcon(icon.icon);
+
+		// update buttons of all shop items
+
+		parent.updateButtons();
+	}
 
 	public function set_x(Value:Float):Float
 	{

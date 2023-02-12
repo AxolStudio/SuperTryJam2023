@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="science-sprites">
+	<!--
+	Created with ShoeBox
+	http://renderhjs.net/shoebox/
+	-->
+	<SubTexture name="food" x="19" y="0" width="17" height="18" frameX="-1" frameY="-0" frameWidth="18" frameHeight="18"/>
+	<SubTexture name="population" x="19" y="19" width="13" height="17" frameX="-3" frameY="-1" frameWidth="18" frameHeight="18"/>
+	<SubTexture name="production" x="0" y="0" width="18" height="18" frameX="-0" frameY="-0" frameWidth="18" frameHeight="18"/>
+	<SubTexture name="science" x="0" y="19" width="18" height="15" frameX="-0" frameY="-1" frameWidth="18" frameHeight="18"/>
+</TextureAtlas>
