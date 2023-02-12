@@ -9,19 +9,21 @@ class Technology
 	public var effect:Array<String> = [];
 	public var scienceCost:Int = -1;
 	public var requires:Array<String> = [];
+	public var description:String = "";
 
-	public function new(Name:String, Age:Int, Effect:Array<String>, ScienceCost:Int, Requires:Array<String>)
+	public function new(Name:String, Age:Int, Effect:Array<String>, ScienceCost:Int, Requires:Array<String>, Description:String = "")
 	{
 		name = Name;
 		age = Age;
 		effect = Effect;
 		scienceCost = ScienceCost;
 		requires = Requires;
+		description = Description;
 	}
 
 	public static inline function fromData(Data:Dynamic):Technology
 	{
-		return new Technology(Data.name, Data.age, Data.effect, Data.science, Data.requires);
+		return new Technology(Data.name, Data.age, Data.effect, Data.science, Data.requires, Data.description);
 	}
 
 	public function doEffect():Void

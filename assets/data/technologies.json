@@ -4,69 +4,79 @@
     "age": 1,
     "science": 10,
     "effect": ["i:berry bush:d!gen:5$food", "i:berry bush:d!chance:10?create:berry bush"],
-    "requires": []
+    "requires": [],
+    "description": "{{berry bush}} Generate an additional 5 {{food}} and have a 10% chance to create a new {{berry bush}} on Death"
   },
   {
     "name": "lumberjacking",
     "age": 1,
     "science": 10,
     "effect": ["u:axe"],
-    "requires": []
+    "requires": [],
+    "description": "Adds {{axe}} to the Element Shop."
   },
   {
     "name": "horticulture",
     "age": 1,
     "science": 10,
     "effect": ["u:pickaxe"],
-    "requires": []
+    "requires": [],
+    "description": "Adds {{pickaxe}} to the Element Shop."
   },
   {
     "name": "torches",
     "age": 1,
     "science": 10,
     "effect": ["u:torch"],
-    "requires": ["campfire"]
+    "requires": ["campfire"],
+    "description": "Requires {{campfire}}.\n\nAdds {{torch}} to the Element Shop."
   },
   {
     "name": "fire",
     "age": 1,
     "science": 10,
     "effect": ["u:campfire"],
-    "requires": []
+    "requires": [],
+    "description": "Adds {{campfire}} to the Element Shop."
   },
   {
     "name": "weaponry",
     "age": 1,
     "science": 10,
     "effect": ["u:spear"],
-    "requires": []
+    "requires": [],
+    "description": "Adds {{spear}} to the Element Shop."
   },
   {
     "name": "archery",
     "age": 1,
     "science": 10,
     "effect": ["u:sling"],
-    "requires": ["weaponry"]
+    "requires": ["weaponry"],
+    "description": "Requires {{weaponry}}.\n\nAdds {{sling}} to the Element Shop."
   },
   {
     "name": "exploration",
     "age": 1,
     "science": 10,
     "effect": ["u:canoe"],
-    "requires": ["axe"]
+    "requires": ["axe"],
+    "description": "Requires {{lumberjacking}}.\n\nAdds {{canoe}} to the Element Shop."
   },
   {
     "name": "fishing",
     "age": 1,
     "science": 10,
     "effect": ["e:fish"],
-    "requires": ["exploration"]
+    "requires": ["exploration"],
+    "description": "Requires {{exploration}}.\n\nAdds {{fish}} to the Element Shop."
   },
   {
     "name": "husbandry",
     "age": 1,
     "science": 10,
     "effect": ["u:pig", "u:sheep", "u:cow"],
-    "requires": ["campfire"]
+    "requires": ["campfire"],
+    "description": "Requires {{campfire}}.\n\nAdds {{pig}}, {{sheep}}, and {{cow}} to the Element Shop."
   }
 ]

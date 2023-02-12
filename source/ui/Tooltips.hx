@@ -8,6 +8,10 @@ import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import gameObjects.Icon;
+import gameObjects.Technology;
+import globals.Globals.GlyphType;
+import globals.Globals;
 
 using axollib.TitleCase;
 using flixel.util.FlxSpriteUtil;
@@ -34,7 +38,7 @@ class Tooltips
 			if (tooltips[tooltips.length - 1].target == Target)
 				return;
 
-		Tooltips.update(0);
+		//Tooltips.update(0);
 		tooltips.push(new ToolTip(FlxG.mouse.x + 8, FlxG.mouse.y + 8, Source, Target));
 	}
 
@@ -59,7 +63,7 @@ class ToolTip extends FlxGroup
 
 	public var background:FlxSprite;
 	public var icon:FlxSprite;
-	public var text:FlxText;
+	public var text:GameText;
 	public var title:FlxText;
 
 	public var target:FlxObject;
@@ -79,8 +83,8 @@ class ToolTip extends FlxGroup
 		title = new FlxText(0, 0, 250, Source.toTitleCase());
 		title.setFormat(null, 24, FlxColor.BLACK, "center");
 
-		text = new FlxText(0, 0, 250, "This is the tooltip!");
-		text.setFormat(null, 16, FlxColor.BLACK, "left");
+		text = new GameText(0, 0, 250, parseDetails(Source));
+		// text.setFormat(null, 16, FlxColor.BLACK, "left");
 
 		background.makeGraphic(258, Math.ceil(icon.height + 16 + text.height + title.height), FlxColor.BLACK);
 		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
@@ -107,6 +111,29 @@ class ToolTip extends FlxGroup
 		add(icon);
 		add(text);
 		add(title);
+	}
+
+	public function parseDetails(Source:String):String
+	{
+		var details:String = "";
+
+		var type:GlyphType = Globals.GLYPH_TYPES.get(Source);
+
+		switch (type)
+		{
+			case ICON:
+				var icon:Icon = Globals.IconList.get(Source);
+				details = icon.description;
+
+			case TECHNOLOGY:
+				var tech:Technology = Globals.TechnologiesList.get(Source);
+				details = tech.description;
+
+			case RESOURCE:
+				details = Globals.RESOURCE_DETAILS.get(Source);
+		}
+
+		return details;
 	}
 
 	public function get_x():Float

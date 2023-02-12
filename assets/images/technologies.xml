@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TextureAtlas imagePath="weaponry-sprites.png">
+<TextureAtlas imagePath="archery-sprites">
 	<!--
 	Created with ShoeBox
 	http://renderhjs.net/shoebox/
 	-->
-	<SubTexture name="archery.png"	x="237"	y="240"	width="107"	height="120" frameX="-16" frameY="-3" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="exploration.png"	x="121"	y="0"	width="117"	height="118" frameX="-6" frameY="-5" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="fire.png"	x="119"	y="237"	width="117"	height="114" frameX="-6" frameY="-7" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="fishing.png"	x="0"	y="0"	width="120"	height="119" frameX="-4" frameY="-4" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="horticulture.png"	x="345"	y="240"	width="107"	height="120" frameX="-14" frameY="-4" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="husbandry.png"	x="120"	y="120"	width="113"	height="107" frameX="-6" frameY="-15" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="lumberjacking.png"	x="0"	y="120"	width="119"	height="116" frameX="-5" frameY="-6" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="mining.png"	x="0"	y="237"	width="118"	height="120" frameX="-6" frameY="-4" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="torches.png"	x="237"	y="119"	width="116"	height="120" frameX="-6" frameY="-4" frameWidth="127" frameHeight="127"/>
-	<SubTexture name="weaponry.png"	x="354"	y="0"	width="96"	height="120" frameX="-5" frameY="-4" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="archery"	x="119"	y="0"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="exploration"	x="238"	y="0"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="fire"	x="119"	y="357"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="fishing"	x="119"	y="238"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="horticulture"	x="119"	y="119"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="husbandry"	x="238"	y="119"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="lumberjacking"	x="0"	y="357"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="mining"	x="0"	y="238"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="torches"	x="0"	y="119"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
+	<SubTexture name="weaponry"	x="0"	y="0"	width="118"	height="118" frameX="-5" frameY="-5" frameWidth="127" frameHeight="127"/>
 </TextureAtlas>

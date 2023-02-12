@@ -73,6 +73,7 @@ class PlayState extends GameState
 		bgColor = FlxColor.WHITE;
 
 		Globals.PlayState = this;
+		Globals.initGame();
 
 		for (b in 0...Globals.BLANKS_PER_AGE)
 		{
