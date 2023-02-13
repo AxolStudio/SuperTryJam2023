@@ -12,6 +12,7 @@ import gameObjects.IconSprite;
 import globals.Globals;
 import states.GameState.GameSubState;
 
+using axollib.TitleCase;
 using flixel.util.FlxSpriteUtil;
 
 class ShopScreen extends GameSubState
@@ -92,6 +93,7 @@ class ShopItem extends FlxGroup
 	public var background:FlxSprite;
 	public var cost:GameText;
 	public var buyButton:GameButton;
+	public var title:GameText;
 
 	public var parent:ShopScreen;
 
@@ -105,10 +107,13 @@ class ShopItem extends FlxGroup
 		parent = Parent;
 
 		add(background = new FlxSprite());
-		background.makeGraphic(250 + (MARGINS * 2), 200, FlxColor.BLACK);
+		background.makeGraphic(250 + (MARGINS * 2), 260, FlxColor.BLACK);
 		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
 
-		add(icon = new IconSprite(background.x + (background.width / 2) - 64, background.y + MARGINS));
+		add(title = new GameText(background.x + MARGINS, background.y + MARGINS, Std.int(background.width - (MARGINS * 2)), "Title", FlxColor.BLACK, SIZE_36));
+		title.alignment = "center";
+
+		add(icon = new IconSprite(background.x + (background.width / 2) - 64, title.y + title.height + PADDING));
 
 		add(cost = new GameText(background.x + MARGINS, icon.y + icon.height + PADDING, Std.int(background.width - (MARGINS * 2)), "Cost: {{production}}0",
 			FlxColor.BLACK, SIZE_24));
@@ -129,6 +134,7 @@ class ShopItem extends FlxGroup
 	{
 		icon.icon = Icon;
 		cost.text = "Cost: {{production}}" + Std.string(Globals.IconList.get(Icon).cost);
+		title.text = Icon.toTitleCase();
 	}
 
 	public function onBuy():Void
@@ -150,6 +156,7 @@ class ShopItem extends FlxGroup
 	public function set_x(Value:Float):Float
 	{
 		background.x = Value;
+		title.x = background.x + MARGINS;
 		icon.x = background.x + (background.width / 2) - 64;
 		cost.x = background.x + MARGINS;
 		buyButton.x = background.x + MARGINS;
@@ -159,7 +166,8 @@ class ShopItem extends FlxGroup
 	public function set_y(Value:Float):Float
 	{
 		background.y = Value;
-		icon.y = background.y + MARGINS;
+		title.y = background.y + MARGINS;
+		icon.y = title.y + title.height + PADDING;
 		cost.y = icon.y + icon.height + PADDING;
 		buyButton.y = background.y + background.height - buyButton.height - PADDING;
 		return Value;
