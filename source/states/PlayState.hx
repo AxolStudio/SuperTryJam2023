@@ -14,6 +14,7 @@ import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
 import ui.CurrencyDisplay;
+import ui.GameText;
 import ui.ShopScreen;
 
 using StringTools;
@@ -33,7 +34,7 @@ class PlayState extends GameState
 
 	public var age:Int = 0;
 
-	public var txtAge:FlxText;
+	public var txtAge:GameText;
 
 	public var foodBar:CurrencyDisplay;
 	public var productionBar:CurrencyDisplay;
@@ -55,7 +56,7 @@ class PlayState extends GameState
 
 	public var whosAdding:Array<String> = [];
 
-	public var txtPopulation:FlxText;
+	public var txtPopulation:GameText;
 
 	public var checkingIcon:Int = -1;
 
@@ -132,16 +133,18 @@ class PlayState extends GameState
 		shopButton.active = false;
 
 		age = 1;
-		add(txtAge = new FlxText(0, 10, 0, "Age " + Roman.arabic2Roman(age)));
-		txtAge.setFormat(null, 32, FlxColor.BLACK, "center");
+		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), SIZE_36));
+		// txtAge.setFormat(null, 32, FlxColor.BLACK, "center");
+		txtAge.alignment = "center";
 		txtAge.screenCenter(FlxAxes.X);
 
 		add(foodBar = new CurrencyDisplay(10, 10, "{{food}} Food", 25));
 		add(productionBar = new CurrencyDisplay(10, 50, "{{production}} Production", 25));
 		add(scienceBar = new CurrencyDisplay(10, 90, "{{science}} Science", 50));
 
-		add(txtPopulation = new FlxText(FlxG.width - 200, 10, 0, "Population: 0"));
-		txtPopulation.setFormat(null, 18, FlxColor.BLACK, "right");
+		add(txtPopulation = new GameText(FlxG.width - 510, 10, 500, "{{population}} Population: 0", SIZE_22));
+		// txtPopulation.setFormat(null, 18, FlxColor.BLACK, "right");
+		txtPopulation.alignment = "right";
 
 		food = 10;
 
@@ -159,7 +162,7 @@ class PlayState extends GameState
 
 	public function updatePopText()
 	{
-		txtPopulation.text = "Population: " + Std.string(getIconsOfType(-1, "human").length);
+		txtPopulation.text = "{{population}} Population: " + Std.string(getIconsOfType(-1, "human").length);
 	}
 
 	public function spin():Void

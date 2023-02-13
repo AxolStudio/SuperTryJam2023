@@ -38,7 +38,7 @@ class Tooltips
 			if (tooltips[tooltips.length - 1].target == Target)
 				return;
 
-		//Tooltips.update(0);
+		// Tooltips.update(0);
 		tooltips.push(new ToolTip(FlxG.mouse.x + 8, FlxG.mouse.y + 8, Source, Target));
 	}
 
@@ -64,9 +64,10 @@ class ToolTip extends FlxGroup
 	public var background:FlxSprite;
 	public var icon:FlxSprite;
 	public var text:GameText;
-	public var title:FlxText;
+	public var title:GameText;
 
 	public var target:FlxObject;
+	public var type:GlyphType;
 
 	public function new(X:Float, Y:Float, Source:String, Target:FlxObject):Void
 	{
@@ -76,14 +77,25 @@ class ToolTip extends FlxGroup
 
 		background = new FlxSprite();
 
+		type = Globals.GLYPH_TYPES.get(Source);
+
 		icon = new FlxSprite();
-		icon.frames = GraphicsCache.loadGraphicFromAtlas("assets/images/icons.png", "assets/images/icons.xml", false, "icons").atlasFrames;
+		icon.frames = switch (type)
+		{
+			case ICON:
+				GraphicsCache.loadGraphicFromAtlas("assets/images/icons.png", "assets/images/icons.xml", false, "icons").atlasFrames;
+			case TECHNOLOGY:
+				GraphicsCache.loadGraphicFromAtlas("assets/images/technologies.png", "assets/images/technologies.xml", false, "technologies").atlasFrames;
+			case RESOURCE:
+				GraphicsCache.loadGraphicFromAtlas("assets/images/misc.png", "assets/images/misc.xml", false, "misc").atlasFrames;
+		};
 		icon.animation.frameName = Source;
 
-		title = new FlxText(0, 0, 250, Source.toTitleCase());
-		title.setFormat(null, 24, FlxColor.BLACK, "center");
+		title = new GameText(0, 0, 250, Source.toTitleCase(), SIZE_36);
+		title.alignment = "center";
+		// title.setFormat(null, 24, FlxColor.BLACK, "center");
 
-		text = new GameText(0, 0, 250, parseDetails(Source));
+		text = new GameText(0, 0, 250, parseDetails(Source), SIZE_22);
 		// text.setFormat(null, 16, FlxColor.BLACK, "left");
 
 		background.makeGraphic(258, Math.ceil(icon.height + 16 + text.height + title.height), FlxColor.BLACK);
@@ -116,8 +128,6 @@ class ToolTip extends FlxGroup
 	public function parseDetails(Source:String):String
 	{
 		var details:String = "";
-
-		var type:GlyphType = Globals.GLYPH_TYPES.get(Source);
 
 		switch (type)
 		{
@@ -161,8 +171,16 @@ class ToolTip extends FlxGroup
 		super.update(elapsed);
 
 		if (target != null)
+		{
 			if (!FlxG.mouse.overlaps(target) && !FlxG.mouse.overlaps(background))
 				Tooltips.hideTooltip(this);
+			// if (target is GameText)
+			// {
+			// 	cast(target, GameText).checkMouse();
+			// 	if (cast(target, GameText).tooltipLetter != cast(target, GameText).currLetter)
+			// 		Tooltips.hideTooltip(this);
+			// }
+		}
 	}
 
 	override function destroy()

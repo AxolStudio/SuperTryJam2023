@@ -8,16 +8,24 @@ import flixel.text.FlxBitmapText;
 
 class GameText extends FlxBitmapText
 {
-	public static var FONT:FlxBitmapFont;
+	public static var FONT_22:FlxBitmapFont;
+	public static var FONT_36:FlxBitmapFont;
 
 	public var currLetter:Int = -1;
+	public var tooltipLetter:Int = -1;
 
-	public function new(X:Float, Y:Float, FieldWidth:Int, Text:String)
+	public function new(X:Float, Y:Float, FieldWidth:Int, Text:String, ?WhichFont:WhichFont = SIZE_22)
 	{
-		if (FONT == null)
-			GameText.createFont();
+		if (FONT_22 == null || FONT_36 == null)
+			GameText.createFonts();
+		
+		var font:FlxBitmapFont = switch (WhichFont)
+		{
+			case SIZE_22: FONT_22;
+			case SIZE_36: FONT_36;
+		}
 
-		super(FONT);
+		super(font);
 
 		x = X;
 		y = Y;
@@ -26,10 +34,13 @@ class GameText extends FlxBitmapText
 		text = Text;
 	}
 
-	public static function createFont():Void
+	public static function createFonts():Void
 	{
-		FONT = cast FlxBitmapFont.fromAngelCode("assets/fonts/basic-font-18.png", "assets/fonts/basic-font-18.xml");
-		FONT.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs.png", "assets/images/glyphs.xml"));
+		FONT_22 = cast FlxBitmapFont.fromAngelCode("assets/fonts/basic-font-22.png", "assets/fonts/basic-font-22.xml");
+		FONT_22.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-22.png", "assets/images/glyphs-22.xml", true, "glyphs-22"));
+
+		FONT_36 = cast FlxBitmapFont.fromAngelCode("assets/fonts/basic-font-36.png", "assets/fonts/basic-font-36.xml");
+		FONT_36.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-36.png", "assets/images/glyphs-36.xml", true, "glyphs-36"));
 	}
 
 	override function update(elapsed:Float)
@@ -64,11 +75,20 @@ class GameText extends FlxBitmapText
 					{
 						currLetter = dataPos;
 						if (charCode >= font.specialStart)
+						{
+							tooltipLetter = currLetter;
 							Tooltips.showTooltip(font.revLookupTable.get(currFrame.name), this);
+						}
 						return;
 					}
 				}
 			}
 		}
 	}
+}
+
+enum WhichFont
+{
+	SIZE_22;
+	SIZE_36;
 }
