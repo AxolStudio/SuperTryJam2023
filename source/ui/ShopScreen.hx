@@ -34,9 +34,10 @@ class ShopScreen extends GameSubState
 		background.screenCenter();
 		add(background);
 
-		var title:FlxText = new FlxText(0, 0, 0, "Choose Elements to Add");
-		title.setFormat(null, 32, FlxColor.WHITE, "center");
-		title.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+		var title:GameText = new GameText(0, 0, 500, "Choose Elements to Add", FlxColor.BLACK, SIZE_36);
+		// title.setFormat(null, 32, FlxColor.WHITE, "center");
+		title.alignment = "center";
+		// title.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		title.screenCenter(FlxAxes.X);
 		title.y = background.y + 10;
 		add(title);
@@ -58,6 +59,8 @@ class ShopScreen extends GameSubState
 		closeButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
 		closeButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
 		add(closeButton);
+
+		updateButtons();
 
 		super.create();
 	}
@@ -87,10 +90,13 @@ class ShopItem extends FlxGroup
 	public var icon:IconSprite;
 
 	public var background:FlxSprite;
-	public var cost:FlxText;
-	public var buyButton:FlxButton;
+	public var cost:GameText;
+	public var buyButton:GameButton;
 
 	public var parent:ShopScreen;
+
+	public static inline var MARGINS:Int = 12;
+	public static inline var PADDING:Int = 4;
 
 	public function new(Parent:ShopScreen):Void
 	{
@@ -99,30 +105,35 @@ class ShopItem extends FlxGroup
 		parent = Parent;
 
 		add(background = new FlxSprite());
-		background.makeGraphic(136, 200, FlxColor.BLACK);
+		background.makeGraphic(250 + (MARGINS * 2), 200, FlxColor.BLACK);
 		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
 
-		add(icon = new IconSprite(background.x + 4, background.y + 4));
+		add(icon = new IconSprite(background.x + (background.width / 2) - 64, background.y + MARGINS));
 
-		add(cost = new FlxText(background.x + 4, icon.y + icon.height + 2, background.width - 8, "Cost: 0"));
-		cost.setFormat(null, 16, FlxColor.BLACK, "center");
-		cost.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 1);
+		add(cost = new GameText(background.x + MARGINS, icon.y + icon.height + PADDING, Std.int(background.width - (MARGINS * 2)), "Cost: {{production}}0",
+			FlxColor.BLACK, SIZE_24));
+		cost.alignment = "center";
+		// cost.setFormat(null, 16, FlxColor.BLACK, "center");
+		// cost.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 1);
 
-		add(buyButton = new FlxButton(background.x + 4, cost.y + cost.height + 2, "Buy", onBuy));
-		buyButton.makeGraphic(Std.int(background.width - 8), 32, FlxColor.BLUE);
-		buyButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
-		buyButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
-		buyButton.active = Globals.PlayState.production >= Globals.IconList.get(icon.icon).cost;
+		add(buyButton = new GameButton(background.x + MARGINS, 0, "Buy", onBuy, background.width - (MARGINS * 2), 32, FlxColor.BLUE, FlxColor.BLACK,
+			FlxColor.WHITE, FlxColor.BLACK));
+		// buyButton.makeGraphic(Std.int(background.width - 8), 32, FlxColor.BLUE);
+		// buyButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
+		// buyButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		buyButton.active = false;
+		buyButton.y = background.y + background.height - buyButton.height - PADDING;
 	}
 
 	public function setIcon(Icon:String):Void
 	{
 		icon.icon = Icon;
-		cost.text = "Cost: " + Std.string(Globals.IconList.get(Icon).cost);
+		cost.text = "Cost: {{production}}" + Std.string(Globals.IconList.get(Icon).cost);
 	}
 
 	public function onBuy():Void
 	{
+		buyButton.active = false;
 		// deduct cost from production
 
 		Globals.PlayState.production -= Globals.IconList.get(icon.icon).cost;
@@ -139,18 +150,18 @@ class ShopItem extends FlxGroup
 	public function set_x(Value:Float):Float
 	{
 		background.x = Value;
-		icon.x = background.x + 4;
-		cost.x = background.x + 4;
-		buyButton.x = background.x + 4;
+		icon.x = background.x + (background.width / 2) - 64;
+		cost.x = background.x + MARGINS;
+		buyButton.x = background.x + MARGINS;
 		return Value;
 	}
 
 	public function set_y(Value:Float):Float
 	{
 		background.y = Value;
-		icon.y = background.y + 4;
-		cost.y = icon.y + icon.height + 2;
-		buyButton.y = cost.y + cost.height + 2;
+		icon.y = background.y + MARGINS;
+		cost.y = icon.y + icon.height + PADDING;
+		buyButton.y = background.y + background.height - buyButton.height - PADDING;
 		return Value;
 	}
 

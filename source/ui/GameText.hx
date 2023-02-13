@@ -5,23 +5,24 @@ import flixel.FlxG;
 import flixel.graphics.frames.FlxBitmapFont;
 import flixel.graphics.frames.FlxFrame;
 import flixel.text.FlxBitmapText;
+import flixel.util.FlxColor;
 
 class GameText extends FlxBitmapText
 {
-	public static var FONT_22:FlxBitmapFont;
+	public static var FONT_24:FlxBitmapFont;
 	public static var FONT_36:FlxBitmapFont;
 
 	public var currLetter:Int = -1;
 	public var tooltipLetter:Int = -1;
 
-	public function new(X:Float, Y:Float, FieldWidth:Int, Text:String, ?WhichFont:WhichFont = SIZE_22)
+	public function new(X:Float, Y:Float, FieldWidth:Int, Text:String, ?Color:FlxColor = FlxColor.BLACK, ?WhichFont:WhichFont = SIZE_24)
 	{
-		if (FONT_22 == null || FONT_36 == null)
+		if (FONT_24 == null || FONT_36 == null)
 			GameText.createFonts();
-		
+
 		var font:FlxBitmapFont = switch (WhichFont)
 		{
-			case SIZE_22: FONT_22;
+			case SIZE_24: FONT_24;
 			case SIZE_36: FONT_36;
 		}
 
@@ -32,14 +33,15 @@ class GameText extends FlxBitmapText
 		fieldWidth = FieldWidth;
 		autoSize = false;
 		text = Text;
+		color = Color;
 	}
 
 	public static function createFonts():Void
 	{
-		FONT_22 = cast FlxBitmapFont.fromAngelCode("assets/fonts/basic-font-22.png", "assets/fonts/basic-font-22.xml");
-		FONT_22.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-22.png", "assets/images/glyphs-22.xml", true, "glyphs-22"));
+		FONT_24 = cast FlxBitmapFont.fromAngelCode("assets/fonts/font-24.png", "assets/fonts/font-24.xml");
+		FONT_24.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-22.png", "assets/images/glyphs-22.xml", true, "glyphs-22"));
 
-		FONT_36 = cast FlxBitmapFont.fromAngelCode("assets/fonts/basic-font-36.png", "assets/fonts/basic-font-36.xml");
+		FONT_36 = cast FlxBitmapFont.fromAngelCode("assets/fonts/font-36.png", "assets/fonts/font-36.xml");
 		FONT_36.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-36.png", "assets/images/glyphs-36.xml", true, "glyphs-36"));
 	}
 
@@ -89,6 +91,6 @@ class GameText extends FlxBitmapText
 
 enum WhichFont
 {
-	SIZE_22;
+	SIZE_24;
 	SIZE_36;
 }

@@ -14,6 +14,7 @@ import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
 import ui.CurrencyDisplay;
+import ui.GameButton;
 import ui.GameText;
 import ui.ShopScreen;
 
@@ -28,7 +29,7 @@ class PlayState extends GameState
 	public var collection:Array<GridIcon> = [];
 	public var screenIcons:Array<IconSprite> = [];
 
-	public var spinButton:FlxButton;
+	public var spinButton:GameButton;
 
 	public var canSpin:Bool = false;
 
@@ -60,7 +61,7 @@ class PlayState extends GameState
 
 	public var checkingIcon:Int = -1;
 
-	public var shopButton:FlxButton;
+	public var shopButton:GameButton;
 
 	override public function create()
 	{
@@ -120,20 +121,22 @@ class PlayState extends GameState
 			add(icon);
 		}
 
-		add(spinButton = new FlxButton((FlxG.width / 2) - 100, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin));
-		spinButton.makeGraphic(200, 50, FlxColor.BLUE);
-		spinButton.label.setFormat(null, 32, FlxColor.WHITE, "center");
-		spinButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+		add(spinButton = new GameButton((FlxG.width / 2) - 100, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 200, 50, SIZE_36, FlxColor.BLUE,
+			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
+		// spinButton.makeGraphic(200, 50, FlxColor.BLUE);
+		// spinButton.label.setFormat(null, 32, FlxColor.WHITE, "center");
+		// spinButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		spinButton.active = false;
 
-		add(shopButton = new FlxButton(spinButton.x - 210, spinButton.y, "Shop", openShop));
-		shopButton.makeGraphic(200, 50, FlxColor.GREEN);
-		shopButton.label.setFormat(null, 32, FlxColor.WHITE, "center");
-		shopButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+		add(shopButton = new GameButton(spinButton.x - 210, spinButton.y, "Shop", openShop, 200, 50, SIZE_36, FlxColor.GREEN, FlxColor.BLACK, FlxColor.WHITE,
+			FlxColor.BLACK));
+		// shopButton.makeGraphic(200, 50, FlxColor.GREEN);
+		// shopButton.label.setFormat(null, 32, FlxColor.WHITE, "center");
+		// shopButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		shopButton.active = false;
 
 		age = 1;
-		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), SIZE_36));
+		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), FlxColor.BLACK, SIZE_36));
 		// txtAge.setFormat(null, 32, FlxColor.BLACK, "center");
 		txtAge.alignment = "center";
 		txtAge.screenCenter(FlxAxes.X);
@@ -142,7 +145,7 @@ class PlayState extends GameState
 		add(productionBar = new CurrencyDisplay(10, 50, "{{production}} Production", 25));
 		add(scienceBar = new CurrencyDisplay(10, 90, "{{science}} Science", 50));
 
-		add(txtPopulation = new GameText(FlxG.width - 510, 10, 500, "{{population}} Population: 0", SIZE_22));
+		add(txtPopulation = new GameText(FlxG.width - 510, 10, 500, "{{population}} Population: 0", FlxColor.BLACK, SIZE_24));
 		// txtPopulation.setFormat(null, 18, FlxColor.BLACK, "right");
 		txtPopulation.alignment = "right";
 

@@ -91,14 +91,15 @@ class ToolTip extends FlxGroup
 		};
 		icon.animation.frameName = Source;
 
-		title = new GameText(0, 0, 250, Source.toTitleCase(), SIZE_36);
+		title = new GameText(0, 0, 264 - 24, Source.toTitleCase(), SIZE_36);
 		title.alignment = "center";
 		// title.setFormat(null, 24, FlxColor.BLACK, "center");
 
-		text = new GameText(0, 0, 250, parseDetails(Source), SIZE_22);
+		text = new GameText(0, 0, 264 - 24, parseDetails(Source), SIZE_24);
+		text.alignment = FlxTextAlign.LEFT;
 		// text.setFormat(null, 16, FlxColor.BLACK, "left");
 
-		background.makeGraphic(258, Math.ceil(icon.height + 16 + text.height + title.height), FlxColor.BLACK);
+		background.makeGraphic(264, Math.ceil(icon.height + 32 + text.height + title.height), FlxColor.BLACK);
 		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
 
 		if (X + background.width > FlxG.width)
@@ -110,13 +111,13 @@ class ToolTip extends FlxGroup
 		background.x = X;
 		background.y = Y;
 
-		title.x = background.x + 4;
-		title.y = background.y + 4;
+		title.x = background.x + 12;
+		title.y = background.y + 12;
 
 		icon.x = background.x + (background.width / 2) - (icon.width / 2);
 		icon.y = title.y + title.height + 4;
 
-		text.x = background.x + 4;
+		text.x = background.x + 12;
 		text.y = icon.y + icon.height + 4;
 
 		add(background);
