@@ -80,22 +80,14 @@ class ToolTip extends FlxGroup
 		type = Globals.GLYPH_TYPES.get(Source);
 
 		icon = new FlxSprite();
-		icon.frames = switch (type)
-		{
-			case ICON:
-				GraphicsCache.loadGraphicFromAtlas("assets/images/icons.png", "assets/images/icons.xml", false, "icons").atlasFrames;
-			case TECHNOLOGY:
-				GraphicsCache.loadGraphicFromAtlas("assets/images/technologies.png", "assets/images/technologies.xml", false, "technologies").atlasFrames;
-			case RESOURCE:
-				GraphicsCache.loadGraphicFromAtlas("assets/images/misc.png", "assets/images/misc.xml", false, "misc").atlasFrames;
-		};
+		icon.frames = GraphicsCache.loadGraphicFromAtlas("assets/images/icons.png", "assets/images/icons.xml", false, "icons").atlasFrames;
 		icon.animation.frameName = Source;
 
-		title = new GameText(0, 0, 264 - 24, Source.toTitleCase(), SIZE_36);
+		title = new GameText(0, 0, 264 - 24, Source.toTitleCase(), FlxColor.BLACK, SIZE_36);
 		title.alignment = "center";
 		// title.setFormat(null, 24, FlxColor.BLACK, "center");
 
-		text = new GameText(0, 0, 264 - 24, parseDetails(Source), SIZE_24);
+		text = new GameText(0, 0, 264 - 24, parseDetails(Source), FlxColor.BLACK, SIZE_24);
 		text.alignment = FlxTextAlign.LEFT;
 		// text.setFormat(null, 16, FlxColor.BLACK, "left");
 

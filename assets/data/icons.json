@@ -9,9 +9,9 @@
   {
     "name": "human",
     "cost": 0,
-    "effect": ["pair:human?gen:3$sci"],
+    "effect": ["pair:human?gen:2$sci"],
     "death": [],
-    "description": "Adds 1 to {{population}}. Consumes 1 {{food}} each Spin. Pair to Generate 3 {{science}}."
+    "description": "Adds 1 to {{population}}. Consumes 1 {{food}} each Spin. Pair to Generate 2 {{science}}."
   },
   {
     "name": "child",

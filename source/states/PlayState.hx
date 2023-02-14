@@ -17,6 +17,7 @@ import ui.CurrencyDisplay;
 import ui.GameButton;
 import ui.GameText;
 import ui.ShopScreen;
+import ui.UpgradeScreen;
 
 using StringTools;
 
@@ -37,9 +38,9 @@ class PlayState extends GameState
 
 	public var txtAge:GameText;
 
-	public var foodBar:CurrencyDisplay;
-	public var productionBar:CurrencyDisplay;
-	public var scienceBar:CurrencyDisplay;
+	public var txtFood:GameText;
+	public var txtProduction:GameText;
+	public var txtScience:GameText;
 
 	public var food(default, set):Float = 0;
 	public var production(default, set):Float = 0;
@@ -62,6 +63,9 @@ class PlayState extends GameState
 	public var checkingIcon:Int = -1;
 
 	public var shopButton:GameButton;
+	public var upgradeButton:GameButton;
+
+	public var technologies:Array<String> = [];
 
 	override public function create()
 	{
@@ -121,33 +125,28 @@ class PlayState extends GameState
 			add(icon);
 		}
 
-		add(spinButton = new GameButton((FlxG.width / 2) - 100, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 200, 50, SIZE_36, FlxColor.BLUE,
+		add(spinButton = new GameButton((FlxG.width / 2) - 125, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 250, 50, SIZE_36, FlxColor.BLUE,
 			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
-		// spinButton.makeGraphic(200, 50, FlxColor.BLUE);
-		// spinButton.label.setFormat(null, 32, FlxColor.WHITE, "center");
-		// spinButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		spinButton.active = false;
 
-		add(shopButton = new GameButton(spinButton.x - 210, spinButton.y, "Shop", openShop, 200, 50, SIZE_36, FlxColor.GREEN, FlxColor.BLACK, FlxColor.WHITE,
+		add(shopButton = new GameButton(spinButton.x - 260, spinButton.y, "Shop", openShop, 250, 50, SIZE_36, FlxColor.GREEN, FlxColor.BLACK, FlxColor.WHITE,
 			FlxColor.BLACK));
-		// shopButton.makeGraphic(200, 50, FlxColor.GREEN);
-		// shopButton.label.setFormat(null, 32, FlxColor.WHITE, "center");
-		// shopButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		shopButton.active = false;
 
+		add(upgradeButton = new GameButton(spinButton.x + 260, spinButton.y, "Technologies", openUpgrade, 250, 50, SIZE_36, FlxColor.PURPLE, FlxColor.BLACK,
+			FlxColor.WHITE, FlxColor.BLACK));
+		upgradeButton.active = false;
+
 		age = 1;
+
 		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), FlxColor.BLACK, SIZE_36));
-		// txtAge.setFormat(null, 32, FlxColor.BLACK, "center");
 		txtAge.alignment = "center";
 		txtAge.screenCenter(FlxAxes.X);
 
-		add(foodBar = new CurrencyDisplay(10, 10, "{{food}} Food", 25));
-		add(productionBar = new CurrencyDisplay(10, 50, "{{production}} Production", 25));
-		add(scienceBar = new CurrencyDisplay(10, 90, "{{science}} Science", 50));
-
-		add(txtPopulation = new GameText(FlxG.width - 510, 10, 500, "{{population}} Population: 0", FlxColor.BLACK, SIZE_24));
-		// txtPopulation.setFormat(null, 18, FlxColor.BLACK, "right");
-		txtPopulation.alignment = "right";
+		add(txtPopulation = new GameText(10, 10, 500, "{{population}} 0", FlxColor.BLACK, SIZE_36));
+		add(txtFood = new GameText(10, 50, 500, "{{food}} 0", FlxColor.BLACK, SIZE_36));
+		add(txtProduction = new GameText(10, 90, 500, "{{production}} 0", FlxColor.BLACK, SIZE_36));
+		add(txtScience = new GameText(10, 130, 500, "{{science}} 0", FlxColor.BLACK, SIZE_36));
 
 		food = 10;
 
@@ -155,7 +154,7 @@ class PlayState extends GameState
 
 		currentMode = "waiting-for-spin";
 
-		shopButton.active = spinButton.active = canSpin = true;
+		upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
 	}
 
 	public function openShop():Void
@@ -163,9 +162,14 @@ class PlayState extends GameState
 		openSubState(new ShopScreen());
 	}
 
+	public function openUpgrade():Void
+	{
+		openSubState(new UpgradeScreen());
+	}
+
 	public function updatePopText()
 	{
-		txtPopulation.text = "{{population}} Population: " + Std.string(getIconsOfType(-1, "human").length);
+		txtPopulation.text = "{{population}} " + Std.string(getIconsOfType(-1, "human").length);
 	}
 
 	public function spin():Void
@@ -576,14 +580,11 @@ class PlayState extends GameState
 				var addedAny:Bool = false;
 				for (n in getNeighborsOfType(IconPos, match))
 				{
-				
 					if (whosAdding.contains('$IconPos:$n:$type') || whosAdding.contains('$n:$IconPos:$type'))
 						continue;
 
 					whosAdding.push('$IconPos:$n:$type');
 					doEffect(IconPos, DoEffect, n);
-
-				
 				}
 
 			case "chance": // a percentage of happening
@@ -697,21 +698,21 @@ class PlayState extends GameState
 	private function set_food(Value:Float):Float
 	{
 		food = Value;
-		foodBar.value = Value;
+		txtFood.text = "{{food}} " + Std.string(food);
 		return food;
 	}
 
 	private function set_production(Value:Float):Float
 	{
 		production = Value;
-		productionBar.value = Value;
+		txtProduction.text = "{{production}} " + Std.string(production);
 		return production;
 	}
 
 	private function set_science(Value:Float):Float
 	{
 		science = Value;
-		scienceBar.value = Value;
+		txtScience.text = "{{science}} " + Std.string(science);
 		return science;
 	}
 }

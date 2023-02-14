@@ -3,6 +3,7 @@ package gameObjects;
 import axollib.GraphicsCache;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import globals.Globals.GlyphType;
 import ui.Tooltips;
 
 class IconSprite extends FlxSprite
@@ -14,7 +15,9 @@ class IconSprite extends FlxSprite
 	public function new(X:Float, Y:Float):Void
 	{
 		super(X, Y);
+
 		frames = GraphicsCache.loadGraphicFromAtlas("assets/images/icons.png", "assets/images/icons.xml", false, "icons").atlasFrames;
+
 		animation.frameName = "blank";
 	}
 

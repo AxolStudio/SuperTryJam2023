@@ -1,6 +1,6 @@
 [
   {
-    "name": "planting",
+    "name": "horticulture",
     "age": 1,
     "science": 10,
     "effect": ["i:berry bush:d!gen:5$food", "i:berry bush:d!chance:10?create:berry bush"],
@@ -16,7 +16,7 @@
     "description": "Adds {{axe}} to the Element Shop."
   },
   {
-    "name": "horticulture",
+    "name": "mining",
     "age": 1,
     "science": 10,
     "effect": ["u:pickaxe"],
@@ -29,7 +29,7 @@
     "science": 10,
     "effect": ["u:torch"],
     "requires": ["campfire"],
-    "description": "Requires {{campfire}}.\n\nAdds {{torch}} to the Element Shop."
+    "description": "Adds {{torch}} to the Element Shop."
   },
   {
     "name": "fire",
@@ -53,7 +53,7 @@
     "science": 10,
     "effect": ["u:sling"],
     "requires": ["weaponry"],
-    "description": "Requires {{weaponry}}.\n\nAdds {{sling}} to the Element Shop."
+    "description": "Adds {{sling}} to the Element Shop."
   },
   {
     "name": "exploration",
@@ -61,7 +61,7 @@
     "science": 10,
     "effect": ["u:canoe"],
     "requires": ["axe"],
-    "description": "Requires {{lumberjacking}}.\n\nAdds {{canoe}} to the Element Shop."
+    "description": "Adds {{canoe}} to the Element Shop."
   },
   {
     "name": "fishing",
@@ -69,7 +69,7 @@
     "science": 10,
     "effect": ["e:fish"],
     "requires": ["exploration"],
-    "description": "Requires {{exploration}}.\n\nAdds {{fish}} to the Element Shop."
+    "description": "Adds {{fish}} to the Element Shop."
   },
   {
     "name": "husbandry",
@@ -77,6 +77,6 @@
     "science": 10,
     "effect": ["u:pig", "u:sheep", "u:cow"],
     "requires": ["campfire"],
-    "description": "Requires {{campfire}}.\n\nAdds {{pig}}, {{sheep}}, and {{cow}} to the Element Shop."
+    "description": "Adds {{pig}}, {{sheep}}, and {{cow}} to the Element Shop."
   }
 ]
