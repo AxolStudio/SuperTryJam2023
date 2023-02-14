@@ -397,8 +397,7 @@ class PlayState extends GameState
 			case "create": // create a new icon
 
 				var type:String = split[1];
-				if (whosAdding.contains('$IconPos:$type'))
-					return;
+
 				var count:Int = 1;
 				if (split[1].contains("*"))
 				{
@@ -574,15 +573,19 @@ class PlayState extends GameState
 				var split:Array<String> = DoEffect.split(":");
 				var type:String = split[1];
 
+				var addedAny:Bool = false;
 				for (n in getNeighborsOfType(IconPos, match))
 				{
-					// if (!whosAdding.contains('$IconPos:$type') && !whosAdding.contains('$n:$type'))
-					// {
-					// whosAdding.push('$IconPos:$type');
-					whosAdding.push('$n:$type');
+				
+					if (whosAdding.contains('$IconPos:$n:$type') || whosAdding.contains('$n:$IconPos:$type'))
+						continue;
+
+					whosAdding.push('$IconPos:$n:$type');
 					doEffect(IconPos, DoEffect, n);
-					// }
+
+				
 				}
+
 			case "chance": // a percentage of happening
 				if (FlxG.random.bool(Std.parseFloat(value)))
 					doEffect(IconPos, DoEffect);

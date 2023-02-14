@@ -18,6 +18,7 @@ using flixel.util.FlxSpriteUtil;
 class ShopScreen extends GameSubState
 {
 	public var shopItems:FlxTypedGroup<ShopItem>;
+	public var productionAmount:GameText;
 
 	override public function create():Void
 	{
@@ -55,11 +56,17 @@ class ShopScreen extends GameSubState
 			shopItems.add(shopItem);
 		}
 
-		var closeButton:FlxButton = new FlxButton(background.x + background.width - 42, background.y + 8, "X", onClose);
-		closeButton.makeGraphic(32, 32, FlxColor.RED);
-		closeButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
-		closeButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, FlxColor.RED,
+			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK);
+		// closeButton.makeGraphic(32, 32, FlxColor.RED);
+		// closeButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
+		// closeButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
 		add(closeButton);
+
+		add(productionAmount = new GameText(background.x + background.width - 210, 0, 200,
+			"Production: {{production}}" + Std.string(Globals.PlayState.production), FlxColor.BLACK, SIZE_36));
+		productionAmount.alignment = "right";
+		productionAmount.y = background.y + background.height - productionAmount.height - 10;
 
 		updateButtons();
 
@@ -77,6 +84,7 @@ class ShopScreen extends GameSubState
 		{
 			shopItem.buyButton.active = Globals.PlayState.production >= Globals.IconList.get(shopItem.icon.icon).cost;
 		}
+		productionAmount.text = "Production: {{production}}" + Std.string(Globals.PlayState.production);
 	}
 }
 
@@ -107,7 +115,7 @@ class ShopItem extends FlxGroup
 		parent = Parent;
 
 		add(background = new FlxSprite());
-		background.makeGraphic(250 + (MARGINS * 2), 260, FlxColor.BLACK);
+		background.makeGraphic(250 + (MARGINS * 2), 270, FlxColor.BLACK);
 		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
 
 		add(title = new GameText(background.x + MARGINS, background.y + MARGINS, Std.int(background.width - (MARGINS * 2)), "Title", FlxColor.BLACK, SIZE_36));
@@ -127,7 +135,7 @@ class ShopItem extends FlxGroup
 		// buyButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
 		// buyButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
 		buyButton.active = false;
-		buyButton.y = background.y + background.height - buyButton.height - PADDING;
+		buyButton.y = background.y + background.height - buyButton.height - MARGINS;
 	}
 
 	public function setIcon(Icon:String):Void
@@ -169,7 +177,7 @@ class ShopItem extends FlxGroup
 		title.y = background.y + MARGINS;
 		icon.y = title.y + title.height + PADDING;
 		cost.y = icon.y + icon.height + PADDING;
-		buyButton.y = background.y + background.height - buyButton.height - PADDING;
+		buyButton.y = background.y + background.height - buyButton.height - MARGINS;
 		return Value;
 	}
 

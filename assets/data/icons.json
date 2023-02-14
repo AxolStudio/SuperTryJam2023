@@ -9,7 +9,7 @@
   {
     "name": "human",
     "cost": 0,
-    "effect": ["pair?gen:3$sci"],
+    "effect": ["pair:human?gen:3$sci"],
     "death": [],
     "description": "Adds 1 to {{population}}. Consumes 1 {{food}} each Spin. Pair to Generate 3 {{science}}."
   },
@@ -116,7 +116,7 @@
     "cost": 15,
     "effect": ["work?gen:5$sci", "work?change:meat$meal"],
     "death": [],
-    "description": "Generates 5 {{science}} when Worked. Replces Touching {{meat}} to {{meal}} when Worked."
+    "description": "Generates 5 {{science}} when Worked. Replaces Touching {{meat}} to {{meal}} when Worked."
   },
   {
     "name": "meat",
