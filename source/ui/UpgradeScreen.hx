@@ -3,11 +3,17 @@ package ui;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import gameObjects.IconSprite;
 import gameObjects.Technology;
 import globals.Globals;
+import haxe.ui.constants.ScrollMode;
+import haxe.ui.containers.Box;
+import haxe.ui.containers.Grid;
+import haxe.ui.containers.ScrollView;
+import openfl.events.MouseEvent;
 import states.GameState.GameSubState;
 
 using axollib.TitleCase;
@@ -15,8 +21,11 @@ using flixel.util.FlxSpriteUtil;
 
 class UpgradeScreen extends GameSubState
 {
-	public var techItems:FlxTypedGroup<TechItem>;
+	public var techItems:Array<TechItem>;
 	public var scienceAmount:GameText;
+
+	public var scrollZone:ScrollView;
+	public var scrollGrid:Grid;
 
 	override public function create():Void
 	{
@@ -40,31 +49,58 @@ class UpgradeScreen extends GameSubState
 		title.y = background.y + 10;
 		add(title);
 
-		add(techItems = new FlxTypedGroup<TechItem>());
+		add(scienceAmount = new GameText(background.x + background.width - 510, 0, 500, "Science: {{science}}" + Std.string(Globals.PlayState.science),
+			FlxColor.BLACK, SIZE_36));
+		scienceAmount.alignment = "right";
+		scienceAmount.y = background.y + background.height - scienceAmount.height - 10;
+
+		scrollZone = new ScrollView();
+		scrollZone.width = background.width - 24;
+		scrollZone.height = background.height - title.height - scienceAmount.height - 40;
+		scrollZone.x = background.x + 12;
+		scrollZone.y = title.y + title.height + 10;
+		scrollZone.percentContentWidth = 100;
+		scrollZone.scrollMode = ScrollMode.NORMAL;
+
+		add(scrollZone);
+
+		scrollGrid = new Grid();
+		scrollGrid.width = scrollZone.width;
+		scrollGrid.columns = 3;
+		scrollGrid.padding = 10;
+		scrollGrid.styleString = "spacing:10px;";
+
+		scrollZone.addComponent(scrollGrid);
+
+		techItems = [];
 
 		var techItem:TechItem;
+		var box:Box;
+
 		for (k => v in Globals.TechnologiesList)
 		{
 			if (v.age == Globals.PlayState.age)
 			{
 				if (Globals.PlayState.technologies.contains(k))
 					continue;
-				techItem = new TechItem(this);
-				techItem.x = background.x + 10 + (techItems.length % 2) * (techItem.width + 10);
-				techItem.y = background.y + 60 + Std.int(techItems.length / 2) * (techItem.height + 10);
+
+				box = new Box();
+
+				techItem = new TechItem(this, box);
 				techItem.setIcon(k);
-				techItems.add(techItem);
+				techItems.push(techItem);
+
+				box.width = techItem.width;
+				box.height = techItem.height;
+				
+				box.add(techItem);
+				scrollGrid.addComponent(box);
 			}
 		}
 
 		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, FlxColor.RED,
 			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK);
 		add(closeButton);
-
-		add(scienceAmount = new GameText(background.x + background.width - 210, 0, 200, "Science: {{science}}" + Std.string(Globals.PlayState.science),
-			FlxColor.BLACK, SIZE_36));
-		scienceAmount.alignment = "right";
-		scienceAmount.y = background.y + background.height - scienceAmount.height - 10;
 
 		updateButtons();
 
@@ -98,14 +134,8 @@ class UpgradeScreen extends GameSubState
 	}
 }
 
-class TechItem extends FlxGroup
+class TechItem extends FlxSpriteGroup
 {
-	public var x(get, set):Float;
-	public var y(get, set):Float;
-
-	public var width(get, never):Float;
-	public var height(get, never):Float;
-
 	public var icon:IconSprite;
 
 	public var background:FlxSprite;
@@ -116,15 +146,17 @@ class TechItem extends FlxGroup
 	public var requires:GameText;
 
 	public var parent:UpgradeScreen;
+	public var box:Box;
 
 	public static inline var MARGINS:Int = 12;
 	public static inline var PADDING:Int = 4;
 
-	public function new(Parent:UpgradeScreen):Void
+	public function new(Parent:UpgradeScreen, Box:Box):Void
 	{
 		super();
 
 		parent = Parent;
+		box = Box;
 
 		add(background = new FlxSprite());
 		background.makeGraphic(250 + (MARGINS * 2), 300, FlxColor.BLACK);
@@ -178,57 +210,20 @@ class TechItem extends FlxGroup
 		buyButton.active = false;
 		// deduct cost from production
 
-		Globals.PlayState.science -= Globals.TechnologiesList.get(icon.icon).scienceCost;
+		var tech:Technology = Globals.TechnologiesList.get(icon.icon);
+
+		Globals.PlayState.science -= tech.scienceCost;
 
 		// add the new icon to the player's collection
 
 		Globals.PlayState.technologies.push(icon.icon);
 
+		tech.doEffect();
+
+		 parent.scrollGrid.removeComponent(box);
+
 		// update buttons of all shop items
 
 		parent.updateButtons();
-	}
-
-	public function set_x(Value:Float):Float
-	{
-		background.x = Value;
-		title.x = background.x + MARGINS;
-		icon.x = background.x + (background.width / 2) - 64;
-		cost.x = background.x + MARGINS;
-		requires.x = background.x + MARGINS;
-
-		buyButton.x = background.x + MARGINS;
-		return Value;
-	}
-
-	public function set_y(Value:Float):Float
-	{
-		background.y = Value;
-		title.y = background.y + MARGINS;
-		icon.y = title.y + title.height + PADDING;
-		cost.y = icon.y + icon.height + PADDING;
-		requires.y = cost.y + cost.height + PADDING;
-		buyButton.y = background.y + background.height - buyButton.height - MARGINS;
-		return Value;
-	}
-
-	public function get_width():Float
-	{
-		return background.width;
-	}
-
-	public function get_height():Float
-	{
-		return background.height;
-	}
-
-	public function get_x():Float
-	{
-		return background.x;
-	}
-
-	public function get_y():Float
-	{
-		return background.y;
 	}
 }

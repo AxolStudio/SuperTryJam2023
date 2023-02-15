@@ -2,14 +2,11 @@ package ui;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxRect;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import gameObjects.IconSprite;
 import globals.Globals;
-import haxe.ui.components.VerticalScroll;
 import haxe.ui.containers.Box;
 import haxe.ui.containers.Grid;
 import haxe.ui.containers.ScrollView;
@@ -23,10 +20,8 @@ class ShopScreen extends GameSubState
 	public var shopItems:Array<ShopItem> = [];
 	public var productionAmount:GameText;
 
-	public var scrollZone:ScrollView; // FlxSpriteGroup;
+	public var scrollZone:ScrollView;
 	public var scrollGrid:Grid;
-
-	// public var scrollBounds:FlxRect;
 
 	override public function create():Void
 	{
@@ -41,14 +36,11 @@ class ShopScreen extends GameSubState
 		var background:FlxSprite = new FlxSprite();
 		background.makeGraphic(Math.floor(FlxG.width * .6), Math.floor(FlxG.height * .9), FlxColor.BLACK);
 		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
-
 		background.screenCenter();
 		add(background);
 
 		var title:GameText = new GameText(0, 0, 500, "Choose Elements to Add", FlxColor.BLACK, SIZE_36);
-		// title.setFormat(null, 32, FlxColor.WHITE, "center");
 		title.alignment = "center";
-		// title.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		title.screenCenter(FlxAxes.X);
 		title.y = background.y + 10;
 		add(title);
@@ -90,24 +82,9 @@ class ShopScreen extends GameSubState
 
 		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, FlxColor.RED,
 			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK);
-		// closeButton.makeGraphic(32, 32, FlxColor.RED);
-		// closeButton.label.setFormat(null, 16, FlxColor.WHITE, "center");
-		// closeButton.label.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
 		add(closeButton);
 
 		updateButtons();
-
-		// scrollBounds = new FlxRect(background.x
-		// 	+ 12, background.y
-		// 	+ 22
-		// 	+ title.height, background.width
-		// 	- 24,
-		// 	background.height
-		// 	- title.height
-		// 	- productionAmount.height
-		// 	- 44);
-
-		// scrollZone.clipRect = new FlxRect(0, 0, background.width - 46, background.height - title.height - productionAmount.height - 44);
 
 		super.create();
 	}
@@ -129,10 +106,6 @@ class ShopScreen extends GameSubState
 
 class ShopItem extends FlxSpriteGroup
 {
-	// public var x(get, set):Float;
-	// public var y(get, set):Float;
-	// public var width(get, never):Float;
-	// public var height(get, never):Float;
 	public var iconSprite:IconSprite;
 
 	public var background:FlxSprite;
@@ -148,10 +121,6 @@ class ShopItem extends FlxSpriteGroup
 	public function new(Parent:ShopScreen):Void
 	{
 		super();
-
-		// width = 250 + (MARGINS * 2);
-		// height = 270;
-		// backgroundColor = 0xffff0000;
 
 		parent = Parent;
 
@@ -196,63 +165,4 @@ class ShopItem extends FlxSpriteGroup
 
 		parent.updateButtons();
 	}
-
-	// override function set_left(value:Null<Float>):Null<Float>
-	// {
-	// 	if (background != null)
-	// 	{
-	// 		background.x = value;
-	// 		title.x = background.x + MARGINS;
-	// 		iconSprite.x = background.x + (background.width / 2) - 64;
-	// 		cost.x = background.x + MARGINS;
-	// 		buyButton.x = background.x + MARGINS;
-	// 	}
-	// 	return super.set_left(value);
-	// }
-	// override function set_top(value:Null<Float>):Null<Float>
-	// {
-	// 	if (background != null)
-	// 	{
-	// 		background.y = value;
-	// 		title.y = background.y + MARGINS;
-	// 		iconSprite.y = title.y + title.height + PADDING;
-	// 		cost.y = iconSprite.y + iconSprite.height + PADDING;
-	// 		buyButton.y = background.y + background.height - buyButton.height - MARGINS;
-	// 	}
-	// 	return super.set_top(value);
-	// }
-	// public function set_x(Value:Float):Float
-	// {
-	// 	background.x = Value;
-	// 	title.x = background.x + MARGINS;
-	// 	iconSprite.x = background.x + (background.width / 2) - 64;
-	// 	cost.x = background.x + MARGINS;
-	// 	buyButton.x = background.x + MARGINS;
-	// 	return Value;
-	// }
-	// public function set_y(Value:Float):Float
-	// {
-	// 	background.y = Value;
-	// 	title.y = background.y + MARGINS;
-	// 	iconSprite.y = title.y + title.height + PADDING;
-	// 	cost.y = iconSprite.y + iconSprite.height + PADDING;
-	// 	buyButton.y = background.y + background.height - buyButton.height - MARGINS;
-	// 	return Value;
-	// }
-	// public function get_width():Float
-	// {
-	// 	return background.width;
-	// }
-	// public function get_height():Float
-	// {
-	// 	return background.height;
-	// }
-	// public function get_x():Float
-	// {
-	// 	return background.x;
-	// }
-	// public function get_y():Float
-	// {
-	// 	return background.y;
-	// }
 }

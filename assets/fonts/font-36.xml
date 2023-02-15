@@ -102,7 +102,7 @@
 		<char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="11" /><!--   -->
 		<char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="88" /><!-- 	 -->
 	</chars>
-	<kernings count="515">
+	<kernings count="517">
 		<kerning first="65"  second="39"  amount="-5" />
 		<kerning first="65"  second="67"  amount="-4" />
 		<kerning first="65"  second="71"  amount="-4" />
@@ -618,5 +618,7 @@
 		<kerning first="121"  second="100"  amount="-1" />
 		<kerning first="121"  second="101"  amount="-1" />
 		<kerning first="121"  second="111"  amount="-1" />
+		<kerning first="113"  second="117"  amount="-10" />
+		<kerning first="114"  second="106"  amount="-11" />
 	</kernings>
 </font>
