@@ -177,7 +177,7 @@ class PlayState extends GameState
 		if (!spinButton.active || !canSpin)
 			return;
 		currentMode = "spinning";
-		shopButton.active = spinButton.active = canSpin = false;
+		upgradeButton.active = shopButton.active = spinButton.active = canSpin = false;
 		// some kind of animation!
 
 		willWound = [];
@@ -381,7 +381,7 @@ class PlayState extends GameState
 		updatePopText();
 
 		currentMode = "waiting-for-spin";
-		shopButton.active = spinButton.active = canSpin = true;
+		upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
 	}
 
 	public function parseEffect(IconPos:Int, Effect:String):Void

@@ -60,7 +60,7 @@ class UpgradeScreen extends GameSubState
 		scrollZone.x = background.x + 12;
 		scrollZone.y = title.y + title.height + 10;
 		scrollZone.percentContentWidth = 100;
-		scrollZone.scrollMode = ScrollMode.NORMAL;
+		// scrollZone.scrollMode = ScrollMode.NORMAL;
 
 		add(scrollZone);
 
@@ -92,7 +92,7 @@ class UpgradeScreen extends GameSubState
 
 				box.width = techItem.width;
 				box.height = techItem.height;
-				
+
 				box.add(techItem);
 				scrollGrid.addComponent(box);
 			}
@@ -220,7 +220,8 @@ class TechItem extends FlxSpriteGroup
 
 		tech.doEffect();
 
-		 parent.scrollGrid.removeComponent(box);
+		parent.techItems.remove(this);
+		parent.scrollGrid.removeComponent(box);
 
 		// update buttons of all shop items
 
