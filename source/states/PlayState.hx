@@ -10,6 +10,7 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
@@ -66,6 +67,8 @@ class PlayState extends GameState
 	public var upgradeButton:GameButton;
 
 	public var technologies:Array<String> = [];
+
+	public var timer:Float = -1;
 
 	override public function create()
 	{
@@ -290,10 +293,11 @@ class PlayState extends GameState
 
 		for (i in 0...25)
 		{
-			screenIcons[i].icon = collection[i].name;
-
 			if (collection[i].wounded)
+			{
+				screenIcons[i].activate();
 				wounds[i].revive();
+			}
 		}
 
 		var toKill:Array<Int> = [];
@@ -358,6 +362,11 @@ class PlayState extends GameState
 		{
 			if (!toRemove.contains(i))
 				tmpCollection.push(collection[i]);
+			else
+			{
+				screenIcons[i].activate();
+				screenIcons[i].icon = "blank";
+			}
 		}
 
 		collection = tmpCollection.copy();
@@ -427,6 +436,7 @@ class PlayState extends GameState
 				}
 			case "replace": // replace this icon with another
 				replaceIcon(IconPos, split[1]);
+
 				trace("replace: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
 			case "gen": // generate a resource
 				var details:Array<String> = split[1].split("$");
@@ -569,6 +579,7 @@ class PlayState extends GameState
 			case "work": // a human is touching this tile
 				for (n in getNeighborsOfType(IconPos, "human"))
 				{
+					screenIcons[n].activate();
 					doEffect(IconPos, DoEffect, n);
 				}
 			case "pair": // a pair of tiles of this type are touching
@@ -584,17 +595,23 @@ class PlayState extends GameState
 						continue;
 
 					whosAdding.push('$IconPos:$n:$type');
+
+					screenIcons[IconPos].activate();
 					doEffect(IconPos, DoEffect, n);
 				}
 
 			case "chance": // a percentage of happening
 				if (FlxG.random.bool(Std.parseFloat(value)))
+				{
+					screenIcons[IconPos].activate();
 					doEffect(IconPos, DoEffect);
+				}
 			case "timer": // count down to 0 and then do the effect...
 				var split:Array<String> = Effect.split(":");
 				var time:Int = Std.parseInt(split[1]);
 				if (collection[IconPos].timer == 0)
 				{
+					screenIcons[IconPos].activate();
 					doEffect(IconPos, DoEffect);
 				}
 				else if (collection[IconPos].timer > 0)
@@ -607,6 +624,7 @@ class PlayState extends GameState
 				}
 
 			case "after": // after this spin, do this effect
+				screenIcons[IconPos].activate();
 				doEffect(IconPos, DoEffect);
 
 			case "touch": // is touching a tile of a speficic type
@@ -616,6 +634,7 @@ class PlayState extends GameState
 				{
 					for (n in getNeighborsOfType(IconPos, t))
 					{
+						screenIcons[IconPos].activate();
 						doEffect(IconPos, DoEffect, n);
 					}
 				}
@@ -679,20 +698,40 @@ class PlayState extends GameState
 
 	override public function update(elapsed:Float)
 	{
+		super.update(elapsed);
 		switch (currentMode)
 		{
 			case "did-spin":
-				draw();
 				checkingIcon = 0;
-				currentMode = "checking";
+				currentMode = "pre-checking";
+
+			case "pre-checking":
+				for (i in 0...25)
+				{
+					screenIcons[i].icon = collection[i].name;
+				}
+				timer = .2;
+				currentMode = "post-pre-checking";
+
+			case "post-pre-checking":
+				timer -= elapsed;
+				if (timer <= 0)
+				{
+					timer = .1;
+					currentMode = "checking";
+				}
 
 			case "checking":
-				checkEffects();
-				if (checkingIcon >= 25)
-					finishChecking();
-		}
+				timer -= elapsed;
+				if (timer <= 0)
+				{
+					timer = .1;
+					checkEffects();
 
-		super.update(elapsed);
+					if (checkingIcon >= 25)
+						finishChecking();
+				}
+		}
 	}
 
 	private function set_food(Value:Float):Float

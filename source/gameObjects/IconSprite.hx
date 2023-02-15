@@ -3,6 +3,8 @@ package gameObjects;
 import axollib.GraphicsCache;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxAxes;
 import globals.Globals.GlyphType;
 import ui.Tooltips;
 
@@ -38,5 +40,10 @@ class IconSprite extends FlxSprite
 
 		if (FlxG.mouse.overlaps(this))
 			Tooltips.showTooltip(icon, this);
+	}
+
+	public function activate():Void
+	{
+		FlxTween.shake(this, 0.05, 0.1, FlxAxes.X);
 	}
 }
