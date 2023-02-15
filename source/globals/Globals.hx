@@ -1,5 +1,6 @@
 package globals;
 
+import haxe.ui.Toolkit;
 import states.PlayState;
 
 @:build(macros.IconsBuilder.build()) // IconList
@@ -24,6 +25,39 @@ class Globals
 	{
 		if (initialized)
 			return;
+
+		Toolkit.init();
+
+		Toolkit.styleSheet.parse("
+            .scrollview {
+                border: 2px solid black;
+            }
+
+            .scrollview .vertical-scroll {
+                padding-left: 2px;
+                width: 30px;
+                background-color: white;
+                border-left: 2px solid black;
+            }
+
+            .scrollview .vertical-scroll .thumb {
+                width: 30px;
+                background-color: gray;
+                opacity:1;
+            }
+
+            .scrollview .vertical-scroll .thumb:hover {
+                background-color: #999;
+                opacity:1;
+            
+            }
+
+            .scrollview .vertical-scroll .thumb:down {
+                background-color: #333;
+                opacity:1;
+            
+            }
+        ");
 
 		for (k => v in IconList)
 			GLYPH_TYPES.set(k, GlyphType.ICON);
