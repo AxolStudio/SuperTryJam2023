@@ -18,6 +18,7 @@ import ui.CurrencyDisplay;
 import ui.GameButton;
 import ui.GameText;
 import ui.ShopScreen;
+import ui.TechDisplay;
 import ui.UpgradeScreen;
 
 using StringTools;
@@ -66,7 +67,10 @@ class PlayState extends GameState
 	public var shopButton:GameButton;
 	public var upgradeButton:GameButton;
 
-	public var technologies:Array<String> = [];
+	public var technologies:Map<Int, Array<String>> = [1 => []];
+
+	public var techDisp:TechDisplay;
+	public var techLabel:GameText;
 
 	public var timer:Float = -1;
 
@@ -151,6 +155,16 @@ class PlayState extends GameState
 		add(txtProduction = new GameText(10, 90, 500, "{{production}} 0", FlxColor.BLACK, SIZE_36));
 		add(txtScience = new GameText(10, 130, 500, "{{science}} 0", FlxColor.BLACK, SIZE_36));
 
+		add(techLabel = new GameText(0, 0, Std.int((FlxG.width / 2) - GRID_MID - 10), "Technologies Learned", FlxColor.BLACK, SIZE_36));
+		techLabel.alignment = "center";
+		techLabel.x = FlxG.width - techLabel.width - 10;
+		techLabel.y = 10;
+
+		techDisp = new TechDisplay((FlxG.width / 2) - GRID_MID - 20, FlxG.height - 120 - techLabel.height);
+		techDisp.x = FlxG.width - techDisp.width - 10;
+		techDisp.y = techLabel.y + techLabel.height + 10;
+		add(techDisp);
+
 		food = 10;
 
 		updatePopText();
@@ -158,6 +172,16 @@ class PlayState extends GameState
 		currentMode = "waiting-for-spin";
 
 		upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+	}
+
+	public function addTech(NewTech:String):Void
+	{
+		var collected:Array<String> = technologies.get(age);
+		collected.push(NewTech);
+
+		technologies.set(age, collected);
+
+		techDisp.addTech(age, NewTech);
 	}
 
 	public function openShop():Void

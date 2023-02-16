@@ -76,12 +76,13 @@ class UpgradeScreen extends GameSubState
 
 		var techItem:TechItem;
 		var box:Box;
+		var collected:Array<String> = Globals.PlayState.technologies.get(Globals.PlayState.age);
 
 		for (k => v in Globals.TechnologiesList)
 		{
 			if (v.age == Globals.PlayState.age)
 			{
-				if (Globals.PlayState.technologies.contains(k))
+				if (collected.contains(k))
 					continue;
 
 				box = new Box();
@@ -115,18 +116,23 @@ class UpgradeScreen extends GameSubState
 	public function updateButtons():Void
 	{
 		var tech:Technology;
+		var collected:Array<String> = Globals.PlayState.technologies.get(Globals.PlayState.age);
+
 		for (techItem in techItems)
 		{
 			tech = Globals.TechnologiesList.get(techItem.icon.icon);
 			var hasReq:Bool = true;
+
 			for (req in tech.requires)
 			{
-				if (!Globals.PlayState.technologies.contains(req))
+				if (!collected.contains(req))
 				{
 					hasReq = false;
 					break;
 				}
 			}
+
+			trace(tech.requires, collected, hasReq);
 
 			techItem.buyButton.active = Globals.PlayState.science >= tech.scienceCost && hasReq;
 		}
@@ -215,8 +221,7 @@ class TechItem extends FlxSpriteGroup
 		Globals.PlayState.science -= tech.scienceCost;
 
 		// add the new icon to the player's collection
-
-		Globals.PlayState.technologies.push(icon.icon);
+		Globals.PlayState.addTech(tech.name);
 
 		tech.doEffect();
 
