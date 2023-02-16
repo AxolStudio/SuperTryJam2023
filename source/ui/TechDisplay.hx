@@ -36,7 +36,7 @@ class TechDisplay extends ScrollView
 			box = new Box();
 			box.width = width;
 
-			txt = new GameText(0, 0, Std.int(width), "Age " + Roman.arabic2Roman(a), FlxColor.BLACK, SIZE_24);
+			txt = new GameText(0, 0, Std.int(width - 40), "Age " + Roman.arabic2Roman(a), FlxColor.BLACK, SIZE_24);
 			txt.alignment = "center";
 
 			box.height = txt.height;
@@ -47,7 +47,7 @@ class TechDisplay extends ScrollView
 
 			box = new Box();
 			box.width = width;
-			txt = new GameText(0, 0, Std.int(width), "", FlxColor.BLACK, SIZE_36);
+			txt = new GameText(0, 0, Std.int(width - 40), "", FlxColor.BLACK, SIZE_36);
 			txt.alignment = "left";
 
 			box.height = txt.height;

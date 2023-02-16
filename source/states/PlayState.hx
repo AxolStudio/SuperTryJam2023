@@ -72,7 +72,14 @@ class PlayState extends GameState
 	public var techDisp:TechDisplay;
 	public var techLabel:GameText;
 
+	public var resourceLabel:GameText;
+
 	public var timer:Float = -1;
+
+	public var toKill:Array<Int> = [];
+	public var toRemove:Array<Int> = [];
+
+	public var starved:Int = 0;
 
 	override public function create()
 	{
@@ -150,15 +157,21 @@ class PlayState extends GameState
 		txtAge.alignment = "center";
 		txtAge.screenCenter(FlxAxes.X);
 
-		add(txtPopulation = new GameText(10, 10, 500, "{{population}} 0", FlxColor.BLACK, SIZE_36));
-		add(txtFood = new GameText(10, 50, 500, "{{food}} 0", FlxColor.BLACK, SIZE_36));
-		add(txtProduction = new GameText(10, 90, 500, "{{production}} 0", FlxColor.BLACK, SIZE_36));
-		add(txtScience = new GameText(10, 130, 500, "{{science}} 0", FlxColor.BLACK, SIZE_36));
+		add(resourceLabel = new GameText(10, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Resources", FlxColor.BLACK, SIZE_36));
+		resourceLabel.alignment = "center";
 
-		add(techLabel = new GameText(0, 0, Std.int((FlxG.width / 2) - GRID_MID - 10), "Technologies Learned", FlxColor.BLACK, SIZE_36));
+		add(txtPopulation = new GameText(10, resourceLabel.y + resourceLabel.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{population}} 0",
+			FlxColor.BLACK, SIZE_36));
+		add(txtFood = new GameText(10, txtPopulation.y + txtPopulation.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{food}} 0", FlxColor.BLACK,
+			SIZE_36));
+		add(txtProduction = new GameText(10, txtFood.y + txtFood.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{production}} 0", FlxColor.BLACK,
+			SIZE_36));
+		add(txtScience = new GameText(10, txtProduction.y + txtProduction.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{science}} 0",
+			FlxColor.BLACK, SIZE_36));
+
+		add(techLabel = new GameText(0, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Technologies Learned", FlxColor.BLACK, SIZE_36));
 		techLabel.alignment = "center";
 		techLabel.x = FlxG.width - techLabel.width - 10;
-		techLabel.y = 10;
 
 		techDisp = new TechDisplay((FlxG.width / 2) - GRID_MID - 20, FlxG.height - 120 - techLabel.height);
 		techDisp.x = FlxG.width - techDisp.width - 10;
@@ -213,6 +226,8 @@ class PlayState extends GameState
 		whosAdding = [];
 		iconsToAdd = [];
 		iconsToDelete = [];
+		toKill = [];
+		toRemove = [];
 
 		for (i in 0...25)
 		{
@@ -226,6 +241,10 @@ class PlayState extends GameState
 		}
 
 		FlxG.random.shuffle(collection);
+
+		for (i in 0...25)
+			if (collection[i].wounded)
+				wounds[i].revive();
 
 		currentMode = "did-spin";
 	}
@@ -296,12 +315,11 @@ class PlayState extends GameState
 		checkingIcon++;
 	}
 
-	public function finishChecking():Void
+	public function afterCheck():Void
 	{
-		checkingIcon = -1;
+		checkingIcon = 0;
+		currentMode = "after-check";
 
-		// wound icons unless they are protected
-		trace(willWound);
 		for (i in willWound)
 		{
 			if (!preventedWound.contains(i))
@@ -312,85 +330,20 @@ class PlayState extends GameState
 					collection[i].wounded = true;
 			}
 		}
-		// add any double-wounded to 		iconsToKill
-		// kill off iconsToKill
 
-		for (i in 0...25)
-		{
-			if (collection[i].wounded)
-			{
-				screenIcons[i].activate();
-				wounds[i].revive();
-			}
-		}
+		toRemove = [];
 
-		var toKill:Array<Int> = [];
-		var toRemove:Array<Int> = [];
-		trace("iconsToKill", iconsToKill);
-		while (iconsToKill.length > 0)
-		{
-			toKill = [];
-			for (i in iconsToKill)
-			{
-				if (!toKill.contains(i) && !toRemove.contains(i))
-					toKill.push(i);
-			}
-			iconsToKill = [];
-			for (i in toKill)
-			{
-				killIcon(i);
-				toRemove.push(i);
-			}
-		}
+		currentMode = "wounding";
+	}
 
-		var starved:Int = 0;
-		for (h in 0...collection.length)
-		{
-			if (collection[h].name == "child" && !toRemove.contains(h))
-			{
-				// feed this human or kill it!
-				if (food > 0)
-				{
-					food--;
-				}
-				else
-				{
-					toRemove.push(h);
-					starved++;
-				}
-			}
-			if (collection[h].name == "human" && !toRemove.contains(h))
-			{
-				// feed this human or kill it!
-				if (food > 0)
-				{
-					food--;
-				}
-				else
-				{
-					toRemove.push(h);
-					starved++;
-				}
-			}
-		}
-		trace(starved + " humans starved to death.");
-
-		for (i in iconsToDelete)
-		{
-			toRemove.push(i);
-		}
-
+	public function finishChecking():Void
+	{
 		var tmpCollection:Array<GridIcon> = [];
 		trace("toRemove", toRemove);
 		for (i in 0...collection.length)
 		{
 			if (!toRemove.contains(i))
 				tmpCollection.push(collection[i]);
-			else
-			{
-				screenIcons[i].activate();
-				screenIcons[i].icon = "blank";
-			}
 		}
 
 		collection = tmpCollection.copy();
@@ -472,6 +425,8 @@ class PlayState extends GameState
 				}
 				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
 				trace("food: " + food + " prod: " + production + " sci: " + science);
+			// add an animation of the resource being generated
+
 			case "die": // remove this icon from the collection
 				iconsToKill.push(IconPos);
 				trace("die: " + IconPos + " : " + collection[IconPos].name);
@@ -675,6 +630,7 @@ class PlayState extends GameState
 				doEffect(IconPos, e);
 			}
 		}
+		// if the icon is within the 25 shown, have an animation!
 	}
 
 	public function hasNeighborType(IconPos:Int, Value:String):Bool
@@ -753,9 +709,145 @@ class PlayState extends GameState
 					checkEffects();
 
 					if (checkingIcon >= 25)
-						finishChecking();
+						afterCheck();
 				}
+			case "wounding":
+				timer -= elapsed;
+				if (timer <= 0)
+				{
+					timer = .1;
+					checkWounds();
+					if (checkingIcon >= 25)
+					{
+						currentMode = "deleting";
+						checkingIcon = 0;
+					}
+				}
+			case "deleting":
+				timer -= elapsed;
+				if (timer <= 0)
+				{
+					timer = .1;
+					checkToDelete();
+					if (checkingIcon >= iconsToDelete.length)
+					{
+						currentMode = "killing";
+						checkingIcon = -1;
+					}
+				}
+			case "killing":
+				if (checkingIcon == -1)
+				{
+					if (iconsToKill.length > 0)
+					{
+						toKill = [];
+						for (i in iconsToKill)
+						{
+							if (!toKill.contains(i) && !toRemove.contains(i))
+								toKill.push(i);
+						}
+						iconsToKill = [];
+						checkingIcon = 0;
+					}
+					else
+					{
+						currentMode = "starving";
+						starved = 0;
+						checkingIcon = 0;
+					}
+				}
+				else
+				{
+					timer -= elapsed;
+					if (timer <= 0)
+					{
+						timer = .1;
+						checkToKill();
+					}
+				}
+
+			case "starving":
+				timer -= elapsed;
+				if (timer <= 0)
+				{
+					timer = .1;
+					checkStarving();
+					if (checkingIcon >= collection.length)
+					{
+						trace(starved + " humans starved to death.");
+						checkingIcon = 0;
+						currentMode = "finished";
+					}
+				}
+
+			case "finished":
+				finishChecking();
 		}
+	}
+
+	public function checkToDelete():Void
+	{
+		toRemove.push(iconsToDelete[checkingIcon]);
+		// animate!
+		checkingIcon++;
+	}
+
+	public function checkWounds():Void
+	{
+		if (collection[checkingIcon].wounded && !wounds[checkingIcon].alive)
+		{
+			screenIcons[checkingIcon].activate();
+			wounds[checkingIcon].revive();
+		}
+		else
+			timer = 0;
+		checkingIcon++;
+	}
+
+	public function checkStarving():Void
+	{
+		if (collection[checkingIcon].name == "child" && !toRemove.contains(checkingIcon))
+		{
+			// feed this human or kill it!
+			if (food > 0)
+			{
+				food--;
+			}
+			else
+			{
+				killIcon(checkingIcon);
+				toRemove.push(checkingIcon);
+				starved++;
+			}
+		}
+		else if (collection[checkingIcon].name == "human" && !toRemove.contains(checkingIcon))
+		{
+			// feed this human or kill it!
+			if (food > 0)
+			{
+				food--;
+			}
+			else
+			{
+				killIcon(checkingIcon);
+				toRemove.push(checkingIcon);
+				starved++;
+			}
+		}
+		else
+			timer = 0;
+		checkingIcon++;
+	}
+
+	public function checkToKill():Void
+	{
+		killIcon(toKill[checkingIcon]);
+		if (!toRemove.contains(checkingIcon))
+			toRemove.push(checkingIcon);
+
+		checkingIcon++;
+		if (checkingIcon >= toKill.length)
+			checkingIcon = -1;
 	}
 
 	private function set_food(Value:Float):Float

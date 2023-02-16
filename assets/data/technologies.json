@@ -2,15 +2,15 @@
   {
     "name": "horticulture",
     "age": 1,
-    "science": 10,
+    "science": 15,
     "effect": ["i:berry bush:d!gen:5$food", "i:berry bush:d!chance:10?create:berry bush"],
     "requires": [],
     "description": "{{berry bush}} Generate an additional 5 {{food}} and have a 10% chance to create a new {{berry bush}} on Death"
   },
   {
-    "name": "lumberjacking",
+    "name": "logging",
     "age": 1,
-    "science": 10,
+    "science": 25,
     "effect": ["u:axe"],
     "requires": [],
     "description": "Adds {{axe}} to the Element Shop."
@@ -18,7 +18,7 @@
   {
     "name": "mining",
     "age": 1,
-    "science": 10,
+    "science": 25,
     "effect": ["u:pickaxe"],
     "requires": [],
     "description": "Adds {{pickaxe}} to the Element Shop."
@@ -26,7 +26,7 @@
   {
     "name": "torches",
     "age": 1,
-    "science": 10,
+    "science": 20,
     "effect": ["u:torch"],
     "requires": ["campfire"],
     "description": "Adds {{torch}} to the Element Shop."
@@ -34,7 +34,7 @@
   {
     "name": "fire",
     "age": 1,
-    "science": 10,
+    "science": 25,
     "effect": ["u:campfire"],
     "requires": [],
     "description": "Adds {{campfire}} to the Element Shop."
@@ -42,7 +42,7 @@
   {
     "name": "weaponry",
     "age": 1,
-    "science": 10,
+    "science": 20,
     "effect": ["u:spear"],
     "requires": [],
     "description": "Adds {{spear}} to the Element Shop."
@@ -50,7 +50,7 @@
   {
     "name": "archery",
     "age": 1,
-    "science": 10,
+    "science": 25,
     "effect": ["u:sling"],
     "requires": ["weaponry"],
     "description": "Adds {{sling}} to the Element Shop."
@@ -58,7 +58,7 @@
   {
     "name": "exploration",
     "age": 1,
-    "science": 10,
+    "science": 25,
     "effect": ["u:canoe"],
     "requires": ["axe"],
     "description": "Adds {{canoe}} to the Element Shop."
@@ -66,15 +66,15 @@
   {
     "name": "fishing",
     "age": 1,
-    "science": 10,
+    "science": 20,
     "effect": ["e:fish"],
     "requires": ["exploration"],
-    "description": "Adds {{fish}} to the Element Shop."
+    "description": "{{fish}} can now appear in the Grid."
   },
   {
     "name": "husbandry",
     "age": 1,
-    "science": 10,
+    "science": 50,
     "effect": ["u:pig", "u:sheep", "u:cow"],
     "requires": ["campfire"],
     "description": "Adds {{pig}}, {{sheep}}, and {{cow}} to the Element Shop."
