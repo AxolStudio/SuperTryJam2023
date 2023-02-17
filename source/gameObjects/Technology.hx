@@ -30,7 +30,7 @@ class Technology
 	{
 		for (e in effect)
 		{
-			var split:Array<String> = e.split(":");
+			var split:Array<String> = e.split("=");
 			var type:String = split[0];
 			var target:String = split[1];
 

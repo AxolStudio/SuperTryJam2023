@@ -561,11 +561,13 @@ class PlayState extends GameState
 
 	public function replaceIcon(IconPos:Int, NewIcon:String):Void
 	{
-		iconsToKill.push(IconPos);
-		iconsToAdd.push(NewIcon);
+		// iconsToKill.push(IconPos);
+		// iconsToAdd.push(NewIcon);
 		screenIcons[IconPos].activate();
 		screenIcons[IconPos].icon = NewIcon;
 
+		collection[IconPos] = new GridIcon(NewIcon);
+		
 	}
 
 	public function checkEffect(IconPos:Int, Effect:String, DoEffect:String):Bool
@@ -844,7 +846,8 @@ class PlayState extends GameState
 
 	public function checkToDelete():Void
 	{
-		toRemove.push(iconsToDelete[checkingIcon]);
+		if (!toRemove.contains(iconsToDelete[checkingIcon]))
+			toRemove.push(iconsToDelete[checkingIcon]);
 		// animate!
 		checkingIcon++;
 	}
