@@ -21,7 +21,7 @@
 	<SubTexture name="fish" x="82" y="94" width="16" height="16" frameX="-3" frameY="-3" frameWidth="22" frameHeight="22"/>
 	<SubTexture name="fishing" x="23" y="46" width="22" height="22" frameX="-0" frameY="-0" frameWidth="22" frameHeight="22"/>
 	<SubTexture name="food" x="83" y="33" width="16" height="17" frameX="-3" frameY="-3" frameWidth="22" frameHeight="22"/>
-	<SubTexture name="fruiting" x="23" y="69" width="22" height="22" frameX="-0" frameY="-0" frameWidth="22" frameHeight="22"/>
+	<SubTexture name="horticulture" x="23" y="69" width="22" height="22" frameX="-0" frameY="-0" frameWidth="22" frameHeight="22"/>
 	<SubTexture name="hare" x="82" y="111" width="16" height="16" frameX="-3" frameY="-3" frameWidth="22" frameHeight="22"/>
 	<SubTexture name="human" x="116" y="37" width="8" height="16" frameX="-7" frameY="-3" frameWidth="22" frameHeight="22"/>
 	<SubTexture name="husbandry" x="23" y="92" width="22" height="22" frameX="-0" frameY="-0" frameWidth="22" frameHeight="22"/>

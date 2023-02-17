@@ -37,13 +37,40 @@ class IconSprite extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		if (FlxG.mouse.overlaps(this))
-			Tooltips.showTooltip(icon, this);
+		if (alive)
+			if (FlxG.mouse.overlaps(this))
+				Tooltips.showTooltip(icon, this);
 	}
 
 	public function activate():Void
 	{
 		FlxTween.shake(this, 0.05, 0.1, FlxAxes.X);
+	}
+}
+
+class FakeIcon extends IconSprite
+{
+	public function new():Void
+	{
+		super(0, 0);
+		kill();
+	}
+
+	public function spawn(Source:IconSprite):Void
+	{
+		reset(Source.x, Source.y);
+		icon = Source.icon;
+		Source.icon = "blank";
+		acceleration.y = 4000;
+		velocity.y = -500;
+		angularVelocity = velocity.x = FlxG.random.float(-5, 5) * 50;
+		alive = false;
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+		if (y > FlxG.height)
+			kill();
 	}
 }

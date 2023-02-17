@@ -85,6 +85,8 @@ class PlayState extends GameState
 
 	public var resGenTexts:FlxTypedGroup<ResGenText>;
 
+	public var fakeIcons:FlxTypedGroup<FakeIcon>;
+
 	override public function create()
 	{
 		initializeGame();
@@ -142,6 +144,8 @@ class PlayState extends GameState
 			screenIcons.push(icon);
 			add(icon);
 		}
+
+		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
 
 		add(spinButton = new GameButton((FlxG.width / 2) - 125, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 250, 50, SIZE_36, FlxColor.BLUE,
 			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
@@ -379,7 +383,8 @@ class PlayState extends GameState
 	public function parseEffect(IconPos:Int, Effect:String):Void
 	{
 		var split:Array<String> = Effect.split("?");
-		checkEffect(IconPos, split[0], split[1]);
+		if (!checkEffect(IconPos, split[0], split[1]))
+			timer = 0;
 	}
 
 	public function doEffect(IconPos:Int, Effect:String, ?Source:Int = -1):Void
@@ -390,6 +395,7 @@ class PlayState extends GameState
 			case "delete": // remove icon without it's death effect
 				iconsToDelete.push(Source);
 				trace("delete: " + IconPos + " : " + collection[IconPos].name + " = " + collection[Source].name);
+
 			case "create": // create a new icon
 
 				var type:String = split[1];
@@ -557,10 +563,14 @@ class PlayState extends GameState
 	{
 		iconsToKill.push(IconPos);
 		iconsToAdd.push(NewIcon);
+		screenIcons[IconPos].activate();
+		screenIcons[IconPos].icon = NewIcon;
+
 	}
 
-	public function checkEffect(IconPos:Int, Effect:String, DoEffect:String):Void
+	public function checkEffect(IconPos:Int, Effect:String, DoEffect:String):Bool
 	{
+		var doPause:Bool = false;
 		var check:Bool = false;
 		var keyWord:String = "";
 		var value:String = "";
@@ -584,6 +594,7 @@ class PlayState extends GameState
 					screenIcons[n].activate();
 					doEffect(IconPos, DoEffect, n);
 				}
+				doPause = true;
 			case "pair": // a pair of tiles of this type are touching
 				var splitA:Array<String> = Effect.split(":");
 				var match:String = splitA[1];
@@ -601,13 +612,14 @@ class PlayState extends GameState
 					screenIcons[IconPos].activate();
 					doEffect(IconPos, DoEffect, n);
 				}
-
+				doPause = true;
 			case "chance": // a percentage of happening
 				if (FlxG.random.bool(Std.parseFloat(value)))
 				{
 					screenIcons[IconPos].activate();
 					doEffect(IconPos, DoEffect);
 				}
+				doPause = true;
 			case "timer": // count down to 0 and then do the effect...
 				var split:Array<String> = Effect.split(":");
 				var time:Int = Std.parseInt(split[1]);
@@ -619,16 +631,17 @@ class PlayState extends GameState
 				else if (collection[IconPos].timer > 0)
 				{
 					collection[IconPos].timer--;
+					// show this!
 				}
 				else
 				{
 					collection[IconPos].timer = time;
 				}
-
+				doPause = true;
 			case "after": // after this spin, do this effect
 				screenIcons[IconPos].activate();
 				doEffect(IconPos, DoEffect);
-
+				doPause = true;
 			case "touch": // is touching a tile of a speficic type
 				var types:Array<String> = value.split("/");
 
@@ -640,12 +653,21 @@ class PlayState extends GameState
 						doEffect(IconPos, DoEffect, n);
 					}
 				}
+				doPause = true;
 		}
+		return doPause;
 	}
 
 	public function killIcon(IconPos:Int):Void
 	{
 		var def:Icon = Globals.IconList.get(collection[IconPos].name);
+
+		// if the icon is within the 25 shown, have an animation!
+		if (IconPos < 25)
+		{
+			death(IconPos);
+		}
+
 		if (def.death != null)
 		{
 			for (e in def.death)
@@ -653,7 +675,21 @@ class PlayState extends GameState
 				doEffect(IconPos, e);
 			}
 		}
-		// if the icon is within the 25 shown, have an animation!
+	}
+
+	public function death(IconPos:Int):Void
+	{
+		var f:FakeIcon = fakeIcons.getFirstAvailable();
+		if (f == null)
+		{
+			f = new FakeIcon();
+			fakeIcons.add(f);
+		}
+		if (wounds[IconPos].alive)
+		{
+			wounds[IconPos].kill();
+		}
+		f.spawn(screenIcons[IconPos]);
 	}
 
 	public function hasNeighborType(IconPos:Int, Value:String):Bool
@@ -708,19 +744,16 @@ class PlayState extends GameState
 				checkingIcon = 0;
 				currentMode = "pre-checking";
 
-			case "pre-checking":
 				for (i in 0...25)
 				{
 					screenIcons[i].icon = collection[i].name;
 				}
-				timer = .2;
-				currentMode = "post-pre-checking";
 
-			case "post-pre-checking":
+			case "pre-checking":
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .1;
+					timer = .05;
 					currentMode = "checking";
 				}
 
@@ -728,7 +761,7 @@ class PlayState extends GameState
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .1;
+					timer = .05;
 					checkEffects();
 
 					if (checkingIcon >= 25)
@@ -738,7 +771,7 @@ class PlayState extends GameState
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .1;
+					timer = .05;
 					checkWounds();
 					if (checkingIcon >= 25)
 					{
@@ -750,7 +783,7 @@ class PlayState extends GameState
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .1;
+					timer = .05;
 					checkToDelete();
 					if (checkingIcon >= iconsToDelete.length)
 					{
@@ -777,6 +810,7 @@ class PlayState extends GameState
 						currentMode = "starving";
 						starved = 0;
 						checkingIcon = 0;
+						timer = .05;
 					}
 				}
 				else
@@ -784,7 +818,7 @@ class PlayState extends GameState
 					timer -= elapsed;
 					if (timer <= 0)
 					{
-						timer = .1;
+						timer = .05;
 						checkToKill();
 					}
 				}
@@ -793,7 +827,7 @@ class PlayState extends GameState
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .1;
+					timer = .05;
 					checkStarving();
 					if (checkingIcon >= collection.length)
 					{
@@ -865,8 +899,8 @@ class PlayState extends GameState
 	public function checkToKill():Void
 	{
 		killIcon(toKill[checkingIcon]);
-		if (!toRemove.contains(checkingIcon))
-			toRemove.push(checkingIcon);
+		if (!toRemove.contains(toKill[checkingIcon]))
+			toRemove.push(toKill[checkingIcon]);
 
 		checkingIcon++;
 		if (checkingIcon >= toKill.length)
