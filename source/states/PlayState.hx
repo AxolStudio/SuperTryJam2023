@@ -4,6 +4,7 @@ import axollib.TitleCase.Roman;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.text.FlxText;
@@ -17,6 +18,7 @@ import globals.Globals;
 import ui.CurrencyDisplay;
 import ui.GameButton;
 import ui.GameText;
+import ui.ResGenText;
 import ui.ShopScreen;
 import ui.TechDisplay;
 import ui.UpgradeScreen;
@@ -80,6 +82,8 @@ class PlayState extends GameState
 	public var toRemove:Array<Int> = [];
 
 	public var starved:Int = 0;
+
+	public var resGenTexts:FlxTypedGroup<ResGenText>;
 
 	override public function create()
 	{
@@ -181,6 +185,8 @@ class PlayState extends GameState
 		food = 10;
 
 		updatePopText();
+
+		add(resGenTexts = new FlxTypedGroup<ResGenText>());
 
 		currentMode = "waiting-for-spin";
 
@@ -425,7 +431,7 @@ class PlayState extends GameState
 				}
 				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
 				trace("food: " + food + " prod: " + production + " sci: " + science);
-			// add an animation of the resource being generated
+				showResGen(IconPos, details[1], Std.parseInt(details[0]));
 
 			case "die": // remove this icon from the collection
 				iconsToKill.push(IconPos);
@@ -474,6 +480,23 @@ class PlayState extends GameState
 				iconsToKill.push(icons[FlxG.random.int(0, icons.length - 1)]);
 				trace("snipe: " + IconPos + " : " + collection[IconPos].name + " = " + icons);
 		}
+	}
+
+	public function showResGen(IconPos:Int, Type:String, Amount:Int):Void
+	{
+		var rg:ResGenText = resGenTexts.getFirstAvailable();
+		if (rg == null)
+		{
+			rg = new ResGenText();
+			resGenTexts.add(rg);
+		}
+		rg.spawn(screenIcons[IconPos], switch (Type)
+		{
+			case "food": "food";
+			case "prod": "production";
+			case "sci": "science";
+			default: null;
+		}, Amount);
 	}
 
 	public function getIconsOfType(IconPos:Int, Type:String):Array<Int>
