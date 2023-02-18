@@ -23,6 +23,7 @@ import ui.GameText;
 import ui.ResGenText;
 import ui.ShopScreen;
 import ui.TechDisplay;
+import ui.TimerDisplay;
 import ui.UpgradeScreen;
 
 using StringTools;
@@ -92,6 +93,7 @@ class PlayState extends GameState
 
 	public var shields:Array<FlxSprite>;
 	public var crosshairs:Array<FlxSprite>;
+	public var timerDisplays:Array<TimerDisplay>;
 
 	override public function create()
 	{
@@ -155,9 +157,14 @@ class PlayState extends GameState
 
 		crosshairs = new Array<FlxSprite>();
 
+		timerDisplays = new Array<TimerDisplay>();
+
 		var shield:FlxSprite;
 
 		var crosshair:FlxSprite;
+
+		var timerDisplay:TimerDisplay;
+
 		for (i in 0...25)
 		{
 			shield = new FlxSprite((FlxG.width / 2)
@@ -183,6 +190,10 @@ class PlayState extends GameState
 			crosshair.kill();
 			crosshairs.push(crosshair);
 			add(crosshair);
+
+			timerDisplay = new TimerDisplay(screenIcons[i].x, screenIcons[i].y + screenIcons[i].height);
+			timerDisplays.push(timerDisplay);
+			add(timerDisplay);
 		}
 
 		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
@@ -286,6 +297,7 @@ class PlayState extends GameState
 			wounds[i].kill();
 			crosshairs[i].kill();
 			shields[i].kill();
+			timerDisplays[i].kill();
 		}
 
 		if (age == 1)
@@ -297,8 +309,12 @@ class PlayState extends GameState
 		FlxG.random.shuffle(collection);
 
 		for (i in 0...25)
+		{
 			if (collection[i].wounded)
 				wounds[i].revive();
+			if (collection[i].timer > 0)
+				timerDisplays[i].show(collection[i].timer);
+		}
 
 		currentMode = "did-spin";
 	}
@@ -508,9 +524,33 @@ class PlayState extends GameState
 				{
 					icons = icons.concat(getIconsOfType(IconPos, t));
 				}
-				iconsToKill.push(icons[FlxG.random.int(0, icons.length - 1)]);
-				trace("snipe: " + IconPos + " : " + collection[IconPos].name + " = " + icons);
+				var target:Int = icons[FlxG.random.int(0, icons.length - 1)];
+				iconsToKill.push(target);
+				trace("snipe: " + IconPos + " : " + collection[target].name + " = " + icons);
+				if (!crosshairs[target].alive)
+				{
+					crosshairs[target].revive();
+					crosshairs[target].alpha = 0;
+					crosshairs[target].angle = 0;
+					crosshairs[target].angularVelocity = 60;
+					screenIcons[target].activate();
+
+					FlxTween.tween(crosshairs[target], {alpha: 1}, 0.15, {
+						type: FlxTweenType.ONESHOT
+					});
+				}
 		}
+	}
+
+	public function removeFood(IconPos:Int, Amount:Int):Void
+	{
+		var rg:ResGenText = resGenTexts.getFirstAvailable();
+		if (rg == null)
+		{
+			rg = new ResGenText();
+			resGenTexts.add(rg);
+		}
+		rg.reverseSpawn(screenIcons[IconPos], "food", Amount);
 	}
 
 	public function showResGen(IconPos:Int, Type:String, Amount:Int):Void
@@ -662,19 +702,22 @@ class PlayState extends GameState
 			case "timer": // count down to 0 and then do the effect...
 				var split:Array<String> = Effect.split(":");
 				var time:Int = Std.parseInt(split[1]);
-				if (collection[IconPos].timer == 0)
-				{
-					screenIcons[IconPos].activate();
-					doEffect(IconPos, DoEffect);
-				}
-				else if (collection[IconPos].timer > 0)
+				if (collection[IconPos].timer > -1)
 				{
 					collection[IconPos].timer--;
+					timerDisplays[IconPos].transition(collection[IconPos].timer);
 					// show this!
+					if (collection[IconPos].timer <= 0)
+					{
+						screenIcons[IconPos].activate();
+						collection[IconPos].timer = -1;
+						doEffect(IconPos, DoEffect);
+					}
 				}
 				else
 				{
 					collection[IconPos].timer = time;
+					timerDisplays[IconPos].appear(time);
 				}
 				doPause = true;
 			case "after": // after this spin, do this effect
@@ -735,6 +778,10 @@ class PlayState extends GameState
 		if (crosshairs[IconPos].alive)
 		{
 			crosshairs[IconPos].kill();
+		}
+		if (timerDisplays[IconPos].alive)
+		{
+			timerDisplays[IconPos].kill();
 		}
 		f.spawn(screenIcons[IconPos]);
 	}
@@ -901,7 +948,7 @@ class PlayState extends GameState
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					if (checkingIcon >= collection.length)
+					if (checkingIcon >= 25) // only spun population eat
 					{
 						trace(starved + " humans starved to death.");
 						checkingIcon = 0;
@@ -965,27 +1012,32 @@ class PlayState extends GameState
 
 	public function checkStarving():Void
 	{
-		if (collection[checkingIcon].name == "child" && !toRemove.contains(checkingIcon))
+		// if (collection[checkingIcon].name == "child" && !toRemove.contains(checkingIcon))
+		// {
+		// 	// feed this human or kill it!
+		// 	if (food > 0)
+		// 	{
+		// 		food--;
+		// 	}
+		// 	else
+		// 	{
+		// 		killIcon(checkingIcon);
+		// 		toRemove.push(checkingIcon);
+		// 		trace(checkingIcon);
+		// 		starved++;
+		// 	}
+		// }
+		// else
+
+		// eventually different kinds of population will have different food requirements
+		if (collection[checkingIcon].name == "human" && !toRemove.contains(checkingIcon))
 		{
 			// feed this human or kill it!
 			if (food > 0)
 			{
-				food--;
-			}
-			else
-			{
-				killIcon(checkingIcon);
-				toRemove.push(checkingIcon);
-				trace(checkingIcon);
-				starved++;
-			}
-		}
-		else if (collection[checkingIcon].name == "human" && !toRemove.contains(checkingIcon))
-		{
-			// feed this human or kill it!
-			if (food > 0)
-			{
-				food--;
+				food--; // show food being taken away!
+				screenIcons[checkingIcon].activate();
+				removeFood(checkingIcon, 1);
 			}
 			else
 			{

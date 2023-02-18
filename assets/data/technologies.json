@@ -3,9 +3,9 @@
     "name": "horticulture",
     "age": 1,
     "science": 15,
-    "effect": ["i=berry bush=d!gen:5$food", "i=berry bush=d!chance:10?create:berry bush"],
+    "effect": ["i=berry bush=d!gen:3$food", "i=berry bush=d!chance:25?create:berry bush"],
     "requires": [],
-    "description": "{{berry bush}} Generate an additional 5 {{food}} and have a 10% chance to create a new {{berry bush}} on Death"
+    "description": "{{berry bush}} Generate an additional 3 {{food}} and have a 25% chance to create a new {{berry bush}} on Death"
   },
   {
     "name": "logging",

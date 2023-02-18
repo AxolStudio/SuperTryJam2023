@@ -11,21 +11,21 @@
     "cost": 0,
     "effect": ["pair:human?gen:2$sci"],
     "death": [],
-    "description": "Adds 1 to {{population}}. Consumes 1 {{food}} each Spin. Pair to Generate 2 {{science}}."
+    "description": "Pair to Generate 2 {{science}}. Adds 1 to {{population}}. Can Work."
   },
   {
     "name": "child",
     "cost": 20,
     "effect": ["timer:2?replace:human"],
     "death": [],
-    "description": "Consumes 1 {{food}} each Spin. After 2 Spins, becomes a {{human}}."
+    "description": "After 2 Spins, becomes a {{human}}. Can not Work."
   },
   {
     "name": "berry bush",
     "cost": 5,
     "effect": ["work?die"],
-    "death": ["gen:5$food"],
-    "description": "Dies when Worked. Generates 5 {{food}} on Death."
+    "death": ["gen:3$food"],
+    "description": "Dies when Worked. Generates 3 {{food}} on Death."
   },
   {
     "name": "deer",
@@ -80,8 +80,8 @@
     "name": "tree",
     "cost": 0,
     "effect": ["work?gen:2$food", "work?gen:1$prod"],
-    "death": ["gen:2$food", "gen:4$prod", "create:log*1-3", "create:sapling*1-2"],
-    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 2 {{food}}, 4 {{production}} and Creates 1-3 {{log}} and 1-2 {{sapling}} on Death."
+    "death": ["gen:4$food", "gen:4$prod", "create:log*1-3", "create:sapling*1-2"],
+    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 4 {{food}}, 4 {{production}} and Creates 1-3 {{log}} and 1-2 {{sapling}} on Death."
   },
   {
     "name": "sapling",
@@ -101,15 +101,15 @@
     "name": "coal",
     "cost": 0,
     "effect": ["touch:torch/campfire?die"],
-    "death": ["gen:4$prod"],
-    "description": "Dies when Touching {{torch}} {{campfire}}. Generates 4 {{production}} on Death."
+    "death": ["gen:10$prod"],
+    "description": "Dies when Touching {{torch}} {{campfire}}. Generates 10 {{production}} on Death."
   },
   {
     "name": "torch",
     "cost": 5,
-    "effect": ["touch:wolf/bear/mammoth?protect:wolf/bear/mammoth"],
+    "effect": ["work:protect:human/child"],
     "death": [],
-    "description": "Protects Touching {{human}} from Touching {{wolf}} {{bear}} {{mammoth}}."
+    "description": "Protects {{human}} {{child}} when Worked."
   },
   {
     "name": "campfire",
