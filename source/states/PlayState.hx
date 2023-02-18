@@ -993,6 +993,7 @@ class PlayState extends GameState
 		if (preventedWound.contains(willWound[checkingIcon]))
 		{
 			shields[willWound[checkingIcon]].revive();
+			FlxTween.cancelTweensOf(shields[willWound[checkingIcon]]);
 			FlxTween.shake(shields[willWound[checkingIcon]], 0.05, 0.1, FlxAxes.X);
 		}
 		else
@@ -1004,6 +1005,7 @@ class PlayState extends GameState
 				collection[willWound[checkingIcon]].wounded = true;
 				screenIcons[willWound[checkingIcon]].activate();
 				wounds[willWound[checkingIcon]].revive();
+				FlxTween.cancelTweensOf(wounds[willWound[checkingIcon]]);
 				FlxTween.shake(wounds[willWound[checkingIcon]], 0.05, 0.1, FlxAxes.X);
 			}
 		}

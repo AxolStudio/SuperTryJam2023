@@ -39,6 +39,7 @@ class TimerDisplay extends GameText
 	{
 		drawFrame();
 		revive();
+		FlxTween.cancelTweensOf(this);
 		FlxTween.shake(this, 0.05, 0.1, FlxAxes.X, {
 			onComplete: (_) ->
 			{
