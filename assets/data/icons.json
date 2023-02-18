@@ -80,8 +80,8 @@
     "name": "tree",
     "cost": 0,
     "effect": ["work?gen:2$food", "work?gen:1$prod"],
-    "death": ["gen:2$food", "gen:4$prod", "create:log*2-5", "create:sapling*1-2"],
-    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 2 {{food}}, 4 {{production}} and Creates 2-5 {{log}} and 1-2 {{sapling}} on Death."
+    "death": ["gen:2$food", "gen:4$prod", "create:log*1-3", "create:sapling*1-2"],
+    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 2 {{food}}, 4 {{production}} and Creates 1-3 {{log}} and 1-2 {{sapling}} on Death."
   },
   {
     "name": "sapling",
@@ -129,8 +129,8 @@
     "name": "boulder",
     "cost": 0,
     "effect": ["work?gen:2$prod"],
-    "death": ["gen:4$prod", "create:rock*2-5"],
-    "description": "Generates 2 {{production}} when Worked. Generates 4 {{production}} and Creates 2-5 {{rock}} on Death."
+    "death": ["gen:4$prod", "create:rock*1-3"],
+    "description": "Generates 2 {{production}} when Worked. Generates 4 {{production}} and Creates 1-3 {{rock}} on Death."
   },
   {
     "name": "axe",
@@ -143,8 +143,8 @@
     "name": "log",
     "cost": 0,
     "effect": ["work?gen:1$prod"],
-    "death": ["gen:2$prod", "create:wood*2-5"],
-    "description": "Generates 1 {{production}} when Worked. Generates 2 {{production}} and Creates 2-5 {{wood}} on Death."
+    "death": ["gen:2$prod", "create:wood*1-3"],
+    "description": "Generates 1 {{production}} when Worked. Generates 2 {{production}} and Creates 1-3 {{wood}} on Death."
   },
   {
     "name": "pickaxe",

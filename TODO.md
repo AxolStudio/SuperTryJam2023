@@ -1,6 +1,3 @@
-[ ] Add shop menu
-[ ] Add technologies
-[ ] Add Upgrades menu
-[ ] Add animations to show effects of spin
-[ ] Add Bitmapfont and Icon Characters
+[ ] animate on delete
+[ ] show added icons
 [ ] Add log to spins
