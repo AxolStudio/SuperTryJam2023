@@ -28,7 +28,7 @@
     "age": 1,
     "science": 20,
     "effect": ["u=torch"],
-    "requires": ["campfire"],
+    "requires": ["fire"],
     "description": "Adds {{torch}} to the Element Shop."
   },
   {
@@ -60,7 +60,7 @@
     "age": 1,
     "science": 25,
     "effect": ["u=canoe"],
-    "requires": ["axe"],
+    "requires": ["logging"],
     "description": "Adds {{canoe}} to the Element Shop."
   },
   {
@@ -76,7 +76,7 @@
     "age": 1,
     "science": 50,
     "effect": ["u=pig", "u=sheep", "u=cow"],
-    "requires": ["campfire"],
+    "requires": ["fire"],
     "description": "Adds {{pig}}, {{sheep}}, and {{cow}} to the Element Shop."
   }
 ]

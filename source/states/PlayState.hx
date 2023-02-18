@@ -8,6 +8,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
 import flixel.ui.FlxButton;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
@@ -15,6 +16,7 @@ import flixel.util.FlxTimer;
 import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
+import ui.AddedIcon;
 import ui.CurrencyDisplay;
 import ui.GameButton;
 import ui.GameText;
@@ -86,6 +88,10 @@ class PlayState extends GameState
 	public var resGenTexts:FlxTypedGroup<ResGenText>;
 
 	public var fakeIcons:FlxTypedGroup<FakeIcon>;
+	public var addedIcons:FlxTypedGroup<AddedIcon>;
+
+	public var shields:Array<FlxSprite>;
+	public var crosshairs:Array<FlxSprite>;
 
 	override public function create()
 	{
@@ -145,7 +151,43 @@ class PlayState extends GameState
 			add(icon);
 		}
 
+		shields = new Array<FlxSprite>();
+
+		crosshairs = new Array<FlxSprite>();
+
+		var shield:FlxSprite;
+
+		var crosshair:FlxSprite;
+		for (i in 0...25)
+		{
+			shield = new FlxSprite((FlxG.width / 2)
+				- GRID_MID
+				+ Std.int(i / 5) * 128
+				+ (Std.int(i / 5) * GRID_SPACING),
+				(FlxG.height / 2)
+				- GRID_MID
+				+ Std.int(i % 5) * 128
+				+ (Std.int(i % 5) * GRID_SPACING), "assets/images/shield.png");
+			shield.kill();
+			shields.push(shield);
+			add(shield);
+
+			crosshair = new FlxSprite((FlxG.width / 2)
+				- GRID_MID
+				+ Std.int(i / 5) * 128
+				+ (Std.int(i / 5) * GRID_SPACING),
+				(FlxG.height / 2)
+				- GRID_MID
+				+ Std.int(i % 5) * 128
+				+ (Std.int(i % 5) * GRID_SPACING), "assets/images/crosshair.png");
+			crosshair.kill();
+			crosshairs.push(crosshair);
+			add(crosshair);
+		}
+
 		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
+
+		add(addedIcons = new FlxTypedGroup<AddedIcon>());
 
 		add(spinButton = new GameButton((FlxG.width / 2) - 125, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 250, 50, SIZE_36, FlxColor.BLUE,
 			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
@@ -242,6 +284,8 @@ class PlayState extends GameState
 		for (i in 0...25)
 		{
 			wounds[i].kill();
+			crosshairs[i].kill();
+			shields[i].kill();
 		}
 
 		if (age == 1)
@@ -325,27 +369,6 @@ class PlayState extends GameState
 		checkingIcon++;
 	}
 
-	public function afterCheck():Void
-	{
-		checkingIcon = 0;
-		currentMode = "after-check";
-
-		for (i in willWound)
-		{
-			if (!preventedWound.contains(i))
-			{
-				if (collection[i].wounded)
-					iconsToKill.push(i);
-				else
-					collection[i].wounded = true;
-			}
-		}
-
-		toRemove = [];
-
-		currentMode = "wounding";
-	}
-
 	public function finishChecking():Void
 	{
 		var tmpCollection:Array<GridIcon> = [];
@@ -423,6 +446,8 @@ class PlayState extends GameState
 
 					trace("create: " + IconPos + " : " + collection[IconPos].name + " = " + type);
 				}
+
+				showIconAdd(screenIcons[IconPos], type, count);
 			case "replace": // replace this icon with another
 				replaceIcon(IconPos, split[1]);
 
@@ -567,7 +592,19 @@ class PlayState extends GameState
 		screenIcons[IconPos].icon = NewIcon;
 
 		collection[IconPos] = new GridIcon(NewIcon);
-		
+
+		showIconAdd(screenIcons[IconPos], NewIcon);
+	}
+
+	public function showIconAdd(Icon:IconSprite, NewIcon:String, Amount:Int = 1):Void
+	{
+		var ia:AddedIcon = addedIcons.getFirstAvailable();
+		if (ia == null)
+		{
+			ia = new AddedIcon();
+			addedIcons.add(ia);
+		}
+		ia.spawn(Icon, NewIcon, Amount);
 	}
 
 	public function checkEffect(IconPos:Int, Effect:String, DoEffect:String):Bool
@@ -691,6 +728,14 @@ class PlayState extends GameState
 		{
 			wounds[IconPos].kill();
 		}
+		if (shields[IconPos].alive)
+		{
+			shields[IconPos].kill();
+		}
+		if (crosshairs[IconPos].alive)
+		{
+			crosshairs[IconPos].kill();
+		}
 		f.spawn(screenIcons[IconPos]);
 	}
 
@@ -763,36 +808,54 @@ class PlayState extends GameState
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .05;
-					checkEffects();
-
 					if (checkingIcon >= 25)
-						afterCheck();
+					{
+						timer = 0;
+						currentMode = "wounding";
+						checkingIcon = 0;
+						trace("willWound", willWound);
+					}
+					else
+					{
+						timer = .05;
+						checkEffects();
+					}
 				}
 			case "wounding":
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .05;
-					checkWounds();
-					if (checkingIcon >= 25)
+					if (checkingIcon >= willWound.length)
 					{
 						currentMode = "deleting";
 						checkingIcon = 0;
+						timer = 0;
+						trace("deleting", iconsToDelete);
+					}
+					else
+					{
+						timer = .05;
+						checkWounds();
 					}
 				}
+
 			case "deleting":
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .05;
-					checkToDelete();
 					if (checkingIcon >= iconsToDelete.length)
 					{
 						currentMode = "killing";
 						checkingIcon = -1;
+						timer = 0;
+					}
+					else
+					{
+						timer = .05;
+						checkToDelete();
 					}
 				}
+
 			case "killing":
 				if (checkingIcon == -1)
 				{
@@ -806,13 +869,14 @@ class PlayState extends GameState
 						}
 						iconsToKill = [];
 						checkingIcon = 0;
+						trace("killing", toKill);
 					}
 					else
 					{
 						currentMode = "starving";
 						starved = 0;
 						checkingIcon = 0;
-						timer = .05;
+						timer = 0;
 					}
 				}
 				else
@@ -820,8 +884,16 @@ class PlayState extends GameState
 					timer -= elapsed;
 					if (timer <= 0)
 					{
-						timer = .05;
-						checkToKill();
+						if (checkingIcon >= toKill.length)
+						{
+							checkingIcon = -1;
+							timer = 0;
+						}
+						else
+						{
+							timer = .05;
+							checkToKill();
+						}
 					}
 				}
 
@@ -829,13 +901,16 @@ class PlayState extends GameState
 				timer -= elapsed;
 				if (timer <= 0)
 				{
-					timer = .05;
-					checkStarving();
 					if (checkingIcon >= collection.length)
 					{
 						trace(starved + " humans starved to death.");
 						checkingIcon = 0;
 						currentMode = "finished";
+					}
+					else
+					{
+						timer = .05;
+						checkStarving();
 					}
 				}
 
@@ -847,20 +922,44 @@ class PlayState extends GameState
 	public function checkToDelete():Void
 	{
 		if (!toRemove.contains(iconsToDelete[checkingIcon]))
+		{
+			while (toKill.contains(iconsToDelete[checkingIcon]))
+			{
+				toKill.remove(iconsToDelete[checkingIcon]);
+			};
+
+			trace(iconsToDelete[checkingIcon]);
+
 			toRemove.push(iconsToDelete[checkingIcon]);
+
+			if (iconsToDelete[checkingIcon] < 25)
+			{
+				death(iconsToDelete[checkingIcon]);
+			}
+		}
 		// animate!
 		checkingIcon++;
 	}
 
 	public function checkWounds():Void
 	{
-		if (collection[checkingIcon].wounded && !wounds[checkingIcon].alive)
+		if (preventedWound.contains(willWound[checkingIcon]))
 		{
-			screenIcons[checkingIcon].activate();
-			wounds[checkingIcon].revive();
+			shields[willWound[checkingIcon]].revive();
+			FlxTween.shake(shields[willWound[checkingIcon]], 0.05, 0.1, FlxAxes.X);
 		}
 		else
-			timer = 0;
+		{
+			if (collection[willWound[checkingIcon]].wounded)
+				iconsToKill.push(willWound[checkingIcon]);
+			else
+			{
+				collection[willWound[checkingIcon]].wounded = true;
+				screenIcons[willWound[checkingIcon]].activate();
+				wounds[willWound[checkingIcon]].revive();
+				FlxTween.shake(wounds[willWound[checkingIcon]], 0.05, 0.1, FlxAxes.X);
+			}
+		}
 		checkingIcon++;
 	}
 
@@ -877,6 +976,7 @@ class PlayState extends GameState
 			{
 				killIcon(checkingIcon);
 				toRemove.push(checkingIcon);
+				trace(checkingIcon);
 				starved++;
 			}
 		}
@@ -891,6 +991,7 @@ class PlayState extends GameState
 			{
 				killIcon(checkingIcon);
 				toRemove.push(checkingIcon);
+				trace(checkingIcon);
 				starved++;
 			}
 		}
@@ -903,11 +1004,12 @@ class PlayState extends GameState
 	{
 		killIcon(toKill[checkingIcon]);
 		if (!toRemove.contains(toKill[checkingIcon]))
+		{
 			toRemove.push(toKill[checkingIcon]);
+			trace(toKill[checkingIcon]);
+		}
 
 		checkingIcon++;
-		if (checkingIcon >= toKill.length)
-			checkingIcon = -1;
 	}
 
 	private function set_food(Value:Float):Float
