@@ -20,6 +20,7 @@ import ui.AddedIcon;
 import ui.CurrencyDisplay;
 import ui.GameButton;
 import ui.GameText;
+import ui.InventoryScreen;
 import ui.ResGenText;
 import ui.ShopScreen;
 import ui.TechDisplay;
@@ -71,6 +72,7 @@ class PlayState extends GameState
 
 	public var shopButton:GameButton;
 	public var upgradeButton:GameButton;
+	public var inventoryButton:GameButton;
 
 	public var technologies:Map<Int, Array<String>> = [1 => []];
 
@@ -212,6 +214,10 @@ class PlayState extends GameState
 			FlxColor.WHITE, FlxColor.BLACK));
 		upgradeButton.active = false;
 
+		add(inventoryButton = new GameButton(upgradeButton.x + 260, upgradeButton.y, "Inventory", openInventory, 250, 50, SIZE_36, FlxColor.ORANGE,
+			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
+		inventoryButton.active = false;
+
 		age = 1;
 
 		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), FlxColor.BLACK, SIZE_36));
@@ -247,7 +253,7 @@ class PlayState extends GameState
 
 		currentMode = "waiting-for-spin";
 
-		upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+		inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
 	}
 
 	public function addTech(NewTech:String):Void
@@ -258,6 +264,11 @@ class PlayState extends GameState
 		technologies.set(age, collected);
 
 		techDisp.addTech(age, NewTech);
+	}
+
+	public function openInventory():Void
+	{
+		openSubState(new InventoryScreen());
 	}
 
 	public function openShop():Void
@@ -280,7 +291,7 @@ class PlayState extends GameState
 		if (!spinButton.active || !canSpin)
 			return;
 		currentMode = "spinning";
-		upgradeButton.active = shopButton.active = spinButton.active = canSpin = false;
+		inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = false;
 		// some kind of animation!
 
 		willWound = [];
@@ -416,7 +427,7 @@ class PlayState extends GameState
 		updatePopText();
 
 		currentMode = "waiting-for-spin";
-		upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+		inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
 	}
 
 	public function parseEffect(IconPos:Int, Effect:String):Void
@@ -426,9 +437,10 @@ class PlayState extends GameState
 			timer = 0;
 	}
 
-	public function doEffect(IconPos:Int, Effect:String, ?Source:Int = -1):Void
+	public function doEffect(IconPos:Int, Effect:String, ?Source:Int = -1, ?Mult:Float = 1):Void
 	{
 		var split:Array<String> = Effect.split(":");
+
 		switch (split[0])
 		{
 			case "delete": // remove icon without it's death effect
@@ -448,11 +460,11 @@ class PlayState extends GameState
 					if (split2[1].contains("-"))
 					{
 						var minMax:Array<String> = split2[1].split("-");
-						count = FlxG.random.int(Std.parseInt(minMax[0]), Std.parseInt(minMax[1]));
+						count = FlxG.random.int(Std.int(Std.parseInt(minMax[0]) * Mult), Std.int(Std.parseInt(minMax[1]) * Mult));
 					}
 					else
 					{
-						count = Std.parseInt(split2[1]);
+						count = Std.int(Std.parseInt(split2[1]) * Mult);
 					}
 				}
 				for (i in 0...count)
@@ -470,15 +482,16 @@ class PlayState extends GameState
 				trace("replace: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
 			case "gen": // generate a resource
 				var details:Array<String> = split[1].split("$");
+				var amount:Int = Std.int(Std.parseFloat(details[0]) * Mult);
 				switch (details[1])
 				{
-					case "food": food += Std.parseFloat(details[0]);
-					case "prod": production += Std.parseFloat(details[0]);
-					case "sci": science += Std.parseFloat(details[0]);
+					case "food": food += amount;
+					case "prod": production += amount;
+					case "sci": science += amount;
 				}
-				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
+				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1] +" x" + Mult + " = " + amount  );
 				trace("food: " + food + " prod: " + production + " sci: " + science);
-				showResGen(IconPos, details[1], Std.parseInt(details[0]));
+				showResGen(IconPos, details[1], amount);
 
 			case "die": // remove this icon from the collection
 				iconsToKill.push(IconPos);
@@ -624,6 +637,90 @@ class PlayState extends GameState
 		return neighbors;
 	}
 
+	public function getNeighborsWork(IconPos:Int):Array<Int>
+	{
+		var neighbors:Array<Int> = [];
+
+		var l:Int = IconPos >= 5 ? IconPos - 5 : -1;
+		var r:Int = IconPos < 20 ? IconPos + 5 : -1;
+
+		var u:Int = IconPos % 5 != 0 ? IconPos - 1 : -1;
+		var d:Int = IconPos % 5 != 4 ? IconPos + 1 : -1;
+
+		var ul:Int = l >= 0 && u >= 0 ? l - 1 : -1;
+		var ur:Int = r >= 0 && u >= 0 ? r - 1 : -1;
+
+		var dl:Int = l >= 0 && d >= 0 ? l + 1 : -1;
+		var dr:Int = r >= 0 && d >= 0 ? r + 1 : -1;
+
+		var icon:Icon;
+
+		if (l > -1)
+		{
+			icon = Globals.IconList.get(collection[l].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(l);
+		}
+		if (r > -1)
+		{
+			icon = Globals.IconList.get(collection[r].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(r);
+		}
+
+		if (u > -1)
+		{
+			icon = Globals.IconList.get(collection[u].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(u);
+		}
+
+		if (d > -1)
+		{
+			icon = Globals.IconList.get(collection[d].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(d);
+		}
+
+		if (ul > -1)
+		{
+			icon = Globals.IconList.get(collection[ul].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(ul);
+		}
+
+		if (ur > -1)
+		{
+			icon = Globals.IconList.get(collection[ur].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(ur);
+		}
+
+		if (dl > -1)
+		{
+			icon = Globals.IconList.get(collection[dl].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(dl);
+		}
+
+		if (dr > -1)
+		{
+			icon = Globals.IconList.get(collection[dr].name);
+			trace(icon.workMultiplier);
+			if (icon.workMultiplier > 0)
+				neighbors.push(dr);
+		}
+
+		return neighbors;
+	}
+
 	public function replaceIcon(IconPos:Int, NewIcon:String):Void
 	{
 		// iconsToKill.push(IconPos);
@@ -668,10 +765,10 @@ class PlayState extends GameState
 		switch (keyWord)
 		{
 			case "work": // a human is touching this tile
-				for (n in getNeighborsOfType(IconPos, "human"))
+				for (n in getNeighborsWork(IconPos))
 				{
 					screenIcons[n].activate();
-					doEffect(IconPos, DoEffect, n);
+					doEffect(IconPos, DoEffect, n, Globals.IconList.get(collection[n].name).workMultiplier);
 				}
 				doPause = true;
 			case "pair": // a pair of tiles of this type are touching
@@ -952,7 +1049,7 @@ class PlayState extends GameState
 					{
 						trace(starved + " humans starved to death.");
 						checkingIcon = 0;
-						currentMode = "finished";
+						currentMode = "merging";
 					}
 					else
 					{
@@ -961,8 +1058,50 @@ class PlayState extends GameState
 					}
 				}
 
-			case "finished":
+			case "merging":
+				mergeIcons();
 				finishChecking();
+		}
+	}
+
+	public function mergeIcons():Void
+	{
+		// 3 humans will merge into 1 family
+		var humans:Array<Int> = [];
+		for (i in 0...collection.length)
+		{
+			if (collection[i].name == "human")
+				humans.push(i);
+		}
+		var neighbors:Array<Int> = [];
+		var h:Int;
+		while (humans.length >= 3)
+		{
+			h = humans.pop();
+			neighbors = getNeighborsOfType(h, "human");
+			if (neighbors.length >= 2)
+			{
+				screenIcons[h].activate();
+				screenIcons[h].icon = "family";
+
+				collection[h] = new GridIcon("family");
+
+				showIconAdd(screenIcons[h], "family");
+
+				screenIcons[neighbors[0]].activate();
+				screenIcons[neighbors[1]].activate();
+
+				screenIcons[neighbors[0]].icon = "blank";
+				screenIcons[neighbors[1]].icon = "blank";
+
+				humans.remove(neighbors[0]);
+				humans.remove(neighbors[1]);
+
+				toRemove.push(neighbors[0]);
+				toRemove.push(neighbors[1]);
+
+				trace("family", h, neighbors[0], neighbors[1]);
+			}
 		}
 	}
 

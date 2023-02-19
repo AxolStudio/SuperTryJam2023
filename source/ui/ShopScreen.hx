@@ -9,6 +9,7 @@ import gameObjects.IconSprite;
 import globals.Globals;
 import haxe.ui.containers.Box;
 import haxe.ui.containers.Grid;
+import haxe.ui.containers.HBox;
 import haxe.ui.containers.ScrollView;
 import states.GameState.GameSubState;
 
@@ -21,7 +22,7 @@ class ShopScreen extends GameSubState
 	public var productionAmount:GameText;
 
 	public var scrollZone:ScrollView;
-	public var scrollGrid:Grid;
+	public var scrollGrid:HBox;
 
 	override public function create():Void
 	{
@@ -57,9 +58,9 @@ class ShopScreen extends GameSubState
 		scrollZone.y = title.y + title.height + 10;
 		scrollZone.percentContentWidth = 100;
 
-		scrollGrid = new Grid();
+		scrollGrid = new HBox();
 		scrollGrid.width = scrollZone.width;
-		scrollGrid.columns = 3;
+		scrollGrid.continuous = true;
 		scrollGrid.padding = 10;
 		scrollGrid.styleString = "spacing:10px;";
 

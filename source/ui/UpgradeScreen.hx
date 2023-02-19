@@ -12,6 +12,7 @@ import globals.Globals;
 import haxe.ui.constants.ScrollMode;
 import haxe.ui.containers.Box;
 import haxe.ui.containers.Grid;
+import haxe.ui.containers.HBox;
 import haxe.ui.containers.ScrollView;
 import openfl.events.MouseEvent;
 import states.GameState.GameSubState;
@@ -25,7 +26,7 @@ class UpgradeScreen extends GameSubState
 	public var scienceAmount:GameText;
 
 	public var scrollZone:ScrollView;
-	public var scrollGrid:Grid;
+	public var scrollGrid:HBox;
 
 	override public function create():Void
 	{
@@ -64,9 +65,9 @@ class UpgradeScreen extends GameSubState
 
 		add(scrollZone);
 
-		scrollGrid = new Grid();
+		scrollGrid = new HBox();
 		scrollGrid.width = scrollZone.width;
-		scrollGrid.columns = 3;
+		scrollGrid.continuous = true;
 		scrollGrid.padding = 10;
 		scrollGrid.styleString = "spacing:10px;";
 

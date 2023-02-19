@@ -4,209 +4,247 @@
     "cost": 0,
     "effect": [],
     "death": [],
-    "description": "No effect."
+    "description": "No effect.",
+    "workmultiplier": 0
   },
   {
     "name": "human",
     "cost": 0,
     "effect": ["pair:human?gen:2$sci"],
     "death": [],
-    "description": "Pair to Generate 2 {{science}}. Adds 1 to {{population}}. Can Work."
+    "description": "Pair to Generate 2 {{science}}. Adds 1 to {{population}}. Can Work.",
+    "workmultiplier": 1
   },
   {
     "name": "child",
     "cost": 20,
-    "effect": ["timer:2?replace:human"],
+    "effect": ["timer:1?replace:human"],
     "death": [],
-    "description": "After 2 Spins, becomes a {{human}}. Can not Work."
+    "description": "After 1 Spins, becomes a {{human}}. Can not Work.",
+    "workmultiplier": 0
   },
   {
     "name": "berry bush",
     "cost": 5,
     "effect": ["work?die"],
     "death": ["gen:3$food"],
-    "description": "Dies when Worked. Generates 3 {{food}} on Death."
+    "description": "Dies when Worked. Generates 3 {{food}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "deer",
     "cost": 0,
     "effect": [],
     "death": ["create:meat*2"],
-    "description": "Creates 2 {{meat}} on Death."
+    "description": "Creates 2 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "hare",
     "cost": 0,
     "effect": [],
     "death": ["create:meat*1"],
-    "description": "Creates 1 {{meat}} on Death."
+    "description": "Creates 1 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "wolf",
     "cost": 0,
     "effect": ["touch:human?wound", "touch:child/deer/hare/meat/pig/sheep?delete"],
     "death": ["create:meat*2"],
-    "description": "Wounds Touching {{human}}. Removes Touching {{child}} {{deer}} {{hare}} {{meat}} {{pig}} {{sheep}}. Creates 2 {{meat}} on Death."
+    "description": "Wounds Touching {{human}}. Removes Touching {{child}} {{deer}} {{hare}} {{meat}} {{pig}} {{sheep}}. Creates 2 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "boar",
     "cost": 0,
     "effect": ["touch:human?wound"],
     "death": ["create:meat*2"],
-    "description": "Wounds Touching {{human}}. Creates 2 {{meat}} on Death."
+    "description": "Wounds Touching {{human}}. Creates 2 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "bear",
     "cost": 0,
     "effect": ["touch:human?wound", "touch:child/deer/hare/meat?delete"],
     "death": ["create:meat*3"],
-    "description": "Wounds Touching {{human}}. Removes Touching {{child}} {{deer}} {{hare}} {{meat}}. Creates 3 {{meat}} on Death."
+    "description": "Wounds Touching {{human}}. Removes Touching {{child}} {{deer}} {{hare}} {{meat}}. Creates 3 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "mammoth",
     "cost": 0,
     "effect": ["touch:human?wound"],
     "death": ["create:meat*4"],
-    "description": "Wounds Touching {{human}}. Creates 4 {{meat}} on Death."
+    "description": "Wounds Touching {{human}}. Creates 4 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "rock",
     "cost": 0,
     "effect": [],
-    "death": ["gen:2$prod", "create:coal*1-2"],
-    "description": "Generates 2 {{production}} and Creates 1-2 {{coal}} on Death."
+    "death": ["gen:8$prod"],
+    "description": "Generates 8 {{production}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "tree",
     "cost": 0,
     "effect": ["work?gen:2$food", "work?gen:1$prod"],
     "death": ["gen:4$food", "gen:4$prod", "create:log*1-3", "create:sapling*1-2"],
-    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 4 {{food}}, 4 {{production}} and Creates 1-3 {{log}} and 1-2 {{sapling}} on Death."
+    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 4 {{food}}, 4 {{production}} and Creates 1-3 {{log}} and 1-2 {{sapling}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "sapling",
     "cost": 0,
     "effect": ["timer:3?replace:tree"],
     "death": [],
-    "description": "After 3 Spins, becomes a {{tree}}."
+    "description": "After 3 Spins, becomes a {{tree}}.",
+    "workmultiplier": 0
   },
   {
     "name": "wood",
     "cost": 0,
     "effect": [],
-    "death": ["gen:2$prod"],
-    "description": "Generates 2 {{production}} on Death."
+    "death": ["gen:8$prod"],
+    "description": "Generates 8 {{production}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "coal",
     "cost": 0,
     "effect": ["touch:torch/campfire?die"],
     "death": ["gen:10$prod"],
-    "description": "Dies when Touching {{torch}} {{campfire}}. Generates 10 {{production}} on Death."
+    "description": "Dies when Touching {{torch}} {{campfire}}. Generates 10 {{production}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "torch",
     "cost": 5,
     "effect": ["work?protect:human/child"],
     "death": [],
-    "description": "Protects {{human}} {{child}} when Worked."
+    "description": "Protects {{human}} {{child}} when Worked.",
+    "workmultiplier": 0
   },
   {
     "name": "campfire",
     "cost": 15,
     "effect": ["work?gen:5$sci", "work?change:meat$meal"],
     "death": [],
-    "description": "Generates 5 {{science}} when Worked. Replaces Touching {{meat}} to {{meal}} when Worked."
+    "description": "Generates 5 {{science}} when Worked. Replaces Touching {{meat}} to {{meal}} when Worked.",
+    "workmultiplier": 0
   },
   {
     "name": "meat",
     "cost": 0,
     "effect": ["work?die"],
     "death": ["gen:5$food"],
-    "description": "Dies when Worked. Generates 5 {{food}} on Death."
+    "description": "Dies when Worked. Generates 5 {{food}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "boulder",
     "cost": 0,
     "effect": ["work?gen:2$prod"],
     "death": ["gen:4$prod", "create:rock*1-3"],
-    "description": "Generates 2 {{production}} when Worked. Generates 4 {{production}} and Creates 1-3 {{rock}} on Death."
+    "description": "Generates 2 {{production}} when Worked. Generates 4 {{production}} and Creates 1-3 {{rock}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "axe",
     "cost": 10,
     "effect": ["work?kill:tree/log"],
     "death": [],
-    "description": "Kills Touching {{tree}} {{log}} when Worked."
+    "description": "Kills Touching {{tree}} {{log}} when Worked.",
+    "workmultiplier": 0
   },
   {
     "name": "log",
     "cost": 0,
-    "effect": ["work?gen:1$prod"],
-    "death": ["gen:2$prod", "create:wood*1-3"],
-    "description": "Generates 1 {{production}} when Worked. Generates 2 {{production}} and Creates 1-3 {{wood}} on Death."
+    "effect": ["work?gen:2$prod"],
+    "death": ["gen:4$prod", "create:wood*1-3"],
+    "description": "Generates 2 {{production}} when Worked. Generates 4 {{production}} and Creates 1-3 {{wood}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "pickaxe",
     "cost": 10,
     "effect": ["work?kill:rock/boulder"],
     "death": [],
-    "description": "Kills Touching {{rock}} {{boulder}} when Worked."
+    "description": "Kills Touching {{rock}} {{boulder}} when Worked.",
+    "workmultiplier": 0
   },
   {
     "name": "sling",
     "cost": 15,
     "effect": ["work?snipe:hare/deer/wolf/bear/mammoth/boar"],
     "death": [],
-    "description": "Kills Random {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{boar}} when Worked."
+    "description": "Kills Random {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{boar}} when Worked.",
+    "workmultiplier": 0
   },
   {
     "name": "spear",
     "cost": 10,
     "effect": ["work?kill:hare/deer/wolf/bear/mammoth/boar/pig/cow/sheep"],
     "death": [],
-    "description": "Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{boar}} {{pig}} {{cow}} {{sheep}} when Worked."
+    "description": "Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{boar}} {{pig}} {{cow}} {{sheep}} when Worked.",
+    "workmultiplier": 0
   },
   {
     "name": "canoe",
     "cost": 10,
     "effect": ["touch:blank?gen:5$sci", "work?kill:fish"],
     "death": [],
-    "description": "Generates 5 {{science}} when Touching {{blank}}. Kills Touching {{fish}} when Worked."
+    "description": "Generates 5 {{science}} when Touching {{blank}}. Kills Touching {{fish}} when Worked.",
+    "workmultiplier": 0
   },
   {
     "name": "meal",
     "cost": 0,
     "effect": ["work?die"],
     "death": ["gen:15$food"],
-    "description": "Dies when Worked. Generates 15 {{food}} on Death."
+    "description": "Dies when Worked. Generates 15 {{food}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "fish",
     "cost": 0,
     "effect": [],
     "death": ["create:meat*3"],
-    "description": "Creates 3 {{meat}} on Death."
+    "description": "Creates 3 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "pig",
     "cost": 5,
     "effect": [],
     "death": ["create:meat*3"],
-    "description": "Creates 3 {{meat}} on Death."
+    "description": "Creates 3 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "sheep",
     "cost": 5,
     "effect": ["work?gen:5$prod"],
     "death": ["create:meat*2"],
-    "description": "Generates 5 {{production}} when Worked. Creates 2 {{meat}} on Death."
+    "description": "Generates 5 {{production}} when Worked. Creates 2 {{meat}} on Death.",
+    "workmultiplier": 0
   },
   {
     "name": "cow",
     "cost": 10,
     "effect": ["work?gen:2$food"],
     "death": ["create:meat*5"],
-    "description": "Generates 2 {{food}} when Worked. Creates 5 {{meat}} on Death."
+    "description": "Generates 2 {{food}} when Worked. Creates 5 {{meat}} on Death.",
+    "workmultiplier": 0
+  },
+  {
+    "name": "family",
+    "cost": 0,
+    "effect": [],
+    "death": [],
+    "description": "3 {{human}} merge to form a {{family}}. Works touching Elements. Worked Elements give x1.5. Cost 5 {{food}} when spun.",
+    "workmultiplier": 1.5
   }
 ]
