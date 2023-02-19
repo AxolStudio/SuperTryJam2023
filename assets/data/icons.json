@@ -107,7 +107,7 @@
   {
     "name": "torch",
     "cost": 5,
-    "effect": ["work:protect:human/child"],
+    "effect": ["work?protect:human/child"],
     "death": [],
     "description": "Protects {{human}} {{child}} when Worked."
   },

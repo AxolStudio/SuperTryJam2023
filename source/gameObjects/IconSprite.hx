@@ -14,23 +14,39 @@ class IconSprite extends FlxSprite
 
 	public var icon(get, set):String;
 
-	public function new(X:Float, Y:Float):Void
+	public function new(X:Float, Y:Float, ?Size:IconSize = SIZE_128):Void
 	{
 		super(X, Y);
 
-		frames = GraphicsCache.loadGraphicFromAtlas("assets/images/icons.png", "assets/images/icons.xml", false, "icons").atlasFrames;
+		var source:String = switch (Size)
+		{
+			case SIZE_128:
+				"icons";
+			case SIZE_36:
+				"glyphs-36";
+			case SIZE_22:
+				"glyphs-22";
+		}
 
-		animation.frameName = "blank";
+		frames = GraphicsCache.loadGraphicFromAtlas('assets/images/${source}.png', 'assets/images/${source}.xml', false, 'icons-$source').atlasFrames;
+		
+		trace(frames);
+		
+		if (Size == SIZE_128)
+			animation.frameName = "blank";
 	}
 
 	private function set_icon(Value:String):String
 	{
+		trace(Value);
 		animation.frameName = Value;
+		trace(animation.frameName);
 		return Value;
 	}
 
 	private function get_icon():String
 	{
+		trace(animation.frameName);
 		return animation.frameName;
 	}
 
@@ -74,4 +90,11 @@ class FakeIcon extends IconSprite
 		if (y > FlxG.height)
 			kill();
 	}
+}
+
+enum IconSize
+{
+	SIZE_128;
+	SIZE_36;
+	SIZE_22;
 }
