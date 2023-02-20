@@ -17,7 +17,7 @@
   },
   {
     "name": "child",
-    "cost": 20,
+    "cost": 5,
     "effect": ["timer:1?replace:human"],
     "death": [],
     "description": "After 1 Spins, becomes a {{human}}. Can not Work.",
@@ -50,7 +50,7 @@
   {
     "name": "wolf",
     "cost": 0,
-    "effect": ["touch:human?wound", "touch:child/deer/hare/meat/pig/sheep?delete"],
+    "effect": ["touch:human/family?wound", "touch:child/deer/hare/meat/pig/sheep?delete"],
     "death": ["create:meat*2"],
     "description": "Wounds Touching {{human}}. Removes Touching {{child}} {{deer}} {{hare}} {{meat}} {{pig}} {{sheep}}. Creates 2 {{meat}} on Death.",
     "workmultiplier": 0
@@ -58,7 +58,7 @@
   {
     "name": "boar",
     "cost": 0,
-    "effect": ["touch:human?wound"],
+    "effect": ["touch:human/family?wound"],
     "death": ["create:meat*2"],
     "description": "Wounds Touching {{human}}. Creates 2 {{meat}} on Death.",
     "workmultiplier": 0
@@ -66,7 +66,7 @@
   {
     "name": "bear",
     "cost": 0,
-    "effect": ["touch:human?wound", "touch:child/deer/hare/meat?delete"],
+    "effect": ["touch:human/family?wound", "touch:child/deer/hare/meat?delete"],
     "death": ["create:meat*3"],
     "description": "Wounds Touching {{human}}. Removes Touching {{child}} {{deer}} {{hare}} {{meat}}. Creates 3 {{meat}} on Death.",
     "workmultiplier": 0
@@ -74,7 +74,7 @@
   {
     "name": "mammoth",
     "cost": 0,
-    "effect": ["touch:human?wound"],
+    "effect": ["touch:human/family?wound"],
     "death": ["create:meat*4"],
     "description": "Wounds Touching {{human}}. Creates 4 {{meat}} on Death.",
     "workmultiplier": 0
@@ -178,17 +178,17 @@
   {
     "name": "sling",
     "cost": 15,
-    "effect": ["work?snipe:hare/deer/wolf/bear/mammoth/boar"],
+    "effect": ["work?snipe:hare/deer/wolf/boar/bear/mammoth"],
     "death": [],
-    "description": "Kills Random {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{boar}} when Worked.",
+    "description": "Kills Random {{hare}} {{deer}} {{wolf}} {{boar}} {{bear}} {{mammoth}} when Worked.",
     "workmultiplier": 0
   },
   {
     "name": "spear",
     "cost": 10,
-    "effect": ["work?kill:hare/deer/wolf/bear/mammoth/boar/pig/cow/sheep"],
+    "effect": ["work?kill:hare/deer/wolf/boar/bear/mammoth"],
     "death": [],
-    "description": "Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{boar}} {{pig}} {{cow}} {{sheep}} when Worked.",
+    "description": "Kills Touching {{hare}} {{deer}} {{wolf}} {{boar}} {{bear}} {{mammoth}} when Worked.",
     "workmultiplier": 0
   },
   {
@@ -233,7 +233,7 @@
   },
   {
     "name": "cow",
-    "cost": 10,
+    "cost": 15,
     "effect": ["work?gen:2$food"],
     "death": ["create:meat*5"],
     "description": "Generates 2 {{food}} when Worked. Creates 5 {{meat}} on Death.",
@@ -242,9 +242,37 @@
   {
     "name": "family",
     "cost": 0,
-    "effect": [],
+    "effect": ["spin?gen:3$sci"],
     "death": [],
-    "description": "3 {{human}} merge to form a {{family}}. Works touching Elements. Worked Elements give x1.5. Cost 5 {{food}} when spun.",
+    "description": "3 {{human}} Elements Merge to form a {{family}}. Works touching Elements. Worked Elements give x1.5. Generates 3 {{science}} and costs 5 {{food}} when spun.",
     "workmultiplier": 1.5
+  },
+  {
+    "name": "hut",
+    "cost": 0,
+    "effect": [
+      "spin?gen:12$sci",
+      "touch:hare/deer/wolf/bear/mammoth?kill:hare/deer/wolf/boar/bear/mammoth",
+      "touch:rock/boulder?kill:rock/boulder",
+      "touch:meat?change:meat$meal",
+      "touch::tree/log?kill:tree/log"
+    ],
+    "death": [],
+    "description": "5 {{family}} Elements merge to form a {{hut}}. Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{rock}} {{boulder}} {{meat}} {{tree}} {{log}}. Works touching Elements. Worked and Killed Elements give x2. Generates 12 {{science}} and costs 20 {{food}} when spun.",
+    "workmultiplier": 2
+  },
+  {
+    "name": "tribe",
+    "cost": 0,
+    "effect": [
+      "spin?gen:70$sci",
+      "touch:hare/deer/wolf/bear/mammoth?kill:hare/deer/wolf/boar/bear/mammoth",
+      "touch:rock/boulder?kill:rock/boulder",
+      "touch:meat?change:meat$meal",
+      "touch::tree/log?kill:tree/log"
+    ],
+    "death": [],
+    "description": "5 {{hut}} Elements merge to form a {{tribe}}. Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{rock}} {{boulder}} {{meat}} {{tree}} {{log}}. Works touching Elements. Worked and Killed Elements give x3. Generates 70 {{science}} and costs 125 {{food}} when spun.",
+    "workmultiplier": 3
   }
 ]

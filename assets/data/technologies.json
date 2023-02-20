@@ -42,7 +42,7 @@
   {
     "name": "weaponry",
     "age": 1,
-    "science": 20,
+    "science": 5,
     "effect": ["u=spear"],
     "requires": [],
     "description": "Adds {{spear}} to the Element Shop."
@@ -76,7 +76,15 @@
     "age": 1,
     "science": 50,
     "effect": ["u=pig", "u=sheep", "u=cow"],
-    "requires": ["fire"],
+    "requires": ["horticulture", "fire"],
     "description": "Adds {{pig}}, {{sheep}}, and {{cow}} to the Element Shop."
+  },
+  {
+    "name": "construction",
+    "age": 1,
+    "science": 50,
+    "effect": ["e=construction"],
+    "requires": ["logging", "mining", "fire", "weaponry"],
+    "description": "Allows 5 {{family}} Element to merge into 1 {{hut}} and 5 {{hut}} Elements to merge into 1 {{tribe}} Element."
   }
 ]

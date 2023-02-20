@@ -489,7 +489,7 @@ class PlayState extends GameState
 					case "prod": production += amount;
 					case "sci": science += amount;
 				}
-				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1] +" x" + Mult + " = " + amount  );
+				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1] + " x" + Mult + " = " + amount);
 				trace("food: " + food + " prod: " + production + " sci: " + science);
 				showResGen(IconPos, details[1], amount);
 
@@ -764,11 +764,13 @@ class PlayState extends GameState
 
 		switch (keyWord)
 		{
+			case "spin": // just do the effect!
+				doEffect(IconPos, DoEffect, null, Math.max(1, Globals.IconList.get(collection[IconPos].name).workMultiplier));
 			case "work": // a human is touching this tile
 				for (n in getNeighborsWork(IconPos))
 				{
 					screenIcons[n].activate();
-					doEffect(IconPos, DoEffect, n, Globals.IconList.get(collection[n].name).workMultiplier);
+					doEffect(IconPos, DoEffect, n, Math.max(1, Globals.IconList.get(collection[n].name).workMultiplier));
 				}
 				doPause = true;
 			case "pair": // a pair of tiles of this type are touching
@@ -829,7 +831,7 @@ class PlayState extends GameState
 					for (n in getNeighborsOfType(IconPos, t))
 					{
 						screenIcons[IconPos].activate();
-						doEffect(IconPos, DoEffect, n);
+						doEffect(IconPos, DoEffect, n, Math.max(1, Globals.IconList.get(collection[IconPos].name).workMultiplier));
 					}
 				}
 				doPause = true;
@@ -1153,25 +1155,52 @@ class PlayState extends GameState
 
 	public function checkStarving():Void
 	{
-		// if (collection[checkingIcon].name == "child" && !toRemove.contains(checkingIcon))
-		// {
-		// 	// feed this human or kill it!
-		// 	if (food > 0)
-		// 	{
-		// 		food--;
-		// 	}
-		// 	else
-		// 	{
-		// 		killIcon(checkingIcon);
-		// 		toRemove.push(checkingIcon);
-		// 		trace(checkingIcon);
-		// 		starved++;
-		// 	}
-		// }
-		// else
-
-		// eventually different kinds of population will have different food requirements
-		if (collection[checkingIcon].name == "human" && !toRemove.contains(checkingIcon))
+		if (collection[checkingIcon].name == "tribe" && !toRemove.contains(checkingIcon))
+		{
+			// feed this human or kill it!
+			if (food >= 120)
+			{
+				food -= 120;
+			}
+			else
+			{
+				killIcon(checkingIcon);
+				toRemove.push(checkingIcon);
+				trace(checkingIcon);
+				starved++;
+			}
+		}
+		else if (collection[checkingIcon].name == "hut" && !toRemove.contains(checkingIcon))
+		{
+			// feed this human or kill it!
+			if (food >= 20)
+			{
+				food -= 20;
+			}
+			else
+			{
+				killIcon(checkingIcon);
+				toRemove.push(checkingIcon);
+				trace(checkingIcon);
+				starved++;
+			}
+		}
+		else if (collection[checkingIcon].name == "family" && !toRemove.contains(checkingIcon))
+		{
+			// feed this human or kill it!
+			if (food >= 5)
+			{
+				food -= 5;
+			}
+			else
+			{
+				killIcon(checkingIcon);
+				toRemove.push(checkingIcon);
+				trace(checkingIcon);
+				starved++;
+			}
+		}
+		else if (collection[checkingIcon].name == "human" && !toRemove.contains(checkingIcon))
 		{
 			// feed this human or kill it!
 			if (food > 0)
