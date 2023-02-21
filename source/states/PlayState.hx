@@ -97,6 +97,8 @@ class PlayState extends GameState
 	public var crosshairs:Array<FlxSprite>;
 	public var timerDisplays:Array<TimerDisplay>;
 
+	public var constructionEnabled:Bool = false;
+
 	override public function create()
 	{
 		initializeGame();
@@ -283,7 +285,13 @@ class PlayState extends GameState
 
 	public function updatePopText()
 	{
-		txtPopulation.text = "{{population}} " + Std.string(getIconsOfType(-1, "human").length);
+		var pop:Int = getIconsOfType(-1, "human", true).length;
+		pop += getIconsOfType(-1, "child", true).length;
+		pop += getIconsOfType(-1, "family", true).length * 3;
+		pop += getIconsOfType(-1, "hut", true).length * 3 * 5;
+		pop += getIconsOfType(-1, "tribe", true).length * 3 * 5 * 5;
+
+		txtPopulation.text = "{{population}} " + Std.string(pop);
 	}
 
 	public function spin():Void
@@ -555,7 +563,7 @@ class PlayState extends GameState
 		}
 	}
 
-	public function removeFood(IconPos:Int, Amount:Int):Void
+	public function removeResource(IconPos:Int, Type:String, Amount:Int):Void
 	{
 		var rg:ResGenText = resGenTexts.getFirstAvailable();
 		if (rg == null)
@@ -563,7 +571,14 @@ class PlayState extends GameState
 			rg = new ResGenText();
 			resGenTexts.add(rg);
 		}
-		rg.reverseSpawn(screenIcons[IconPos], "food", Amount);
+		rg.reverseSpawn(screenIcons[IconPos], switch (Type)
+		{
+			case "food": "food";
+			case "prod": "production";
+			case "sci": "science";
+			case "population": "population";
+			default: null;
+		}, Amount);
 	}
 
 	public function showResGen(IconPos:Int, Type:String, Amount:Int):Void
@@ -579,14 +594,15 @@ class PlayState extends GameState
 			case "food": "food";
 			case "prod": "production";
 			case "sci": "science";
+			case "population": "population";
 			default: null;
 		}, Amount);
 	}
 
-	public function getIconsOfType(IconPos:Int, Type:String):Array<Int>
+	public function getIconsOfType(IconPos:Int, Type:String, ?FullCollection:Bool = false):Array<Int>
 	{
 		var icons:Array<Int> = [];
-		for (i in 0...25)
+		for (i in 0...(FullCollection ? collection.length : 25))
 		{
 			if (collection[i].name == Type && i != IconPos)
 				icons.push(i);
@@ -601,8 +617,8 @@ class PlayState extends GameState
 		var l:Int = IconPos >= 5 ? IconPos - 5 : -1;
 		var r:Int = IconPos < 20 ? IconPos + 5 : -1;
 
-		var u:Int = IconPos % 5 != 0 ? IconPos - 1 : -1;
-		var d:Int = IconPos % 5 != 4 ? IconPos + 1 : -1;
+		var u:Int = IconPos % 5 > 0 ? IconPos - 1 : -1;
+		var d:Int = IconPos % 5 < 4 ? IconPos + 1 : -1;
 
 		var ul:Int = l >= 0 && u >= 0 ? l - 1 : -1;
 		var ur:Int = r >= 0 && u >= 0 ? r - 1 : -1;
@@ -658,14 +674,14 @@ class PlayState extends GameState
 		if (l > -1)
 		{
 			icon = Globals.IconList.get(collection[l].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(l);
 		}
 		if (r > -1)
 		{
 			icon = Globals.IconList.get(collection[r].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(r);
 		}
@@ -673,7 +689,7 @@ class PlayState extends GameState
 		if (u > -1)
 		{
 			icon = Globals.IconList.get(collection[u].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(u);
 		}
@@ -681,7 +697,7 @@ class PlayState extends GameState
 		if (d > -1)
 		{
 			icon = Globals.IconList.get(collection[d].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(d);
 		}
@@ -689,7 +705,7 @@ class PlayState extends GameState
 		if (ul > -1)
 		{
 			icon = Globals.IconList.get(collection[ul].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(ul);
 		}
@@ -697,7 +713,7 @@ class PlayState extends GameState
 		if (ur > -1)
 		{
 			icon = Globals.IconList.get(collection[ur].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(ur);
 		}
@@ -705,7 +721,7 @@ class PlayState extends GameState
 		if (dl > -1)
 		{
 			icon = Globals.IconList.get(collection[dl].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(dl);
 		}
@@ -713,7 +729,7 @@ class PlayState extends GameState
 		if (dr > -1)
 		{
 			icon = Globals.IconList.get(collection[dr].name);
-			trace(icon.workMultiplier);
+
 			if (icon.workMultiplier > 0)
 				neighbors.push(dr);
 		}
@@ -860,6 +876,9 @@ class PlayState extends GameState
 
 	public function death(IconPos:Int):Void
 	{
+		var icon:Icon = Globals.IconList.get(collection[IconPos].name);
+		if (icon.population > 0)
+			removeResource(IconPos, "population", icon.population);
 		var f:FakeIcon = fakeIcons.getFirstAvailable();
 		if (f == null)
 		{
@@ -1069,26 +1088,36 @@ class PlayState extends GameState
 	public function mergeIcons():Void
 	{
 		// 3 humans will merge into 1 family
-		var humans:Array<Int> = [];
-		for (i in 0...collection.length)
+		checkForMergableIcons("human", "family", 3);
+	}
+
+	public function newFunc():Void
+	{
+		trace("text");
+	}
+
+	public function checkForMergableIcons(WhichIcons:String, MergeInto:String, AmountNeeded:Int):Void
+	{
+		var mergables:Array<Int> = [];
+		for (i in 0...25)
 		{
-			if (collection[i].name == "human")
-				humans.push(i);
+			if (collection[i].name == WhichIcons)
+				mergables.push(i);
 		}
 		var neighbors:Array<Int> = [];
-		var h:Int;
-		while (humans.length >= 3)
+		var m:Int;
+		while (mergables.length >= 3)
 		{
-			h = humans.pop();
-			neighbors = getNeighborsOfType(h, "human");
-			if (neighbors.length >= 2)
+			m = mergables.pop();
+			neighbors = getNeighborsOfType(m, WhichIcons);
+			if (neighbors.length >= AmountNeeded - 1)
 			{
-				screenIcons[h].activate();
-				screenIcons[h].icon = "family";
+				screenIcons[m].activate();
+				screenIcons[m].icon = MergeInto;
 
-				collection[h] = new GridIcon("family");
+				collection[m] = new GridIcon(MergeInto);
 
-				showIconAdd(screenIcons[h], "family");
+				showIconAdd(screenIcons[m], MergeInto);
 
 				screenIcons[neighbors[0]].activate();
 				screenIcons[neighbors[1]].activate();
@@ -1096,13 +1125,38 @@ class PlayState extends GameState
 				screenIcons[neighbors[0]].icon = "blank";
 				screenIcons[neighbors[1]].icon = "blank";
 
-				humans.remove(neighbors[0]);
-				humans.remove(neighbors[1]);
+				mergables.remove(neighbors[0]);
+				mergables.remove(neighbors[1]);
 
 				toRemove.push(neighbors[0]);
 				toRemove.push(neighbors[1]);
 
-				trace("family", h, neighbors[0], neighbors[1]);
+				if (wounds[m].alive)
+				{
+					wounds[m].kill();
+				}
+				if (shields[m].alive)
+				{
+					shields[m].kill();
+				}
+				if (wounds[neighbors[0]].alive)
+				{
+					wounds[neighbors[0]].kill();
+				}
+				if (shields[neighbors[0]].alive)
+				{
+					shields[neighbors[0]].kill();
+				}
+				if (wounds[neighbors[1]].alive)
+				{
+					wounds[neighbors[1]].kill();
+				}
+				if (shields[neighbors[1]].alive)
+				{
+					shields[neighbors[1]].kill();
+				}
+
+				trace(MergeInto, m, neighbors[0], neighbors[1]);
 			}
 		}
 	}
@@ -1155,65 +1209,20 @@ class PlayState extends GameState
 
 	public function checkStarving():Void
 	{
-		if (collection[checkingIcon].name == "tribe" && !toRemove.contains(checkingIcon))
+		var icon:Icon = Globals.IconList.get(collection[checkingIcon].name);
+		if (icon.food > 0)
 		{
-			// feed this human or kill it!
-			if (food >= 120)
+			if (food >= icon.food)
 			{
-				food -= 120;
-			}
-			else
-			{
-				killIcon(checkingIcon);
-				toRemove.push(checkingIcon);
-				trace(checkingIcon);
-				starved++;
-			}
-		}
-		else if (collection[checkingIcon].name == "hut" && !toRemove.contains(checkingIcon))
-		{
-			// feed this human or kill it!
-			if (food >= 20)
-			{
-				food -= 20;
-			}
-			else
-			{
-				killIcon(checkingIcon);
-				toRemove.push(checkingIcon);
-				trace(checkingIcon);
-				starved++;
-			}
-		}
-		else if (collection[checkingIcon].name == "family" && !toRemove.contains(checkingIcon))
-		{
-			// feed this human or kill it!
-			if (food >= 5)
-			{
-				food -= 5;
-			}
-			else
-			{
-				killIcon(checkingIcon);
-				toRemove.push(checkingIcon);
-				trace(checkingIcon);
-				starved++;
-			}
-		}
-		else if (collection[checkingIcon].name == "human" && !toRemove.contains(checkingIcon))
-		{
-			// feed this human or kill it!
-			if (food > 0)
-			{
-				food--; // show food being taken away!
+				food -= icon.food;
 				screenIcons[checkingIcon].activate();
-				removeFood(checkingIcon, 1);
+				removeResource(checkingIcon, "food", icon.food);
 			}
 			else
 			{
 				killIcon(checkingIcon);
 				toRemove.push(checkingIcon);
-				trace(checkingIcon);
+				// trace(checkingIcon);
 				starved++;
 			}
 		}

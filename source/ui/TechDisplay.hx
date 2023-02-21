@@ -5,7 +5,7 @@ import flixel.util.FlxColor;
 import gameObjects.IconSprite;
 import globals.Globals;
 import haxe.ui.containers.Box;
-import haxe.ui.containers.Grid;
+import haxe.ui.containers.HBox;
 import haxe.ui.containers.ScrollView;
 import haxe.ui.containers.VBox;
 
@@ -15,7 +15,7 @@ class TechDisplay extends ScrollView
 
 	public var icons:Map<Int, IconSprite> = [];
 	public var boxes:Map<Int, Box> = [];
-	public var grids:Map<Int, Grid> = [];
+	public var grids:Map<Int, HBox> = [];
 
 	public function new(Width:Float, Height:Float):Void
 	{
@@ -33,7 +33,7 @@ class TechDisplay extends ScrollView
 
 		var txt:GameText;
 		var box:Box;
-		var grid:Grid;
+		var grid:HBox;
 
 		for (a in 1...(Globals.PlayState.age + 1))
 		{
@@ -49,11 +49,12 @@ class TechDisplay extends ScrollView
 
 			vbox.addComponent(box);
 
-			grid = new Grid();
+			grid = new HBox();
 
 			grid.width = vbox.width;
 			grid.padding = 10;
 			grid.styleString = "spacing:10px;";
+			grid.continuous = true;
 			grids.set(a, grid);
 
 			vbox.addComponent(grid);
@@ -78,11 +79,11 @@ class TechDisplay extends ScrollView
 
 	public function addTech(Age:Int, NewTech:String):Void
 	{
-		var icon:IconSprite = new IconSprite(0, 0);
+		var icon:IconSprite = new IconSprite(0, 0, SIZE_64);
 		icon.icon = NewTech;
 		icon.color = FlxColor.BLACK;
 
-		var grid:Grid = grids.get(Age);
+		var grid:HBox = grids.get(Age);
 		var box:Box = new Box();
 
 		box.width = icon.width;

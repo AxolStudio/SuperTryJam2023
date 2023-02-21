@@ -85,6 +85,8 @@ class ResGenText extends GameText
 				return Globals.PlayState.txtProduction;
 			case science:
 				return Globals.PlayState.txtScience;
+			case population:
+				return Globals.PlayState.txtPopulation;
 		}
 		return null;
 	}
@@ -95,4 +97,5 @@ enum abstract ResourceType(String) from String to String
 	var food;
 	var production;
 	var science;
+	var population;
 }

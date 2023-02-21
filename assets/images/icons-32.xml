@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="icons-32.png">
+	<!--
+	Created with ShoeBox
+	http://renderhjs.net/shoebox/
+	-->
+	<SubTexture name="archery"	x="99"	y="66"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="axe"	x="165"	y="97"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="bear"	x="165"	y="163"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="berry bush"	x="165"	y="130"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="blank"	x="196"	y="196"	width="30"	height="30" frameX="-1" frameY="-1" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="boar"	x="165"	y="66"	width="32"	height="30" frameX="-0" frameY="-1" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="boulder"	x="165"	y="0"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="campfire"	x="165"	y="196"	width="30"	height="32" frameX="-1" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="canoe"	x="99"	y="198"	width="32"	height="30" frameX="-0" frameY="-1" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="child"	x="132"	y="99"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="coal"	x="165"	y="33"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="construction"	x="132"	y="33"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="cow"	x="132"	y="198"	width="32"	height="22" frameX="-0" frameY="-5" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="deer"	x="198"	y="66"	width="26"	height="32" frameX="-3" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="exploration"	x="132"	y="165"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="family"	x="132"	y="132"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="fire"	x="99"	y="99"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="fish"	x="132"	y="66"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="fishing"	x="33"	y="194"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="food"	x="132"	y="0"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="hare"	x="99"	y="165"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="horticulture"	x="99"	y="132"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="human"	x="198"	y="99"	width="16"	height="32" frameX="-8" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="husbandry"	x="33"	y="99"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="hut"	x="99"	y="33"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="log"	x="99"	y="0"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="logging"	x="66"	y="180"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="mammoth"	x="66"	y="149"	width="32"	height="30" frameX="-0" frameY="-1" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="meal"	x="66"	y="116"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="meat"	x="66"	y="89"	width="32"	height="26" frameX="-0" frameY="-3" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="mining"	x="66"	y="56"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="pickaxe"	x="66"	y="23"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="pig"	x="66"	y="0"	width="32"	height="22" frameX="-0" frameY="-5" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="population"	x="198"	y="0"	width="28"	height="32" frameX="-2" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="production"	x="33"	y="161"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="rock"	x="33"	y="132"	width="32"	height="28" frameX="-0" frameY="-2" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="sapling"	x="198"	y="33"	width="28"	height="32" frameX="-2" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="science"	x="33"	y="66"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="sheep"	x="0"	y="198"	width="32"	height="26" frameX="-0" frameY="-3" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="spear"	x="33"	y="33"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="torch"	x="33"	y="0"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="torches"	x="0"	y="165"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="tree"	x="0"	y="132"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="tribe"	x="0"	y="99"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="weaponry"	x="0"	y="66"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="wolf"	x="0"	y="33"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+	<SubTexture name="wood"	x="0"	y="0"	width="32"	height="32" frameX="-0" frameY="-0" frameWidth="32" frameHeight="32"/>
+</TextureAtlas>

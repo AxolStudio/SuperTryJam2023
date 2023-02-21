@@ -3,7 +3,8 @@
 [X] show sniped icons
 [X] show protected icons
 [X] Add inventory screen
-[ ] add village tech? how should it work?
+[X] add village tech? how should it work?
+[X] fix population display
 [ ] show age progress
-[ ] show smaller tech icons
+[ ] add more icon sizes
 [ ] Add log to spins

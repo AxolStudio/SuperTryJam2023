@@ -63,6 +63,8 @@ class Technology
 						case "fish":
 							Globals.WILD_ANIMALS.push("fish");
 							Globals.WILD_ANIMAL_WEIGHTS.push(10);
+						case "construction":
+							Globals.PlayState.constructionEnabled = true;
 					}
 			}
 		}

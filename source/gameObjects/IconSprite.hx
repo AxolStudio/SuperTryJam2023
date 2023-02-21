@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
+import flixel.util.FlxColor;
 import globals.Globals.GlyphType;
 import ui.Tooltips;
 
@@ -21,32 +22,37 @@ class IconSprite extends FlxSprite
 		var source:String = switch (Size)
 		{
 			case SIZE_128:
-				"icons";
-			case SIZE_36:
-				"glyphs-36";
-			case SIZE_22:
-				"glyphs-22";
+				"icons-128";
+			case SIZE_72:
+				"icons-72";
+			case SIZE_64:
+				"icons-64";
+			case SIZE_32:
+				"icons-32";
 		}
 
 		frames = GraphicsCache.loadGraphicFromAtlas('assets/images/${source}.png', 'assets/images/${source}.xml', false, 'icons-$source').atlasFrames;
-		
-		trace(frames);
-		
+
+		color = FlxColor.BLACK;
+
 		if (Size == SIZE_128)
 			animation.frameName = "blank";
 	}
 
 	private function set_icon(Value:String):String
 	{
-		trace(Value);
+		if (Value == "blank")
+			color = FlxColor.GRAY;
+		else
+			color = FlxColor.BLACK;
+
 		animation.frameName = Value;
-		trace(animation.frameName);
+
 		return Value;
 	}
 
 	private function get_icon():String
 	{
-		trace(animation.frameName);
 		return animation.frameName;
 	}
 
@@ -95,6 +101,7 @@ class FakeIcon extends IconSprite
 enum IconSize
 {
 	SIZE_128;
-	SIZE_36;
-	SIZE_22;
+	SIZE_72;
+	SIZE_64;
+	SIZE_32;
 }
