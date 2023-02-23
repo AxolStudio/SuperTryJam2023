@@ -69,7 +69,7 @@ class ShopScreen extends GameSubState
 		var shopItem:ShopItem;
 		var box:Box;
 
-		for (s in Globals.SHOP_ITEMS)
+		for (s in Globals.PlayState.SHOP_ITEMS)
 		{
 			shopItem = new ShopItem(this);
 			shopItem.setIcon(s);
@@ -99,7 +99,7 @@ class ShopScreen extends GameSubState
 	{
 		for (shopItem in shopItems)
 		{
-			shopItem.buyButton.active = Globals.PlayState.production >= Globals.IconList.get(shopItem.iconSprite.icon).cost;
+			shopItem.buyButton.active = Globals.PlayState.production >= Globals.PlayState.IconList.get(shopItem.iconSprite.icon).cost;
 		}
 		productionAmount.text = "Production: {{production}}" + Std.string(Globals.PlayState.production);
 	}
@@ -147,7 +147,7 @@ class ShopItem extends FlxSpriteGroup
 	public function setIcon(Icon:String):Void
 	{
 		iconSprite.icon = Icon;
-		cost.text = "Cost: {{production}}" + Std.string(Globals.IconList.get(Icon).cost);
+		cost.text = "Cost: {{production}}" + Std.string(Globals.PlayState.IconList.get(Icon).cost);
 		title.text = Icon.toTitleCase();
 	}
 
@@ -156,7 +156,7 @@ class ShopItem extends FlxSpriteGroup
 		buyButton.active = false;
 		// deduct cost from production
 
-		Globals.PlayState.production -= Globals.IconList.get(iconSprite.icon).cost;
+		Globals.PlayState.production -= Globals.PlayState.IconList.get(iconSprite.icon).cost;
 
 		// add the new icon to the player's collection
 

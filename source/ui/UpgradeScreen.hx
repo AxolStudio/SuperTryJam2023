@@ -28,6 +28,16 @@ class UpgradeScreen extends GameSubState
 	public var scrollZone:ScrollView;
 	public var scrollGrid:HBox;
 
+	public var callback:Void->Void;
+
+	public function new(Callback:Void->Void):Void
+	{
+		super();
+
+		callback = Callback;
+		closeCallback = () -> callback();
+	}
+
 	override public function create():Void
 	{
 		// simple border with all availble icons to purchase displayed
@@ -79,7 +89,7 @@ class UpgradeScreen extends GameSubState
 		var box:Box;
 		var collected:Array<String> = Globals.PlayState.technologies.get(Globals.PlayState.age);
 
-		for (k => v in Globals.TechnologiesList)
+		for (k => v in Globals.PlayState.TechnologiesList)
 		{
 			if (v.age == Globals.PlayState.age)
 			{
@@ -121,7 +131,7 @@ class UpgradeScreen extends GameSubState
 
 		for (techItem in techItems)
 		{
-			tech = Globals.TechnologiesList.get(techItem.icon.icon);
+			tech = Globals.PlayState.TechnologiesList.get(techItem.icon.icon);
 			var hasReq:Bool = true;
 
 			for (req in tech.requires)
@@ -190,7 +200,7 @@ class TechItem extends FlxSpriteGroup
 
 	public function setIcon(Icon:String):Void
 	{
-		var tech:Technology = Globals.TechnologiesList.get(Icon);
+		var tech:Technology = Globals.PlayState.TechnologiesList.get(Icon);
 		icon.icon = Icon;
 		cost.text = "Cost: {{science}}" + Std.string(tech.scienceCost);
 		title.text = Icon.toTitleCase();
@@ -217,7 +227,7 @@ class TechItem extends FlxSpriteGroup
 		buyButton.active = false;
 		// deduct cost from production
 
-		var tech:Technology = Globals.TechnologiesList.get(icon.icon);
+		var tech:Technology = Globals.PlayState.TechnologiesList.get(icon.icon);
 
 		Globals.PlayState.science -= tech.scienceCost;
 

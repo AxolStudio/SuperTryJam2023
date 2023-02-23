@@ -77,7 +77,7 @@ class ToolTip extends FlxGroup
 
 		background = new FlxSprite();
 
-		type = Globals.GLYPH_TYPES.get(Source);
+		type = Globals.PlayState.GLYPH_TYPES.get(Source);
 
 		icon = new FlxSprite();
 		icon.frames = GraphicsCache.loadGraphicFromAtlas("assets/images/icons-128.png", "assets/images/icons-128.xml", false, "icons-128").atlasFrames;
@@ -127,11 +127,11 @@ class ToolTip extends FlxGroup
 		switch (type)
 		{
 			case ICON:
-				var icon:Icon = Globals.IconList.get(Source);
+				var icon:Icon = Globals.PlayState.IconList.get(Source);
 				details = icon.description;
 
 			case TECHNOLOGY:
-				var tech:Technology = Globals.TechnologiesList.get(Source);
+				var tech:Technology = Globals.PlayState.TechnologiesList.get(Source);
 				details = tech.description;
 
 			case RESOURCE:

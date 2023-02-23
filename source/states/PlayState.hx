@@ -9,6 +9,7 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
+import flixel.ui.FlxBar;
 import flixel.ui.FlxButton;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
@@ -29,8 +30,11 @@ import ui.UpgradeScreen;
 
 using StringTools;
 
+@:build(macros.IconsBuilder.build()) // IconList
+@:build(macros.TechnologiesBuilder.build()) // TechnologiesList
 class PlayState extends GameState
 {
+	public static inline var BLANKS_PER_AGE:Int = 25;
 	public static inline var GRID_SIZE:Float = 648;
 	public static inline var GRID_MID:Float = 324;
 	public static inline var GRID_SPACING:Float = 2;
@@ -99,11 +103,33 @@ class PlayState extends GameState
 
 	public var constructionEnabled:Bool = false;
 
+	public var ageProgress:FlxBar;
+
+	public var ageProgression(get, never):Float;
+
+	public var newTech:FlxSprite;
+	public var newShop:FlxSprite;
+
+	public var STARTING_ICONS:Map<String, Int> = ["human" => 5, "tree" => 2, "boulder" => 2, "berry bush" => 10];
+	public var WILD_ANIMALS:Array<String> = ["hare", "deer", "wolf", "bear", "mammoth"];
+	public var WILD_ANIMAL_WEIGHTS:Array<Float> = [48, 38, 8, 4, 2];
+
+	public var SHOP_ITEMS:Array<String> = ["child", "berry bush"];
+
+	public var GLYPH_TYPES:Map<String, GlyphType> = [];
+
+	public var TechnologiesByAge:Map<Int, Array<String>> = [];
+
 	override public function create()
 	{
 		initializeGame();
 
 		super.create();
+	}
+
+	private function get_ageProgression():Float
+	{
+		return (technologies[age].length / TechnologiesByAge[age].length) * 100;
 	}
 
 	public function initializeGame()
@@ -113,12 +139,29 @@ class PlayState extends GameState
 		Globals.PlayState = this;
 		Globals.initGame();
 
-		for (b in 0...Globals.BLANKS_PER_AGE)
+		for (k => v in IconList)
+			GLYPH_TYPES.set(k, GlyphType.ICON);
+
+		for (k => v in TechnologiesList)
+		{
+			GLYPH_TYPES.set(k, GlyphType.TECHNOLOGY);
+			if (TechnologiesByAge.exists(v.age))
+				TechnologiesByAge[v.age].push(k);
+			else
+				TechnologiesByAge[v.age] = [k];
+		}
+
+		GLYPH_TYPES.set("population", GlyphType.RESOURCE);
+		GLYPH_TYPES.set("food", GlyphType.RESOURCE);
+		GLYPH_TYPES.set("production", GlyphType.RESOURCE);
+		GLYPH_TYPES.set("science", GlyphType.RESOURCE);
+
+		for (b in 0...BLANKS_PER_AGE)
 		{
 			collection.push(new GridIcon("blank"));
 		}
 
-		for (n => v in Globals.STARTING_ICONS)
+		for (n => v in STARTING_ICONS)
 		{
 			for (i in 0...v)
 			{
@@ -220,11 +263,26 @@ class PlayState extends GameState
 			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
 		inventoryButton.active = false;
 
+		add(newTech = new FlxSprite(0, 0, "assets/images/new.png"));
+		newTech.x = upgradeButton.x + upgradeButton.width - newTech.width - 12;
+		newTech.y = upgradeButton.y + (upgradeButton.height / 2) - (newTech.height / 2);
+		newTech.kill();
+
+		add(newShop = new FlxSprite(0, 0, "assets/images/new.png"));
+		newShop.x = shopButton.x + shopButton.width - newShop.width - 12;
+		newShop.y = shopButton.y + (shopButton.height / 2) - (newShop.height / 2);
+		newShop.kill();
+
 		age = 1;
 
 		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), FlxColor.BLACK, SIZE_36));
 		txtAge.alignment = "center";
 		txtAge.screenCenter(FlxAxes.X);
+
+		add(ageProgress = new FlxBar(0, txtAge.y + txtAge.height + 10, FlxBarFillDirection.LEFT_TO_RIGHT, Std.int(GRID_SIZE), 20, this, "ageProgression", 0,
+			100, true));
+		ageProgress.createGradientBar([FlxColor.GRAY], [FlxColor.BLUE, FlxColor.GREEN], 1, 180, true, FlxColor.BLACK);
+		ageProgress.screenCenter(FlxAxes.X);
 
 		add(resourceLabel = new GameText(10, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Resources", FlxColor.BLACK, SIZE_36));
 		resourceLabel.alignment = "center";
@@ -275,12 +333,27 @@ class PlayState extends GameState
 
 	public function openShop():Void
 	{
+		newShop.kill();
 		openSubState(new ShopScreen());
 	}
 
 	public function openUpgrade():Void
 	{
-		openSubState(new UpgradeScreen());
+		newTech.kill();
+		openSubState(new UpgradeScreen(returnFromUpgrade));
+	}
+
+	public function returnFromUpgrade():Void
+	{
+		// check if we should be in the next age
+		if (ageProgression >= 100)
+		{
+			// TODO: animate this!
+
+			age++;
+			txtAge.text = "Age " + Roman.arabic2Roman(age);
+			newTech.revive();
+		}
 	}
 
 	public function updatePopText()
@@ -354,7 +427,7 @@ class PlayState extends GameState
 
 	public function addRandomAnimal():Void
 	{
-		var newAnimal:String = Globals.WILD_ANIMALS[FlxG.random.weightedPick(Globals.WILD_ANIMAL_WEIGHTS)];
+		var newAnimal:String = WILD_ANIMALS[FlxG.random.weightedPick(WILD_ANIMAL_WEIGHTS)];
 		trace("Adding " + newAnimal + " to the collection.");
 		addNewIcon(newAnimal);
 	}
@@ -392,7 +465,7 @@ class PlayState extends GameState
 	{
 		// perform each icon's effect
 
-		var icon:Icon = Globals.IconList.get(collection[checkingIcon].name);
+		var icon:Icon = IconList.get(collection[checkingIcon].name);
 		if (icon.effect != null)
 		{
 			for (e in icon.effect)
@@ -673,14 +746,14 @@ class PlayState extends GameState
 
 		if (l > -1)
 		{
-			icon = Globals.IconList.get(collection[l].name);
+			icon = IconList.get(collection[l].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(l);
 		}
 		if (r > -1)
 		{
-			icon = Globals.IconList.get(collection[r].name);
+			icon = IconList.get(collection[r].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(r);
@@ -688,7 +761,7 @@ class PlayState extends GameState
 
 		if (u > -1)
 		{
-			icon = Globals.IconList.get(collection[u].name);
+			icon = IconList.get(collection[u].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(u);
@@ -696,7 +769,7 @@ class PlayState extends GameState
 
 		if (d > -1)
 		{
-			icon = Globals.IconList.get(collection[d].name);
+			icon = IconList.get(collection[d].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(d);
@@ -704,7 +777,7 @@ class PlayState extends GameState
 
 		if (ul > -1)
 		{
-			icon = Globals.IconList.get(collection[ul].name);
+			icon = IconList.get(collection[ul].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(ul);
@@ -712,7 +785,7 @@ class PlayState extends GameState
 
 		if (ur > -1)
 		{
-			icon = Globals.IconList.get(collection[ur].name);
+			icon = IconList.get(collection[ur].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(ur);
@@ -720,7 +793,7 @@ class PlayState extends GameState
 
 		if (dl > -1)
 		{
-			icon = Globals.IconList.get(collection[dl].name);
+			icon = IconList.get(collection[dl].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(dl);
@@ -728,7 +801,7 @@ class PlayState extends GameState
 
 		if (dr > -1)
 		{
-			icon = Globals.IconList.get(collection[dr].name);
+			icon = IconList.get(collection[dr].name);
 
 			if (icon.workMultiplier > 0)
 				neighbors.push(dr);
@@ -781,12 +854,12 @@ class PlayState extends GameState
 		switch (keyWord)
 		{
 			case "spin": // just do the effect!
-				doEffect(IconPos, DoEffect, null, Math.max(1, Globals.IconList.get(collection[IconPos].name).workMultiplier));
+				doEffect(IconPos, DoEffect, null, Math.max(1, IconList.get(collection[IconPos].name).workMultiplier));
 			case "work": // a human is touching this tile
 				for (n in getNeighborsWork(IconPos))
 				{
 					screenIcons[n].activate();
-					doEffect(IconPos, DoEffect, n, Math.max(1, Globals.IconList.get(collection[n].name).workMultiplier));
+					doEffect(IconPos, DoEffect, n, Math.max(1, IconList.get(collection[n].name).workMultiplier));
 				}
 				doPause = true;
 			case "pair": // a pair of tiles of this type are touching
@@ -847,7 +920,7 @@ class PlayState extends GameState
 					for (n in getNeighborsOfType(IconPos, t))
 					{
 						screenIcons[IconPos].activate();
-						doEffect(IconPos, DoEffect, n, Math.max(1, Globals.IconList.get(collection[IconPos].name).workMultiplier));
+						doEffect(IconPos, DoEffect, n, Math.max(1, IconList.get(collection[IconPos].name).workMultiplier));
 					}
 				}
 				doPause = true;
@@ -857,7 +930,7 @@ class PlayState extends GameState
 
 	public function killIcon(IconPos:Int):Void
 	{
-		var def:Icon = Globals.IconList.get(collection[IconPos].name);
+		var def:Icon = IconList.get(collection[IconPos].name);
 
 		// if the icon is within the 25 shown, have an animation!
 		if (IconPos < 25)
@@ -876,7 +949,7 @@ class PlayState extends GameState
 
 	public function death(IconPos:Int):Void
 	{
-		var icon:Icon = Globals.IconList.get(collection[IconPos].name);
+		var icon:Icon = IconList.get(collection[IconPos].name);
 		if (icon.population > 0)
 			removeResource(IconPos, "population", icon.population);
 		var f:FakeIcon = fakeIcons.getFirstAvailable();
@@ -1209,7 +1282,7 @@ class PlayState extends GameState
 
 	public function checkStarving():Void
 	{
-		var icon:Icon = Globals.IconList.get(collection[checkingIcon].name);
+		var icon:Icon = IconList.get(collection[checkingIcon].name);
 		if (icon.food > 0)
 		{
 			if (food >= icon.food)

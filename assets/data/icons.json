@@ -222,9 +222,9 @@
   {
     "name": "sling",
     "cost": 15,
-    "effect": ["work?snipe:hare/deer/wolf/boar/bear/mammoth"],
+    "effect": ["work?snipe:hare/deer/boar?kill", "work?snipe:wolf/bear/mammoth?wound"],
     "death": [],
-    "description": "Kills Random {{hare}} {{deer}} {{wolf}} {{boar}} {{bear}} {{mammoth}} when Worked.",
+    "description": "Random {{hare}} {{deer}} {{boar}} is Killed or Random {{wolf}} {{bear}} {{mammoth}} is Wounded when Worked.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0

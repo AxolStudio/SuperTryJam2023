@@ -27,7 +27,7 @@ class TechnologiesBuilder
 			meta: null,
 			kind: FieldType.FVar(macro :Map<String, gameObjects.Technology>, macro $a{map}),
 			doc: null,
-			access: [Access.APublic, Access.AStatic]
+			access: [Access.APublic]
 		});
 
 		return fields;

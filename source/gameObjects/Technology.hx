@@ -41,7 +41,7 @@ class Technology
 					var which:String = details[0];
 					var change:String = details[1];
 
-					var icon:Icon = Globals.IconList.get(target);
+					var icon:Icon = Globals.PlayState.IconList.get(target);
 
 					if (which == "e")
 					{
@@ -52,17 +52,18 @@ class Technology
 						icon.death.push(change);
 					}
 
-					Globals.IconList.set(target, icon);
+					Globals.PlayState.IconList.set(target, icon);
 
 				case "u": // unlock a new icon in the shop
-					Globals.SHOP_ITEMS.push(target);
+					Globals.PlayState.SHOP_ITEMS.push(target);
+					Globals.PlayState.newShop.revive();
 
 				case "e": // some special effect
 					switch (target)
 					{
 						case "fish":
-							Globals.WILD_ANIMALS.push("fish");
-							Globals.WILD_ANIMAL_WEIGHTS.push(10);
+							Globals.PlayState.WILD_ANIMALS.push("fish");
+							Globals.PlayState.WILD_ANIMAL_WEIGHTS.push(10);
 						case "construction":
 							Globals.PlayState.constructionEnabled = true;
 					}
