@@ -303,6 +303,10 @@ class PlayState extends GameState
 
 		add(resGenTexts = new FlxTypedGroup<ResGenText>());
 
+		#if debug
+		food = production = science = 1000;
+		#end
+
 		FlxG.camera.fade(FlxColor.BLACK, 1, true, () ->
 		{
 			currentMode = "waiting-for-spin";
@@ -614,14 +618,26 @@ class PlayState extends GameState
 					}
 				}
 			case "snipe": // find a random tile of type on the board, kill it
-				var types:Array<String> = split[1].split("/");
+				var effects:Array<String> = split[1].split("?");
+				var effect:String = effects[1];
+				var types:Array<String> = effects[0].split("/");
 				var icons:Array<Int> = [];
 				for (t in types)
 				{
 					icons = icons.concat(getIconsOfType(IconPos, t));
 				}
+				if (icons.length == 0)
+					return;
 				var target:Int = icons[FlxG.random.int(0, icons.length - 1)];
-				iconsToKill.push(target);
+				if (effect == "wound")
+				{
+					willWound.push(target);
+				}
+				else
+				{
+					iconsToKill.push(target);
+				}
+
 				trace("snipe: " + IconPos + " : " + collection[target].name + " = " + icons);
 				if (!crosshairs[target].alive)
 				{

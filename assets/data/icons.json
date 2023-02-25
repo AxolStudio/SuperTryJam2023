@@ -320,7 +320,7 @@
       "touch::tree/log?kill:tree/log"
     ],
     "death": [],
-    "description": "5 {{family}} Elements merge to form a {{hut}}. Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{rock}} {{boulder}} {{meat}} {{tree}} {{log}}. Works touching Elements. Worked and Killed Elements give x2. Generates 12 {{science}} and costs 20 {{food}} when spun.",
+    "description": "3 {{family}} Elements merge to form a {{hut}}. Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{rock}} {{boulder}} {{meat}} {{tree}} {{log}}. Works touching Elements. Worked and Killed Elements give x2. Generates 12 {{science}} and costs 20 {{food}} when spun.",
     "workmultiplier": 2,
     "pop": 15,
     "food": 20
@@ -336,7 +336,7 @@
       "touch::tree/log?kill:tree/log"
     ],
     "death": [],
-    "description": "5 {{hut}} Elements merge to form a {{tribe}}. Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{rock}} {{boulder}} {{meat}} {{tree}} {{log}}. Works touching Elements. Worked and Killed Elements give x3. Generates 70 {{science}} and costs 125 {{food}} when spun.",
+    "description": "3 {{hut}} Elements merge to form a {{tribe}}. Kills Touching {{hare}} {{deer}} {{wolf}} {{bear}} {{mammoth}} {{rock}} {{boulder}} {{meat}} {{tree}} {{log}}. Works touching Elements. Worked and Killed Elements give x3. Generates 70 {{science}} and costs 125 {{food}} when spun.",
     "workmultiplier": 3,
     "pop": 75,
     "food": 125

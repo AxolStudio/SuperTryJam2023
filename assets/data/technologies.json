@@ -73,11 +73,11 @@
   },
   {
     "name": "husbandry",
-    "age": 1,
+    "age": 2,
     "science": 50,
     "effect": ["u=pig", "u=sheep", "u=cow"],
-    "requires": ["horticulture", "fire"],
-    "description": "Adds {{pig}}, {{sheep}}, and {{cow}} to the Element Shop."
+    "requires": [],
+    "description": "Adds {{pig}} {{sheep}} {{cow}} to the Element Shop. {{boar}} {{bear}} {{mammoth}} no longer spawn each spin."
   },
   {
     "name": "construction",
@@ -85,6 +85,6 @@
     "science": 50,
     "effect": ["e=construction"],
     "requires": ["logging", "mining", "fire", "weaponry"],
-    "description": "Allows 5 {{family}} Element to merge into 1 {{hut}} and 5 {{hut}} Elements to merge into 1 {{tribe}} Element."
+    "description": "Allows 3 {{family}} Element to merge into 1 {{hut}} and 3 {{hut}} Elements to merge into 1 {{tribe}} Element."
   }
 ]

@@ -63,7 +63,8 @@ class Technology
 					{
 						case "fish":
 							Globals.PlayState.WILD_ANIMALS.push("fish");
-							Globals.PlayState.WILD_ANIMAL_WEIGHTS.push(10);
+							Globals.PlayState.WILD_ANIMAL_WEIGHTS.push(30);
+
 						case "construction":
 							Globals.PlayState.constructionEnabled = true;
 					}
