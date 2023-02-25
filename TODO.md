@@ -5,7 +5,8 @@
 [X] Add inventory screen
 [X] add village tech? how should it work?
 [X] fix population display
-[ ] show age progress
+[X] show age progress
 [X] add more icon sizes
 [ ] Add log to spins
-[ ] Add game over and restart
+[X] Add game over and restart
+[ ] Come up with some kind of scoring system

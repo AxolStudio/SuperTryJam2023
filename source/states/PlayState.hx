@@ -3,23 +3,18 @@ package states;
 import axollib.TitleCase.Roman;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import flixel.text.FlxText.FlxTextBorderStyle;
-import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
-import flixel.ui.FlxButton;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
 import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
 import ui.AddedIcon;
-import ui.CurrencyDisplay;
 import ui.GameButton;
+import ui.GameOverState;
 import ui.GameText;
 import ui.InventoryScreen;
 import ui.ResGenText;
@@ -57,6 +52,7 @@ class PlayState extends GameState
 	public var food(default, set):Float = 0;
 	public var production(default, set):Float = 0;
 	public var science(default, set):Float = 0;
+	public var population(default, set):Float = 0;
 
 	public var willWound:Array<Int> = [];
 	public var preventedWound:Array<Int> = [];
@@ -107,7 +103,6 @@ class PlayState extends GameState
 
 	public var ageProgression(get, never):Float;
 
-	public var newTech:FlxSprite;
 	public var newShop:FlxSprite;
 
 	public var STARTING_ICONS:Map<String, Int> = ["human" => 5, "tree" => 2, "boulder" => 2, "berry bush" => 10];
@@ -119,6 +114,8 @@ class PlayState extends GameState
 	public var GLYPH_TYPES:Map<String, GlyphType> = [];
 
 	public var TechnologiesByAge:Map<Int, Array<String>> = [];
+
+	public var log:Array<String> = [];
 
 	override public function create()
 	{
@@ -263,11 +260,6 @@ class PlayState extends GameState
 			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
 		inventoryButton.active = false;
 
-		add(newTech = new FlxSprite(0, 0, "assets/images/new.png"));
-		newTech.x = upgradeButton.x + upgradeButton.width - newTech.width - 12;
-		newTech.y = upgradeButton.y + (upgradeButton.height / 2) - (newTech.height / 2);
-		newTech.kill();
-
 		add(newShop = new FlxSprite(0, 0, "assets/images/new.png"));
 		newShop.x = shopButton.x + shopButton.width - newShop.width - 12;
 		newShop.y = shopButton.y + (shopButton.height / 2) - (newShop.height / 2);
@@ -307,13 +299,16 @@ class PlayState extends GameState
 
 		food = 10;
 
-		updatePopText();
+		updatePop();
 
 		add(resGenTexts = new FlxTypedGroup<ResGenText>());
 
-		currentMode = "waiting-for-spin";
+		FlxG.camera.fade(FlxColor.BLACK, 1, true, () ->
+		{
+			currentMode = "waiting-for-spin";
 
-		inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+			inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+		});
 	}
 
 	public function addTech(NewTech:String):Void
@@ -339,7 +334,6 @@ class PlayState extends GameState
 
 	public function openUpgrade():Void
 	{
-		newTech.kill();
 		openSubState(new UpgradeScreen(returnFromUpgrade));
 	}
 
@@ -352,11 +346,12 @@ class PlayState extends GameState
 
 			age++;
 			txtAge.text = "Age " + Roman.arabic2Roman(age);
-			newTech.revive();
+			if (age < 5) // however many ages we have
+				techDisp.addAge(age);
 		}
 	}
 
-	public function updatePopText()
+	public function updatePop()
 	{
 		var pop:Int = getIconsOfType(-1, "human", true).length;
 		pop += getIconsOfType(-1, "child", true).length;
@@ -364,7 +359,7 @@ class PlayState extends GameState
 		pop += getIconsOfType(-1, "hut", true).length * 3 * 5;
 		pop += getIconsOfType(-1, "tribe", true).length * 3 * 5 * 5;
 
-		txtPopulation.text = "{{population}} " + Std.string(pop);
+		population = pop;
 	}
 
 	public function spin():Void
@@ -505,10 +500,17 @@ class PlayState extends GameState
 			collTmp += collection[i].name + ",";
 		trace("collection", collTmp);
 
-		updatePopText();
-
-		currentMode = "waiting-for-spin";
-		inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+		updatePop();
+		if (population > 0)
+		{
+			currentMode = "waiting-for-spin";
+			inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+		}
+		else
+		{
+			currentMode = "game-over";
+			openSubState(new GameOverState());
+		}
 	}
 
 	public function parseEffect(IconPos:Int, Effect:String):Void
@@ -1335,5 +1337,12 @@ class PlayState extends GameState
 		science = Value;
 		txtScience.text = "{{science}} " + Std.string(science);
 		return science;
+	}
+
+	private function set_population(Value:Float):Float
+	{
+		population = Value;
+		txtPopulation.text = "{{population}} " + Std.string(population);
+		return population;
 	}
 }

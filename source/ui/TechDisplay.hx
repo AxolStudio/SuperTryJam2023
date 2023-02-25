@@ -31,50 +31,36 @@ class TechDisplay extends ScrollView
 
 		addComponent(vbox);
 
+		addAge(1);
+	}
+
+	public function addAge(Age:Int):Void
+	{
 		var txt:GameText;
 		var box:Box;
 		var grid:HBox;
 
-		for (a in 1...(Globals.PlayState.age + 1))
-		{
-			box = new Box();
-			box.width = width;
+		box = new Box();
+		box.width = width;
 
-			txt = new GameText(0, 0, Std.int(width - 40), "Age " + Roman.arabic2Roman(a), FlxColor.BLACK, SIZE_24);
-			txt.alignment = "center";
+		txt = new GameText(0, 0, Std.int(width - 40), "Age " + Roman.arabic2Roman(Age), FlxColor.BLACK, SIZE_24);
+		txt.alignment = "center";
 
-			box.height = txt.height;
+		box.height = txt.height;
 
-			box.add(txt);
+		box.add(txt);
 
-			vbox.addComponent(box);
+		vbox.addComponent(box);
 
-			grid = new HBox();
+		grid = new HBox();
 
-			grid.width = vbox.width;
-			grid.padding = 10;
-			grid.styleString = "spacing:10px;";
-			grid.continuous = true;
-			grids.set(a, grid);
+		grid.width = vbox.width;
+		grid.padding = 10;
+		grid.styleString = "spacing:10px;";
+		grid.continuous = true;
+		grids.set(Age, grid);
 
-			vbox.addComponent(grid);
-
-			// box = new Box();
-
-			// // txt = new GameText(0, 0, Std.int(width - 40), "", FlxColor.BLACK, SIZE_36);
-			// // txt.alignment = "left";
-
-			// icon = new IconSprite(0,0,)
-
-			// box.width = icon.width;
-			// box.height = icon.height;
-
-			// box.add(icon);
-			// icons.set(a, icon);
-			// boxes.set(a, box);
-
-			// grid.addComponent(box);
-		}
+		vbox.addComponent(grid);
 	}
 
 	public function addTech(Age:Int, NewTech:String):Void
