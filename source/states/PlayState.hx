@@ -8,7 +8,6 @@ import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxAxes;
-import flixel.util.FlxColor;
 import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
@@ -17,6 +16,7 @@ import ui.GameButton;
 import ui.GameOverState;
 import ui.GameText;
 import ui.InventoryScreen;
+import ui.LogState;
 import ui.ResGenText;
 import ui.ShopScreen;
 import ui.TechDisplay;
@@ -33,6 +33,8 @@ class PlayState extends GameState
 	public static inline var GRID_SIZE:Float = 648;
 	public static inline var GRID_MID:Float = 324;
 	public static inline var GRID_SPACING:Float = 2;
+
+	public var spinCount:Int = 0;
 
 	public var collection:Array<GridIcon> = [];
 	public var screenIcons:Array<IconSprite> = [];
@@ -73,6 +75,7 @@ class PlayState extends GameState
 	public var shopButton:GameButton;
 	public var upgradeButton:GameButton;
 	public var inventoryButton:GameButton;
+	public var logButton:GameButton;
 
 	public var technologies:Map<Int, Array<String>> = [1 => []];
 
@@ -124,6 +127,11 @@ class PlayState extends GameState
 		super.create();
 	}
 
+	public function addLog(Message:String):Void
+	{
+		log.push(Message);
+	}
+
 	private function get_ageProgression():Float
 	{
 		return (technologies[age].length / TechnologiesByAge[age].length) * 100;
@@ -131,7 +139,7 @@ class PlayState extends GameState
 
 	public function initializeGame()
 	{
-		bgColor = FlxColor.WHITE;
+		bgColor = Colors.WHITE;
 
 		Globals.PlayState = this;
 		Globals.initGame();
@@ -244,21 +252,25 @@ class PlayState extends GameState
 
 		add(addedIcons = new FlxTypedGroup<AddedIcon>());
 
-		add(spinButton = new GameButton((FlxG.width / 2) - 125, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 250, 50, SIZE_36, FlxColor.BLUE,
-			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
+		add(spinButton = new GameButton((FlxG.width / 2) - 125, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 250, 50, SIZE_36, Colors.BLUE, Colors.BLACK,
+			Colors.WHITE, Colors.BLACK));
 		spinButton.active = false;
 
-		add(shopButton = new GameButton(spinButton.x - 260, spinButton.y, "Shop", openShop, 250, 50, SIZE_36, FlxColor.GREEN, FlxColor.BLACK, FlxColor.WHITE,
-			FlxColor.BLACK));
+		add(shopButton = new GameButton(spinButton.x - 260, spinButton.y, "Shop", openShop, 250, 50, SIZE_36, Colors.GREEN, Colors.BLACK, Colors.WHITE,
+			Colors.BLACK));
 		shopButton.active = false;
 
-		add(upgradeButton = new GameButton(spinButton.x + 260, spinButton.y, "Technologies", openUpgrade, 250, 50, SIZE_36, FlxColor.PURPLE, FlxColor.BLACK,
-			FlxColor.WHITE, FlxColor.BLACK));
+		add(upgradeButton = new GameButton(spinButton.x + 260, spinButton.y, "Technologies", openUpgrade, 250, 50, SIZE_36, Colors.VIOLET, Colors.BLACK,
+			Colors.WHITE, Colors.BLACK));
 		upgradeButton.active = false;
 
-		add(inventoryButton = new GameButton(upgradeButton.x + 260, upgradeButton.y, "Inventory", openInventory, 250, 50, SIZE_36, FlxColor.ORANGE,
-			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK));
+		add(inventoryButton = new GameButton(upgradeButton.x + 260, upgradeButton.y, "Inventory", openInventory, 250, 50, SIZE_36, Colors.ORANGE,
+			Colors.BLACK, Colors.WHITE, Colors.BLACK));
 		inventoryButton.active = false;
+
+		add(logButton = new GameButton(shopButton.x - 260, shopButton.y, "Log", openLog, 250, 50, SIZE_36, Colors.MAGENTA, Colors.BLACK, Colors.WHITE,
+			Colors.BLACK));
+		logButton.active = false;
 
 		add(newShop = new FlxSprite(0, 0, "assets/images/new.png"));
 		newShop.x = shopButton.x + shopButton.width - newShop.width - 12;
@@ -267,28 +279,28 @@ class PlayState extends GameState
 
 		age = 1;
 
-		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), FlxColor.BLACK, SIZE_36));
+		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), Colors.BLACK, SIZE_36));
 		txtAge.alignment = "center";
 		txtAge.screenCenter(FlxAxes.X);
 
 		add(ageProgress = new FlxBar(0, txtAge.y + txtAge.height + 10, FlxBarFillDirection.LEFT_TO_RIGHT, Std.int(GRID_SIZE), 20, this, "ageProgression", 0,
 			100, true));
-		ageProgress.createGradientBar([FlxColor.GRAY], [FlxColor.BLUE, FlxColor.GREEN], 1, 180, true, FlxColor.BLACK);
+		ageProgress.createGradientBar([Colors.GRAY], [Colors.CYAN, Colors.DARKBLUE], 1, 180, true, Colors.BLACK);
 		ageProgress.screenCenter(FlxAxes.X);
 
-		add(resourceLabel = new GameText(10, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Resources", FlxColor.BLACK, SIZE_36));
+		add(resourceLabel = new GameText(10, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Resources", Colors.BLACK, SIZE_36));
 		resourceLabel.alignment = "center";
 
 		add(txtPopulation = new GameText(10, resourceLabel.y + resourceLabel.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{population}} 0",
-			FlxColor.BLACK, SIZE_36));
-		add(txtFood = new GameText(10, txtPopulation.y + txtPopulation.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{food}} 0", FlxColor.BLACK,
+			Colors.BLACK, SIZE_36));
+		add(txtFood = new GameText(10, txtPopulation.y + txtPopulation.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{food}} 0", Colors.BLACK,
 			SIZE_36));
-		add(txtProduction = new GameText(10, txtFood.y + txtFood.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{production}} 0", FlxColor.BLACK,
+		add(txtProduction = new GameText(10, txtFood.y + txtFood.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{production}} 0", Colors.BLACK,
 			SIZE_36));
 		add(txtScience = new GameText(10, txtProduction.y + txtProduction.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{science}} 0",
-			FlxColor.BLACK, SIZE_36));
+			Colors.BLACK, SIZE_36));
 
-		add(techLabel = new GameText(0, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Technologies Learned", FlxColor.BLACK, SIZE_36));
+		add(techLabel = new GameText(0, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Technologies Learned", Colors.BLACK, SIZE_36));
 		techLabel.alignment = "center";
 		techLabel.x = FlxG.width - techLabel.width - 10;
 
@@ -307,11 +319,11 @@ class PlayState extends GameState
 		food = production = science = 1000;
 		#end
 
-		FlxG.camera.fade(FlxColor.BLACK, 1, true, () ->
+		FlxG.camera.fade(Colors.BLACK, 1, true, () ->
 		{
 			currentMode = "waiting-for-spin";
 
-			inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+			logButton.active = inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
 		});
 	}
 
@@ -323,6 +335,11 @@ class PlayState extends GameState
 		technologies.set(age, collected);
 
 		techDisp.addTech(age, NewTech);
+	}
+
+	public function openLog():Void
+	{
+		openSubState(new LogState());
 	}
 
 	public function openInventory():Void
@@ -370,8 +387,13 @@ class PlayState extends GameState
 	{
 		if (!spinButton.active || !canSpin)
 			return;
+
+		spinCount++;
+
+		addLog('Spin $spinCount');
+
 		currentMode = "spinning";
-		inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = false;
+		logButton.active = inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = false;
 		// some kind of animation!
 
 		willWound = [];
@@ -413,21 +435,24 @@ class PlayState extends GameState
 	public function addRandomResources():Void
 	{
 		var saplings:Int = FlxMath.maxInt(0, FlxG.random.int(-10, 2));
-		// var berries:Int = FlxMath.maxInt(0, FlxG.random.int(-1, 2));
+
 		var boulders:Int = FlxMath.maxInt(0, FlxG.random.int(-10, 2));
 
 		for (i in 0...saplings)
 			addNewIcon("sapling");
-		// for (i in 0...berries)
-		// 	addNewIcon("berry bush");
+
 		for (i in 0...boulders)
 			addNewIcon("boulder");
+
+		if (saplings > 0 || boulders > 0)
+			addLog((saplings > 0 ? '$saplings {{sapling}} ' : '') + (saplings > 0 && boulders > 0 ? "and " : "")
+				+ (boulders > 0 ? '$boulders {{boulder}} ' : '') + 'appeared!');
 	}
 
 	public function addRandomAnimal():Void
 	{
 		var newAnimal:String = WILD_ANIMALS[FlxG.random.weightedPick(WILD_ANIMAL_WEIGHTS)];
-		trace("Adding " + newAnimal + " to the collection.");
+		addLog('A wild {{$newAnimal}} appeared!');
 		addNewIcon(newAnimal);
 	}
 
@@ -508,7 +533,7 @@ class PlayState extends GameState
 		if (population > 0)
 		{
 			currentMode = "waiting-for-spin";
-			inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+			logButton.active = inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
 		}
 		else
 		{
@@ -524,6 +549,11 @@ class PlayState extends GameState
 			timer = 0;
 	}
 
+	public function getIconName(IconPos:Int):String
+	{
+		return collection[IconPos].name;
+	}
+
 	public function doEffect(IconPos:Int, Effect:String, ?Source:Int = -1, ?Mult:Float = 1):Void
 	{
 		var split:Array<String> = Effect.split(":");
@@ -532,7 +562,8 @@ class PlayState extends GameState
 		{
 			case "delete": // remove icon without it's death effect
 				iconsToDelete.push(Source);
-				trace("delete: " + IconPos + " : " + collection[IconPos].name + " = " + collection[Source].name);
+
+				addLog("A {{" + getIconName(Source) + "}} was Destroyed by {{" + getIconName(IconPos) + "}}!");
 
 			case "create": // create a new icon
 
@@ -561,8 +592,13 @@ class PlayState extends GameState
 
 					trace("create: " + IconPos + " : " + collection[IconPos].name + " = " + type);
 				}
+				if (count > 0)
+				{
+					addLog("A {{" + getIconName(Source) + '}} created {{' + getIconName(IconPos) + '}} x $count.');
 
-				showIconAdd(screenIcons[IconPos], type, count);
+					showIconAdd(screenIcons[IconPos], type, count);
+					
+				}
 			case "replace": // replace this icon with another
 				replaceIcon(IconPos, split[1]);
 
@@ -618,17 +654,30 @@ class PlayState extends GameState
 					}
 				}
 			case "snipe": // find a random tile of type on the board, kill it
-				var effects:Array<String> = split[1].split("?");
-				var effect:String = effects[1];
-				var types:Array<String> = effects[0].split("/");
+
+				var targets:Array<String> = [];
+				var targetEffects:Map<String, String> = [];
+				var targetSplit:Array<String> = split[1].split("|");
+				for (t in targetSplit)
+				{
+					var split2:Array<String> = t.split("*");
+					var tmpTargets:Array<String> = split2[0].split("/");
+					targets = targets.concat(tmpTargets);
+					for (tt in tmpTargets)
+						targetEffects.set(tt, split2[1]);
+				}
 				var icons:Array<Int> = [];
-				for (t in types)
+				for (t in targets)
 				{
 					icons = icons.concat(getIconsOfType(IconPos, t));
 				}
 				if (icons.length == 0)
 					return;
-				var target:Int = icons[FlxG.random.int(0, icons.length - 1)];
+
+				FlxG.random.shuffle(icons);
+
+				var target:Int = icons[0];
+				var effect:String = targetEffects.get(collection[icons[0]].name);
 				if (effect == "wound")
 				{
 					willWound.push(target);

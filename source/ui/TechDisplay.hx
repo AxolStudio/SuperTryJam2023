@@ -1,7 +1,7 @@
 package ui;
 
 import axollib.TitleCase.Roman;
-import flixel.util.FlxColor;
+
 import gameObjects.IconSprite;
 import globals.Globals;
 import haxe.ui.containers.Box;
@@ -43,7 +43,7 @@ class TechDisplay extends ScrollView
 		box = new Box();
 		box.width = width;
 
-		txt = new GameText(0, 0, Std.int(width - 40), "Age " + Roman.arabic2Roman(Age), FlxColor.BLACK, SIZE_24);
+		txt = new GameText(0, 0, Std.int(width - 40), "Age " + Roman.arabic2Roman(Age), Colors.BLACK, SIZE_24);
 		txt.alignment = "center";
 
 		box.height = txt.height;
@@ -54,7 +54,7 @@ class TechDisplay extends ScrollView
 
 		grid = new HBox();
 
-		grid.width = vbox.width;
+		grid.width = vbox.width-20;
 		grid.padding = 10;
 		grid.styleString = "spacing:10px;";
 		grid.continuous = true;
@@ -67,7 +67,7 @@ class TechDisplay extends ScrollView
 	{
 		var icon:IconSprite = new IconSprite(0, 0, SIZE_64);
 		icon.icon = NewTech;
-		icon.color = FlxColor.BLACK;
+		icon.color = Colors.BLACK;
 
 		var grid:HBox = grids.get(Age);
 		var box:Box = new Box();

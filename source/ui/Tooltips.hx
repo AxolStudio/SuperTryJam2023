@@ -6,7 +6,6 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
-import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import gameObjects.Icon;
 import gameObjects.Technology;
@@ -83,18 +82,16 @@ class ToolTip extends FlxGroup
 		icon.frames = GraphicsCache.loadGraphicFromAtlas("assets/images/icons-128.png", "assets/images/icons-128.xml", false, "icons-128").atlasFrames;
 		icon.animation.frameName = Source;
 
-		icon.color = FlxColor.BLACK;
+		icon.color = Colors.BLACK;
 
-		title = new GameText(0, 0, 264 - 24, Source.toTitleCase(), FlxColor.BLACK, SIZE_36);
+		title = new GameText(0, 0, 264 - 24, Source.toTitleCase(), Colors.BLACK, SIZE_36);
 		title.alignment = "center";
-		// title.setFormat(null, 24, FlxColor.BLACK, "center");
 
-		text = new GameText(0, 0, 264 - 24, parseDetails(Source), FlxColor.BLACK, SIZE_24);
+		text = new GameText(0, 0, 264 - 24, parseDetails(Source), Colors.BLACK, SIZE_24);
 		text.alignment = FlxTextAlign.LEFT;
-		// text.setFormat(null, 16, FlxColor.BLACK, "left");
 
-		background.makeGraphic(264, Math.ceil(icon.height + 32 + text.height + title.height), FlxColor.BLACK);
-		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
+		background.makeGraphic(264, Math.ceil(icon.height + 32 + text.height + title.height), Colors.BLACK);
+		background.drawRect(2, 2, background.width - 4, background.height - 4, Colors.WHITE);
 
 		if (X + background.width > FlxG.width)
 			X = FlxG.width - background.width;

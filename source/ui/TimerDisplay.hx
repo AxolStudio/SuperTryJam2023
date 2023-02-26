@@ -3,15 +3,15 @@ package ui;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
-import flixel.util.FlxColor;
+import globals.Globals.Colors;
 
 class TimerDisplay extends GameText
 {
 	public function new(X:Float, Y:Float):Void
 	{
-		super(X, 0, 118, "0", FlxColor.WHITE, SIZE_36);
+		super(X, 0, 118, "0", Colors.WHITE, SIZE_36);
 
-		setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 1);
 		alignment = "right";
 		drawFrame();
 		y = Y - height;

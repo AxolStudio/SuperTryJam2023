@@ -2,7 +2,6 @@ package ui;
 
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
 import gameObjects.IconSprite;
 import globals.Globals;
 
@@ -12,8 +11,8 @@ class ResGenText extends GameText
 
 	public function new():Void
 	{
-		super(0, 0, 0, "", FlxColor.LIME, SIZE_36);
-		setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		super(0, 0, 0, "", Colors.LIME, SIZE_36);
+		setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 1);
 		alignment = "left";
 		autoSize = true;
 		kill();
@@ -23,7 +22,7 @@ class ResGenText extends GameText
 	{
 		type = Type;
 		text = getIcon(Type) + ' +$Amount';
-		color = FlxColor.LIME;
+		color = Colors.LIME;
 		drawFrame();
 		reset(Source.x + 64 - (width / 2), Source.y + 64 - (height / 2));
 		alpha = 0;
@@ -48,7 +47,7 @@ class ResGenText extends GameText
 	{
 		type = Type;
 		text = getIcon(Type) + ' -$Amount';
-		color = FlxColor.RED;
+		color = Colors.RED;
 		drawFrame();
 		var source:GameText = getTarget(type);
 		reset(source.x, source.y + (source.height / 2) - (height / 2));

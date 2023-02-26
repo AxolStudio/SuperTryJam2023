@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
-import flixel.util.FlxColor;
+import globals.Globals.Colors;
 import globals.Globals.GlyphType;
 import ui.Tooltips;
 
@@ -33,7 +33,7 @@ class IconSprite extends FlxSprite
 
 		frames = GraphicsCache.loadGraphicFromAtlas('assets/images/${source}.png', 'assets/images/${source}.xml', false, 'icons-$source').atlasFrames;
 
-		color = FlxColor.BLACK;
+		color = Colors.BLACK;
 
 		if (Size == SIZE_128)
 			animation.frameName = "blank";
@@ -42,9 +42,9 @@ class IconSprite extends FlxSprite
 	private function set_icon(Value:String):String
 	{
 		if (Value == "blank")
-			color = FlxColor.GRAY;
+			color = Colors.GRAY;
 		else
-			color = FlxColor.BLACK;
+			color = Colors.BLACK;
 
 		animation.frameName = Value;
 

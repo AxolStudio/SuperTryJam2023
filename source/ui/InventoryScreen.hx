@@ -1,19 +1,15 @@
 package ui;
 
+import haxe.ui.containers.Box;
+import haxe.ui.containers.HBox;
+import haxe.ui.containers.ScrollView;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxSubState;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.util.FlxAxes;
-import flixel.util.FlxColor;
-import flixel.util.FlxSort;
 import gameObjects.IconSprite;
 import globals.Globals;
-import haxe.ui.containers.Box;
-import haxe.ui.containers.Grid;
-import haxe.ui.containers.HBox;
-import haxe.ui.containers.ScrollView;
 import states.GameState.GameSubState;
 
 using StringTools;
@@ -32,15 +28,15 @@ class InventoryScreen extends GameSubState
 
 	override public function create():Void
 	{
-		bgColor = FlxColor.TRANSPARENT;
+		bgColor = Colors.TRANSPARENT;
 
 		var background:FlxSprite = new FlxSprite();
-		background.makeGraphic(Math.floor(FlxG.width * .6), Math.floor(FlxG.height * .9), FlxColor.BLACK);
-		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
+		background.makeGraphic(Math.floor(FlxG.width * .6), Math.floor(FlxG.height * .9), Colors.BLACK);
+		background.drawRect(2, 2, background.width - 4, background.height - 4, Colors.WHITE);
 		background.screenCenter();
 		add(background);
 
-		var title:GameText = new GameText(0, 0, 500, "Inventory", FlxColor.BLACK, SIZE_36);
+		var title:GameText = new GameText(0, 0, 500, "Inventory", Colors.BLACK, SIZE_36);
 		title.alignment = "center";
 		title.screenCenter(FlxAxes.X);
 		title.y = background.y + 10;
@@ -107,8 +103,8 @@ class InventoryScreen extends GameSubState
 			scrollGrid.addComponent(box);
 		}
 
-		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, FlxColor.RED,
-			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK);
+		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, Colors.RED,
+			Colors.BLACK, Colors.WHITE, Colors.BLACK);
 		add(closeButton);
 
 		super.create();
@@ -141,20 +137,20 @@ class InventoryItem extends FlxSpriteGroup
 			wound.loadGraphic("assets/images/wound.png");
 		}
 
-		add(icon = new IconSprite(0, 0));
+		add(icon = new IconSprite(0, 0, SIZE_64));
 		icon.icon = Icon;
 
 		if (Timer > 0)
 		{
-			add(timer = new GameText(0, 0, 118, Std.string(Timer), FlxColor.WHITE, SIZE_36));
-			timer.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+			add(timer = new GameText(0, 0, 118, Std.string(Timer), Colors.WHITE, SIZE_36));
+			timer.setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 1);
 			timer.alignment = "left";
 			timer.x = icon.x + 10;
 			timer.y = icon.y + icon.height - timer.height;
 		}
 
-		add(count = new GameText(0, 0, 60, '(${Count})', FlxColor.GRAY, SIZE_36));
-		count.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		add(count = new GameText(0, 0, 60, '(${Count})', Colors.GRAY, SIZE_36));
+		count.setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 1);
 		count.alignment = "left";
 		count.x = icon.x + icon.width + 2;
 		count.y = icon.y + icon.height - count.height;

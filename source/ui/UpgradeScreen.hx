@@ -1,20 +1,15 @@
 package ui;
 
+import haxe.ui.containers.Box;
+import haxe.ui.containers.HBox;
+import haxe.ui.containers.ScrollView;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxAxes;
-import flixel.util.FlxColor;
 import gameObjects.IconSprite;
 import gameObjects.Technology;
 import globals.Globals;
-import haxe.ui.constants.ScrollMode;
-import haxe.ui.containers.Box;
-import haxe.ui.containers.Grid;
-import haxe.ui.containers.HBox;
-import haxe.ui.containers.ScrollView;
-import openfl.events.MouseEvent;
 import states.GameState.GameSubState;
 
 using axollib.TitleCase;
@@ -46,22 +41,22 @@ class UpgradeScreen extends GameSubState
 
 		// when the player clicks the "back" button, the shop screen is closed
 
-		bgColor = FlxColor.TRANSPARENT;
+		bgColor = Colors.TRANSPARENT;
 
 		var background:FlxSprite = new FlxSprite();
-		background.makeGraphic(Math.floor(FlxG.width * .6), Math.floor(FlxG.height * .9), FlxColor.BLACK);
-		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
+		background.makeGraphic(Math.floor(FlxG.width * .6), Math.floor(FlxG.height * .9), Colors.BLACK);
+		background.drawRect(2, 2, background.width - 4, background.height - 4, Colors.WHITE);
 		background.screenCenter();
 		add(background);
 
-		var title:GameText = new GameText(0, 0, 500, "Choose Technology to Learn", FlxColor.BLACK, SIZE_36);
+		var title:GameText = new GameText(0, 0, 500, "Choose Technology to Learn", Colors.BLACK, SIZE_36);
 		title.alignment = "center";
 		title.screenCenter(FlxAxes.X);
 		title.y = background.y + 10;
 		add(title);
 
 		add(scienceAmount = new GameText(background.x + background.width - 510, 0, 500, "Science: {{science}}" + Std.string(Globals.PlayState.science),
-			FlxColor.BLACK, SIZE_36));
+			Colors.BLACK, SIZE_36));
 		scienceAmount.alignment = "right";
 		scienceAmount.y = background.y + background.height - scienceAmount.height - 10;
 
@@ -110,8 +105,8 @@ class UpgradeScreen extends GameSubState
 			}
 		}
 
-		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, FlxColor.RED,
-			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK);
+		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, Colors.RED,
+			Colors.BLACK, Colors.WHITE, Colors.BLACK);
 		add(closeButton);
 
 		updateButtons();
@@ -176,24 +171,24 @@ class TechItem extends FlxSpriteGroup
 		box = Box;
 
 		add(background = new FlxSprite());
-		background.makeGraphic(250 + (MARGINS * 2), 300, FlxColor.BLACK);
-		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
+		background.makeGraphic(250 + (MARGINS * 2), 300, Colors.BLACK);
+		background.drawRect(2, 2, background.width - 4, background.height - 4, Colors.WHITE);
 
-		add(title = new GameText(background.x + MARGINS, background.y + MARGINS, Std.int(background.width - (MARGINS * 2)), "Title", FlxColor.BLACK, SIZE_36));
+		add(title = new GameText(background.x + MARGINS, background.y + MARGINS, Std.int(background.width - (MARGINS * 2)), "Title", Colors.BLACK, SIZE_36));
 		title.alignment = "center";
 
 		add(icon = new IconSprite(background.x + (background.width / 2) - 64, title.y + title.height + PADDING));
 
 		add(cost = new GameText(background.x + MARGINS, icon.y + icon.height + PADDING, Std.int(background.width - (MARGINS * 2)), "Cost: {{science}}0",
-			FlxColor.BLACK, SIZE_24));
+			Colors.BLACK, SIZE_24));
 		cost.alignment = "center";
 
 		add(requires = new GameText(background.x + MARGINS, cost.y + cost.height + PADDING, Std.int(background.width - (MARGINS * 2)), "Requires: ",
-			FlxColor.BLACK, SIZE_24));
+			Colors.BLACK, SIZE_24));
 		requires.alignment = "center";
 
-		add(buyButton = new GameButton(background.x + MARGINS, 0, "Learn", onBuy, background.width - (MARGINS * 2), 32, FlxColor.BLUE, FlxColor.BLACK,
-			FlxColor.WHITE, FlxColor.BLACK));
+		add(buyButton = new GameButton(background.x + MARGINS, 0, "Learn", onBuy, background.width - (MARGINS * 2), 32, Colors.LIGHTBLUE, Colors.BLACK,
+			Colors.WHITE, Colors.BLACK));
 		buyButton.active = false;
 		buyButton.y = background.y + background.height - buyButton.height - MARGINS;
 	}

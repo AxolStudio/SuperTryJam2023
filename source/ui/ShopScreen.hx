@@ -1,16 +1,14 @@
 package ui;
 
+import haxe.ui.containers.Box;
+import haxe.ui.containers.HBox;
+import haxe.ui.containers.ScrollView;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxAxes;
-import flixel.util.FlxColor;
 import gameObjects.IconSprite;
 import globals.Globals;
-import haxe.ui.containers.Box;
-import haxe.ui.containers.Grid;
-import haxe.ui.containers.HBox;
-import haxe.ui.containers.ScrollView;
 import states.GameState.GameSubState;
 
 using axollib.TitleCase;
@@ -32,22 +30,22 @@ class ShopScreen extends GameSubState
 
 		// when the player clicks the "back" button, the shop screen is closed
 
-		bgColor = FlxColor.TRANSPARENT;
+		bgColor = Colors.TRANSPARENT;
 
 		var background:FlxSprite = new FlxSprite();
-		background.makeGraphic(Math.floor(FlxG.width * .6), Math.floor(FlxG.height * .9), FlxColor.BLACK);
-		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
+		background.makeGraphic(Math.floor(FlxG.width * .6), Math.floor(FlxG.height * .9), Colors.BLACK);
+		background.drawRect(2, 2, background.width - 4, background.height - 4, Colors.WHITE);
 		background.screenCenter();
 		add(background);
 
-		var title:GameText = new GameText(0, 0, 500, "Choose Elements to Add", FlxColor.BLACK, SIZE_36);
+		var title:GameText = new GameText(0, 0, 500, "Choose Elements to Add", Colors.BLACK, SIZE_36);
 		title.alignment = "center";
 		title.screenCenter(FlxAxes.X);
 		title.y = background.y + 10;
 		add(title);
 
 		add(productionAmount = new GameText(background.x + background.width - 410, 0, 400,
-			"Production: {{production}}" + Std.string(Globals.PlayState.production), FlxColor.BLACK, SIZE_36));
+			"Production: {{production}}" + Std.string(Globals.PlayState.production), Colors.BLACK, SIZE_36));
 		productionAmount.alignment = "right";
 		productionAmount.y = background.y + background.height - productionAmount.height - 10;
 
@@ -81,8 +79,8 @@ class ShopScreen extends GameSubState
 			scrollGrid.addComponent(box);
 		}
 
-		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, FlxColor.RED,
-			FlxColor.BLACK, FlxColor.WHITE, FlxColor.BLACK);
+		var closeButton:GameButton = new GameButton(background.x + background.width - 42, background.y + 8, "X", onClose, 32, 32, SIZE_36, Colors.RED,
+			Colors.BLACK, Colors.WHITE, Colors.BLACK);
 		add(closeButton);
 
 		updateButtons();
@@ -126,20 +124,20 @@ class ShopItem extends FlxSpriteGroup
 		parent = Parent;
 
 		add(background = new FlxSprite());
-		background.makeGraphic(250 + (MARGINS * 2), 270, FlxColor.BLACK);
-		background.drawRect(2, 2, background.width - 4, background.height - 4, FlxColor.WHITE);
+		background.makeGraphic(250 + (MARGINS * 2), 270, Colors.BLACK);
+		background.drawRect(2, 2, background.width - 4, background.height - 4, Colors.WHITE);
 
-		add(title = new GameText(background.x + MARGINS, background.y + MARGINS, Std.int(background.width - (MARGINS * 2)), "Title", FlxColor.BLACK, SIZE_36));
+		add(title = new GameText(background.x + MARGINS, background.y + MARGINS, Std.int(background.width - (MARGINS * 2)), "Title", Colors.BLACK, SIZE_36));
 		title.alignment = "center";
 
 		add(iconSprite = new IconSprite(background.x + (background.width / 2) - 64, title.y + title.height + PADDING));
 
 		add(cost = new GameText(background.x + MARGINS, iconSprite.y + iconSprite.height + PADDING, Std.int(background.width - (MARGINS * 2)),
-			"Cost: {{production}}0", FlxColor.BLACK, SIZE_24));
+			"Cost: {{production}}0", Colors.BLACK, SIZE_24));
 		cost.alignment = "center";
 
-		add(buyButton = new GameButton(background.x + MARGINS, 0, "Buy", onBuy, background.width - (MARGINS * 2), 32, FlxColor.BLUE, FlxColor.BLACK,
-			FlxColor.WHITE, FlxColor.BLACK));
+		add(buyButton = new GameButton(background.x + MARGINS, 0, "Buy", onBuy, background.width - (MARGINS * 2), 32, Colors.LIGHTBLUE, Colors.BLACK,
+			Colors.WHITE, Colors.BLACK));
 		buyButton.active = false;
 		buyButton.y = background.y + background.height - buyButton.height - MARGINS;
 	}

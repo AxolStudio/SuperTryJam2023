@@ -2,9 +2,8 @@ package ui;
 
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
-import flixel.text.FlxText;
 import flixel.ui.FlxBar;
-import flixel.util.FlxColor;
+import globals.Globals.Colors;
 
 class CurrencyDisplay extends FlxGroup
 {
@@ -27,12 +26,12 @@ class CurrencyDisplay extends FlxGroup
 	{
 		super();
 
-		add(txtLabel = new GameText(X, Y, 200, Label, FlxColor.BLACK, SIZE_24));
+		add(txtLabel = new GameText(X, Y, 200, Label, Colors.BLACK, SIZE_24));
 		// txtLabel.setFormat(null, 18, 0x000000, "left");
 
 		add(bar = new FlxBar(X + txtLabel.width + 2, Y + 1, FlxBarFillDirection.LEFT_TO_RIGHT, 200, 22, this, "value", 0, Max, true));
 
-		add(txtAmount = new GameText(X + txtLabel.width + 2 + bar.width + 2, Y, 150, "0/" + Std.string(Max), FlxColor.BLACK, SIZE_24));
+		add(txtAmount = new GameText(X + txtLabel.width + 2 + bar.width + 2, Y, 150, "0/" + Std.string(Max), Colors.BLACK, SIZE_24));
 		// txtAmount.setFormat(null, 18, 0x000000, "left");
 
 		value = 0;

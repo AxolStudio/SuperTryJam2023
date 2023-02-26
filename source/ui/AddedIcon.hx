@@ -1,16 +1,19 @@
 package ui;
 
-import flixel.tweens.FlxTween;
 import flixel.text.FlxText.FlxTextBorderStyle;
-import flixel.util.FlxColor;
+import flixel.tweens.FlxTween;
 import gameObjects.IconSprite;
+import globals.Globals.Colors;
 
 class AddedIcon extends GameText
 {
+	// TODO: delay all new pop-ups for the same icon!
+	public static var Delays:Map<Int, Int> = [];
+
 	public function new():Void
 	{
-		super(0, 0, 0, "", FlxColor.CYAN, SIZE_36);
-		setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		super(0, 0, 0, "", Colors.CYAN, SIZE_36);
+		setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 1);
 		alignment = "left";
 		autoSize = true;
 		kill();

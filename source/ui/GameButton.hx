@@ -1,5 +1,6 @@
 package ui;
 
+import globals.Globals.Colors;
 import flixel.FlxG;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.ui.FlxButton.FlxTypedButton;
@@ -14,8 +15,8 @@ class GameButton extends FlxTypedButton<GameText>
 	public var buttonColor:FlxColor;
 
 	public function new(X:Float = 0, Y:Float = 0, ?Text:String, ?OnClick:Void->Void, ?Width:Float = 80, ?Height:Float = 20,
-			?WhichFont:GameText.WhichFont = GameText.WhichFont.SIZE_24, ?Color:FlxColor = FlxColor.BLUE, ?BorderColor:FlxColor = FlxColor.BLACK,
-			?TextColor:FlxColor = FlxColor.WHITE, ?TextBorderColor:FlxColor = FlxColor.BLACK, ?DisabledColor:FlxColor = 0xff990000):Void
+			?WhichFont:GameText.WhichFont = GameText.WhichFont.SIZE_24, ?Color:FlxColor = Colors.BLUE, ?BorderColor:FlxColor = Colors.BLACK,
+			?TextColor:FlxColor = Colors.WHITE, ?TextBorderColor:FlxColor = Colors.BLACK, ?DisabledColor:FlxColor = Colors.RED):Void
 	{
 		super(X, Y, OnClick);
 
@@ -41,8 +42,8 @@ class GameButton extends FlxTypedButton<GameText>
 		labelOffsets[FlxButton.HIGHLIGHT].y += 1;
 	}
 
-	function initLabel(Text:String, ?Width:Float = 80, ?WhichFont:GameText.WhichFont = GameText.WhichFont.SIZE_24, ?TextColor:FlxColor = FlxColor.WHITE,
-			?TextBorderColor:FlxColor = FlxColor.BLACK):Void
+	function initLabel(Text:String, ?Width:Float = 80, ?WhichFont:GameText.WhichFont = GameText.WhichFont.SIZE_24, ?TextColor:FlxColor = Colors.WHITE,
+			?TextBorderColor:FlxColor = Colors.BLACK):Void
 	{
 		if (Text != null)
 		{

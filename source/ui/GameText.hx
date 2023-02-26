@@ -6,6 +6,7 @@ import flixel.graphics.frames.FlxBitmapFont;
 import flixel.graphics.frames.FlxFrame;
 import flixel.text.FlxBitmapText;
 import flixel.util.FlxColor;
+import globals.Globals.Colors;
 
 class GameText extends FlxBitmapText
 {
@@ -15,7 +16,7 @@ class GameText extends FlxBitmapText
 	public var currLetter:Int = -1;
 	public var tooltipLetter:Int = -1;
 
-	public function new(X:Float, Y:Float, FieldWidth:Int, Text:String, ?Color:FlxColor = FlxColor.BLACK, ?WhichFont:WhichFont = SIZE_24)
+	public function new(X:Float, Y:Float, FieldWidth:Int, Text:String, ?Color:FlxColor = Colors.BLACK, ?WhichFont:WhichFont = SIZE_24)
 	{
 		if (FONT_24 == null || FONT_36 == null)
 			GameText.createFonts();
