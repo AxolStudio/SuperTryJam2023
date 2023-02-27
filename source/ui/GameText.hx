@@ -16,6 +16,8 @@ class GameText extends FlxBitmapText
 	public var currLetter:Int = -1;
 	public var tooltipLetter:Int = -1;
 
+	public var allowTooltips:Bool = true;
+
 	public function new(X:Float, Y:Float, FieldWidth:Int, Text:String, ?Color:FlxColor = Colors.BLACK, ?WhichFont:WhichFont = SIZE_24)
 	{
 		if (FONT_24 == null || FONT_36 == null)
@@ -49,7 +51,8 @@ class GameText extends FlxBitmapText
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		checkMouse();
+		if (allowTooltips)
+			checkMouse();
 	}
 
 	public function checkMouse():Void

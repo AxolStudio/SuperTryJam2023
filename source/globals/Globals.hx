@@ -10,6 +10,8 @@ class Globals
 
 	public static var initialized:Bool = false;
 
+	public static var RESOURCES:Array<String> = ["food", "production", "science", "population"];
+
 	public static function initGame():Void
 	{
 		if (initialized)

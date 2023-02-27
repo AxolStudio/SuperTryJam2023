@@ -11,13 +11,12 @@ import flixel.util.FlxAxes;
 import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
-import ui.AddedIcon;
 import ui.GameButton;
 import ui.GameOverState;
 import ui.GameText;
+import ui.InfoIcon;
 import ui.InventoryScreen;
 import ui.LogState;
-import ui.ResGenText;
 import ui.ShopScreen;
 import ui.TechDisplay;
 import ui.TimerDisplay;
@@ -91,10 +90,8 @@ class PlayState extends GameState
 
 	public var starved:Int = 0;
 
-	public var resGenTexts:FlxTypedGroup<ResGenText>;
-
 	public var fakeIcons:FlxTypedGroup<FakeIcon>;
-	public var addedIcons:FlxTypedGroup<AddedIcon>;
+	public var addedIcons:FlxTypedGroup<InfoIcon>;
 
 	public var shields:Array<FlxSprite>;
 	public var crosshairs:Array<FlxSprite>;
@@ -134,7 +131,10 @@ class PlayState extends GameState
 
 	private function get_ageProgression():Float
 	{
-		return (technologies[age].length / TechnologiesByAge[age].length) * 100;
+		if (technologies.exists(age))
+			return (technologies[age].length / TechnologiesByAge[age].length) * 100;
+		else
+			return 0;
 	}
 
 	public function initializeGame()
@@ -250,8 +250,6 @@ class PlayState extends GameState
 
 		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
 
-		add(addedIcons = new FlxTypedGroup<AddedIcon>());
-
 		add(spinButton = new GameButton((FlxG.width / 2) - 125, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 250, 50, SIZE_36, Colors.BLUE, Colors.BLACK,
 			Colors.WHITE, Colors.BLACK));
 		spinButton.active = false;
@@ -309,11 +307,11 @@ class PlayState extends GameState
 		techDisp.y = techLabel.y + techLabel.height + 10;
 		add(techDisp);
 
+		add(addedIcons = new FlxTypedGroup<InfoIcon>());
+
 		food = 10;
 
 		updatePop();
-
-		add(resGenTexts = new FlxTypedGroup<ResGenText>());
 
 		#if debug
 		food = production = science = 1000;
@@ -597,7 +595,6 @@ class PlayState extends GameState
 					addLog("A {{" + getIconName(Source) + '}} created {{' + getIconName(IconPos) + '}} x $count.');
 
 					showIconAdd(screenIcons[IconPos], type, count);
-					
 				}
 			case "replace": // replace this icon with another
 				replaceIcon(IconPos, split[1]);
@@ -705,29 +702,11 @@ class PlayState extends GameState
 
 	public function removeResource(IconPos:Int, Type:String, Amount:Int):Void
 	{
-		var rg:ResGenText = resGenTexts.getFirstAvailable();
+		var rg:InfoIcon = addedIcons.getFirstAvailable();
 		if (rg == null)
 		{
-			rg = new ResGenText();
-			resGenTexts.add(rg);
-		}
-		rg.reverseSpawn(screenIcons[IconPos], switch (Type)
-		{
-			case "food": "food";
-			case "prod": "production";
-			case "sci": "science";
-			case "population": "population";
-			default: null;
-		}, Amount);
-	}
-
-	public function showResGen(IconPos:Int, Type:String, Amount:Int):Void
-	{
-		var rg:ResGenText = resGenTexts.getFirstAvailable();
-		if (rg == null)
-		{
-			rg = new ResGenText();
-			resGenTexts.add(rg);
+			rg = new InfoIcon();
+			addedIcons.add(rg);
 		}
 		rg.spawn(screenIcons[IconPos], switch (Type)
 		{
@@ -736,7 +715,25 @@ class PlayState extends GameState
 			case "sci": "science";
 			case "population": "population";
 			default: null;
-		}, Amount);
+		}, Amount, false);
+	}
+
+	public function showResGen(IconPos:Int, Type:String, Amount:Int):Void
+	{
+		var rg:InfoIcon = addedIcons.getFirstAvailable();
+		if (rg == null)
+		{
+			rg = new InfoIcon();
+			addedIcons.add(rg);
+		}
+		rg.spawn(screenIcons[IconPos], switch (Type)
+		{
+			case "food": "food";
+			case "prod": "production";
+			case "sci": "science";
+			case "population": "population";
+			default: null;
+		}, Amount, true);
 	}
 
 	public function getIconsOfType(IconPos:Int, Type:String, ?FullCollection:Bool = false):Array<Int>
@@ -891,10 +888,10 @@ class PlayState extends GameState
 
 	public function showIconAdd(Icon:IconSprite, NewIcon:String, Amount:Int = 1):Void
 	{
-		var ia:AddedIcon = addedIcons.getFirstAvailable();
+		var ia:InfoIcon = addedIcons.getFirstAvailable();
 		if (ia == null)
 		{
-			ia = new AddedIcon();
+			ia = new InfoIcon();
 			addedIcons.add(ia);
 		}
 		ia.spawn(Icon, NewIcon, Amount);
