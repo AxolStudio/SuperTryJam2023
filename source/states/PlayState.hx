@@ -567,7 +567,6 @@ class PlayState extends GameState
 				iconsToDelete.push(Source);
 
 				logResponse = 'destroyed {{' + getIconName(Source) + '}}!';
-				
 
 			case "create": // create a new icon
 
@@ -629,7 +628,7 @@ class PlayState extends GameState
 
 				iconsToKill.push(IconPos);
 
-				addLog(" died!");
+				logResponse = " died!";
 
 			case "wound": // wound all humans touching this tile - UNLESS it is prevented from doing so...
 
@@ -986,16 +985,19 @@ class PlayState extends GameState
 		{
 			keyWord = Effect;
 		}
+		var logResponse:String = "";
 
 		switch (keyWord)
 		{
 			case "spin": // just do the effect!
-				doEffect(IconPos, DoEffect, null, Math.max(1, IconList.get(collection[IconPos].name).workMultiplier));
+				logResponse = doEffect(IconPos, DoEffect, null, Math.max(1, IconList.get(collection[IconPos].name).workMultiplier));
+				addLog("A {{" + getIconName(IconPos) + "}} " + logResponse);
 			case "work": // a human is touching this tile
 				for (n in getNeighborsWork(IconPos))
 				{
 					screenIcons[n].activate();
-					doEffect(IconPos, DoEffect, n, Math.max(1, IconList.get(collection[n].name).workMultiplier));
+					logResponse = doEffect(IconPos, DoEffect, n, Math.max(1, IconList.get(collection[n].name).workMultiplier));
+					addLog("A {{" + getIconName(IconPos) + "}} was worked by a {{" + getIconName(n) + "}} and" + logResponse);
 				}
 				doPause = true;
 			case "pair": // a pair of tiles of this type are touching
@@ -1013,14 +1015,16 @@ class PlayState extends GameState
 					whosAdding.push('$IconPos:$n:$type');
 
 					screenIcons[IconPos].activate();
-					doEffect(IconPos, DoEffect, n);
+					logResponse = doEffect(IconPos, DoEffect, n);
+					addLog("A pair of {{" + getIconName(IconPos) + "}} " + logResponse);
 				}
 				doPause = true;
 			case "chance": // a percentage of happening
 				if (FlxG.random.bool(Std.parseFloat(value)))
 				{
 					screenIcons[IconPos].activate();
-					doEffect(IconPos, DoEffect);
+					logResponse = doEffect(IconPos, DoEffect);
+					addLog("A {{" + getIconName(IconPos) + "}} " + logResponse);
 				}
 				doPause = true;
 			case "timer": // count down to 0 and then do the effect...
@@ -1035,7 +1039,8 @@ class PlayState extends GameState
 					{
 						screenIcons[IconPos].activate();
 						collection[IconPos].timer = -1;
-						doEffect(IconPos, DoEffect);
+						logResponse = doEffect(IconPos, DoEffect);
+						addLog("A {{" + getIconName(IconPos) + "}} " + logResponse);
 					}
 				}
 				else
@@ -1046,7 +1051,8 @@ class PlayState extends GameState
 				doPause = true;
 			case "after": // after this spin, do this effect
 				screenIcons[IconPos].activate();
-				doEffect(IconPos, DoEffect);
+				logResponse = doEffect(IconPos, DoEffect);
+				addLog("A {{" + getIconName(IconPos) + "}} " + logResponse);
 				doPause = true;
 			case "touch": // is touching a tile of a speficic type
 				var types:Array<String> = value.split("/");
@@ -1056,7 +1062,8 @@ class PlayState extends GameState
 					for (n in getNeighborsOfType(IconPos, t))
 					{
 						screenIcons[IconPos].activate();
-						doEffect(IconPos, DoEffect, n, Math.max(1, IconList.get(collection[IconPos].name).workMultiplier));
+						logResponse = doEffect(IconPos, DoEffect, n, Math.max(1, IconList.get(collection[IconPos].name).workMultiplier));
+						addLog("A {{" + getIconName(IconPos) + "}} touched a {{" + getIconName(n) + "}} and " + logResponse);
 					}
 				}
 				doPause = true;
@@ -1078,7 +1085,7 @@ class PlayState extends GameState
 		{
 			for (e in def.death)
 			{
-				doEffect(IconPos, e);
+				addLog("A {{" + getIconName(IconPos) + "}} died and " + doEffect(IconPos, e));
 			}
 		}
 	}
@@ -1402,6 +1409,7 @@ class PlayState extends GameState
 			shields[willWound[checkingIcon]].revive();
 			FlxTween.cancelTweensOf(shields[willWound[checkingIcon]]);
 			FlxTween.shake(shields[willWound[checkingIcon]], 0.05, 0.1, FlxAxes.X);
+			addLog("A {{" + getIconName(willWound[checkingIcon]) + "}} was protected from a wound!");
 		}
 		else
 		{

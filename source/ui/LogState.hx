@@ -1,5 +1,6 @@
 package ui;
 
+import haxe.ui.Toolkit;
 import haxe.ui.containers.Box;
 import haxe.ui.containers.ScrollView;
 import haxe.ui.containers.VBox;
@@ -9,6 +10,7 @@ import flixel.util.FlxAxes;
 import globals.Globals;
 import states.GameState;
 
+using StringTools;
 using flixel.util.FlxSpriteUtil;
 
 class LogState extends GameSubState
@@ -18,6 +20,8 @@ class LogState extends GameSubState
 
 	override public function create():Void
 	{
+		FlxG.autoPause = false;
+
 		bgColor = Colors.TRANSPARENT;
 
 		var background:FlxSprite = new FlxSprite();
@@ -42,7 +46,6 @@ class LogState extends GameSubState
 		scrollZone.x = background.x + 12;
 		scrollZone.y = title.y + title.height + 10;
 		scrollZone.percentContentWidth = 100;
-		// scrollZone.scrollMode = ScrollMode.NORMAL;
 
 		add(scrollZone);
 
@@ -56,6 +59,8 @@ class LogState extends GameSubState
 		var entryBox:Box;
 		var entryText:GameText;
 
+		var lastSpin:Box = null;
+
 		for (l in Globals.PlayState.log)
 		{
 			entryText = new GameText(0, 0, Std.int(scrollGrid.width), l, Colors.BLACK, SIZE_24);
@@ -65,10 +70,24 @@ class LogState extends GameSubState
 			entryBox.height = entryText.height;
 			entryBox.add(entryText);
 
+			if (entryText.text.startsWith("Spin "))
+				lastSpin = entryBox;
+
 			scrollGrid.addComponent(entryBox);
 		}
 
-		scrollZone.vscrollPos = scrollZone.vscrollMax;
+Toolkit.callLater(() ->
+{
+	scrollZone.vscrollPos = scrollZone.vscrollMax;
+
+	if (lastSpin != null)
+		Toolkit.callLater(() ->
+		{
+			scrollZone.ensureVisible(lastSpin);
+		});
+});
+
+		trace(scrollZone.vscrollPos, scrollZone.vscrollMax, scrollZone.vscrollPageSize, scrollZone.vscrollThumbSize);
 
 		super.create();
 	}
