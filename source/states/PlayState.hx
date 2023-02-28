@@ -117,6 +117,9 @@ class PlayState extends GameState
 
 	public var log:Array<String> = [];
 
+	public var ate:Int = 0;
+	public var pop:Int = 0;
+
 	override public function create()
 	{
 		initializeGame();
@@ -402,6 +405,7 @@ class PlayState extends GameState
 		iconsToDelete = [];
 		toKill = [];
 		toRemove = [];
+		ate = pop = 0;
 
 		for (i in 0...25)
 		{
@@ -552,8 +556,9 @@ class PlayState extends GameState
 		return collection[IconPos].name;
 	}
 
-	public function doEffect(IconPos:Int, Effect:String, ?Source:Int = -1, ?Mult:Float = 1):Void
+	public function doEffect(IconPos:Int, Effect:String, ?Source:Int = -1, ?Mult:Float = 1):String
 	{
+		var logResponse:String = "";
 		var split:Array<String> = Effect.split(":");
 
 		switch (split[0])
@@ -561,7 +566,8 @@ class PlayState extends GameState
 			case "delete": // remove icon without it's death effect
 				iconsToDelete.push(Source);
 
-				addLog("A {{" + getIconName(Source) + "}} was Destroyed by {{" + getIconName(IconPos) + "}}!");
+				logResponse = 'destroyed {{' + getIconName(Source) + '}}!';
+				
 
 			case "create": // create a new icon
 
@@ -587,19 +593,19 @@ class PlayState extends GameState
 				{
 					iconsToAdd.push(type);
 					whosAdding.push('$IconPos:$type');
-
-					trace("create: " + IconPos + " : " + collection[IconPos].name + " = " + type);
 				}
 				if (count > 0)
 				{
-					addLog("A {{" + getIconName(Source) + '}} created {{' + getIconName(IconPos) + '}} x $count.');
+					logResponse = 'created {{' + getIconName(IconPos) + '}} x $count.';
 
 					showIconAdd(screenIcons[IconPos], type, count);
 				}
 			case "replace": // replace this icon with another
+
+				logResponse = ' replaced with {{' + split[1] + '}}.';
+
 				replaceIcon(IconPos, split[1]);
 
-				trace("replace: " + IconPos + " : " + collection[IconPos].name + " = " + split[1]);
 			case "gen": // generate a resource
 				var details:Array<String> = split[1].split("$");
 				var amount:Int = Std.int(Std.parseFloat(details[0]) * Mult);
@@ -609,46 +615,108 @@ class PlayState extends GameState
 					case "prod": production += amount;
 					case "sci": science += amount;
 				}
-				trace("gen: " + IconPos + " : " + collection[IconPos].name + " = " + split[1] + " x" + Mult + " = " + amount);
-				trace("food: " + food + " prod: " + production + " sci: " + science);
+
+				logResponse = ' generated $amount {{' + (switch (details[1])
+				{
+					case "food": "food";
+					case "prod": "production";
+					case "sci": "science";
+					default: "";
+				}) + '}}.';
 				showResGen(IconPos, details[1], amount);
 
 			case "die": // remove this icon from the collection
+
 				iconsToKill.push(IconPos);
-				trace("die: " + IconPos + " : " + collection[IconPos].name);
+
+				addLog(" died!");
+
 			case "wound": // wound all humans touching this tile - UNLESS it is prevented from doing so...
 
 				willWound.push(Source);
-				trace("wound: " + IconPos + " : " + collection[IconPos].name + " = " + Source + " / " + willWound);
+
+				logResponse = "wounded a {{" + getIconName(Source) + "}}";
 
 			case "protect":
 				var types:Array<String> = split[1].split("/");
+				var any:Bool = false;
+				var nCounts:Map<String, Int> = [];
 				for (t in types)
 				{
 					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
 					preventedWound = preventedWound.concat(neighbors);
 
 					trace("protect: " + IconPos + " : " + collection[IconPos].name + " = " + neighbors);
+
+					for (n in neighbors)
+					{
+						any = true;
+						if (nCounts.exists(collection[n].name))
+							nCounts[collection[n].name]++;
+						else
+							nCounts[collection[n].name] = 1;
+					}
+				}
+
+				if (any)
+				{
+					for (k => v in nCounts)
+						logResponse += (logResponse != "" ? ', ' : '') + '$v {{$k}}';
+
+					logResponse = "protected " + logResponse + " against wounds.";
 				}
 
 			case "kill": // kill the types touching this icon
 				var types:Array<String> = split[1].split("/");
+				var any:Bool = false;
+				var nCounts:Map<String, Int> = [];
 				for (t in types)
 				{
 					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
 					iconsToKill = iconsToKill.concat(neighbors);
 					trace("kill: " + IconPos + " : " + collection[IconPos].name + " = " + neighbors);
+
+					for (n in neighbors)
+					{
+						any = true;
+						if (nCounts.exists(collection[n].name))
+							nCounts[collection[n].name]++;
+						else
+							nCounts[collection[n].name] = 1;
+					}
+				}
+
+				if (any)
+				{
+					for (k => v in nCounts)
+						logResponse += (logResponse != "" ? ', ' : '') + '$v {{$k}}';
+
+					logResponse = "killed " + logResponse;
 				}
 			case "change": // change touching tile to another tile
 				var types:Array<String> = split[1].split("/");
+				var any:Bool = false;
+				var nCounts:Map<String, Int> = [];
+
 				for (t in types)
 				{
 					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
 					for (n in neighbors)
 					{
+						if (nCounts.exists(collection[n].name))
+							nCounts[collection[n].name]++;
+						else
+							nCounts[collection[n].name] = 1;
 						replaceIcon(n, split[2]);
-						trace("change: " + IconPos + " : " + collection[IconPos].name + " : " + collection[n].name + " = " + split[2]);
+						any = true;
 					}
+				}
+				if (any)
+				{
+					for (k => v in nCounts)
+						logResponse += (logResponse != "" ? ', ' : '') + '$v {{$k}} into {{' + split[2] + "}}";
+
+					logResponse = "changed " + logResponse;
 				}
 			case "snipe": // find a random tile of type on the board, kill it
 
@@ -668,36 +736,40 @@ class PlayState extends GameState
 				{
 					icons = icons.concat(getIconsOfType(IconPos, t));
 				}
-				if (icons.length == 0)
-					return;
-
-				FlxG.random.shuffle(icons);
-
-				var target:Int = icons[0];
-				var effect:String = targetEffects.get(collection[icons[0]].name);
-				if (effect == "wound")
+				if (icons.length >= 0)
 				{
-					willWound.push(target);
-				}
-				else
-				{
-					iconsToKill.push(target);
-				}
+					FlxG.random.shuffle(icons);
 
-				trace("snipe: " + IconPos + " : " + collection[target].name + " = " + icons);
-				if (!crosshairs[target].alive)
-				{
-					crosshairs[target].revive();
-					crosshairs[target].alpha = 0;
-					crosshairs[target].angle = 0;
-					crosshairs[target].angularVelocity = 60;
-					screenIcons[target].activate();
+					var target:Int = icons[0];
+					var effect:String = targetEffects.get(collection[icons[0]].name);
+					if (effect == "wound")
+					{
+						logResponse = "sniped a {{" + getIconName(target) + "}}, wounding it!";
 
-					FlxTween.tween(crosshairs[target], {alpha: 1}, 0.15, {
-						type: FlxTweenType.ONESHOT
-					});
+						willWound.push(target);
+					}
+					else
+					{
+						logResponse = "sniped a {{" + getIconName(target) + "}}, killing it!";
+
+						iconsToKill.push(target);
+					}
+
+					if (!crosshairs[target].alive)
+					{
+						crosshairs[target].revive();
+						crosshairs[target].alpha = 0;
+						crosshairs[target].angle = 0;
+						crosshairs[target].angularVelocity = 60;
+						screenIcons[target].activate();
+
+						FlxTween.tween(crosshairs[target], {alpha: 1}, 0.15, {
+							type: FlxTweenType.ONESHOT
+						});
+					}
 				}
 		}
+		return logResponse;
 	}
 
 	public function removeResource(IconPos:Int, Type:String, Amount:Int):Void
@@ -1208,6 +1280,7 @@ class PlayState extends GameState
 						trace(starved + " humans starved to death.");
 						checkingIcon = 0;
 						currentMode = "merging";
+						addLog('$pop people consumed $ate {{food}}.');
 					}
 					else
 					{
@@ -1294,6 +1367,8 @@ class PlayState extends GameState
 				}
 
 				trace(MergeInto, m, neighbors[0], neighbors[1]);
+
+				trace('$AmountNeeded ' + getIconName(m) + ' merged to become a {{$MergeInto}}.');
 			}
 		}
 	}
@@ -1354,12 +1429,15 @@ class PlayState extends GameState
 				food -= icon.food;
 				screenIcons[checkingIcon].activate();
 				removeResource(checkingIcon, "food", icon.food);
+				ate += icon.food;
+				pop += icon.population;
 			}
 			else
 			{
 				killIcon(checkingIcon);
 				toRemove.push(checkingIcon);
 				// trace(checkingIcon);
+				addLog("A " + collection[checkingIcon].name + " starved to death.");
 				starved++;
 			}
 		}
