@@ -12,7 +12,7 @@ class InfoIcon extends GameText
 
 	public static inline var TIME_STEP:Float = 0.25;
 
-	public var source:IconSprite;
+	public var source:IconSprite = null;
 
 	public function new():Void
 	{
@@ -147,16 +147,19 @@ class InfoIcon extends GameText
 	{
 		super.kill();
 		var delayAmt:Int = 0;
-		if (Delays.exists(source))
+		if (source != null)
 		{
-			delayAmt = Delays[source];
-			if (delayAmt > 0)
+			if (Delays.exists(source))
 			{
-				Delays.set(source, delayAmt - 1);
-			}
-			else
-			{
-				Delays.remove(source);
+				delayAmt = Delays[source];
+				if (delayAmt > 0)
+				{
+					Delays.set(source, delayAmt - 1);
+				}
+				else
+				{
+					Delays.remove(source);
+				}
 			}
 		}
 	}

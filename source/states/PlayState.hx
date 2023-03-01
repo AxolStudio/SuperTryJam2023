@@ -178,6 +178,8 @@ class PlayState extends GameState
 			}
 		}
 
+		add(new FlxSprite((FlxG.width / 2) - GRID_MID-2, (FlxG.height / 2) - GRID_MID-2, "assets/images/grid_back.png"));
+
 		var wound:FlxSprite;
 		for (i in 0...25)
 		{
@@ -318,7 +320,7 @@ class PlayState extends GameState
 		updatePop();
 
 		#if debug
-		food = production = science = 1000;
+		// food = production = science = 1000;
 		#end
 
 		FlxG.camera.fade(Colors.BLACK, 1, true, () ->
