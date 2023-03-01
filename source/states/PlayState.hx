@@ -19,6 +19,7 @@ import ui.InfoIcon;
 import ui.InventoryScreen;
 import ui.LogState;
 import ui.ShopScreen;
+import ui.SpinEffect;
 import ui.TechDisplay;
 import ui.TimerDisplay;
 import ui.UpgradeScreen;
@@ -121,6 +122,10 @@ class PlayState extends GameState
 	public var ate:Int = 0;
 	public var pop:Int = 0;
 
+	public var spinEffect:SpinEffect;
+
+	public var postSpin:Array<String> = [];
+
 	override public function create()
 	{
 		initializeGame();
@@ -178,7 +183,7 @@ class PlayState extends GameState
 			}
 		}
 
-		add(new FlxSprite((FlxG.width / 2) - GRID_MID-2, (FlxG.height / 2) - GRID_MID-2, "assets/images/grid_back.png"));
+		add(new FlxSprite((FlxG.width / 2) - GRID_MID - 2, (FlxG.height / 2) - GRID_MID - 2, "assets/images/grid_back.png"));
 
 		var wound:FlxSprite;
 		for (i in 0...25)
@@ -322,6 +327,8 @@ class PlayState extends GameState
 		#if debug
 		// food = production = science = 1000;
 		#end
+
+		add(spinEffect = new SpinEffect());
 
 		FlxG.camera.fade(Colors.BLACK, 1, true, () ->
 		{
@@ -510,12 +517,20 @@ class PlayState extends GameState
 
 	public function finishChecking():Void
 	{
+		postSpin = [];
 		var tmpCollection:Array<GridIcon> = [];
 		trace("toRemove", toRemove);
 		for (i in 0...collection.length)
 		{
 			if (!toRemove.contains(i))
+			{
 				tmpCollection.push(collection[i]);
+				postSpin.push(collection[i].name);
+			}
+			else
+			{
+				postSpin.push("blank");
+			}
 		}
 
 		collection = tmpCollection.copy();
@@ -541,6 +556,9 @@ class PlayState extends GameState
 		{
 			currentMode = "waiting-for-spin";
 			logButton.active = inventoryButton.active = shopButton.active = spinButton.active = canSpin = true;
+
+			spinEffect.start();
+
 			if (age < 2)
 				upgradeButton.active = true;
 		}
