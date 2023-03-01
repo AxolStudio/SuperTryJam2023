@@ -43,9 +43,13 @@ class GameText extends FlxBitmapText
 	{
 		FONT_24 = cast FlxBitmapFont.fromAngelCode("assets/fonts/font-24.png", "assets/fonts/font-24.xml");
 		FONT_24.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-24.png", "assets/images/glyphs-24.xml", true, "glyphs-24"));
+		FONT_24.parent.destroyOnNoUse = false;
+		FONT_24.parent.persist = true;
 
 		FONT_36 = cast FlxBitmapFont.fromAngelCode("assets/fonts/font-36.png", "assets/fonts/font-36.xml");
 		FONT_36.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-36.png", "assets/images/glyphs-36.xml", true, "glyphs-36"));
+		FONT_36.parent.destroyOnNoUse = false;
+		FONT_36.parent.persist = true;
 	}
 
 	override function update(elapsed:Float)

@@ -20,7 +20,7 @@ class LogState extends GameSubState
 
 	override public function create():Void
 	{
-		FlxG.autoPause = false;
+		
 
 		bgColor = Colors.TRANSPARENT;
 
@@ -42,7 +42,7 @@ class LogState extends GameSubState
 
 		scrollZone = new ScrollView();
 		scrollZone.width = background.width - 24;
-		scrollZone.height = background.height - title.height - 20;
+		scrollZone.height = background.height - title.height - 30;
 		scrollZone.x = background.x + 12;
 		scrollZone.y = title.y + title.height + 10;
 		scrollZone.percentContentWidth = 100;
@@ -76,18 +76,16 @@ class LogState extends GameSubState
 			scrollGrid.addComponent(entryBox);
 		}
 
-Toolkit.callLater(() ->
-{
-	scrollZone.vscrollPos = scrollZone.vscrollMax;
-
-	if (lastSpin != null)
 		Toolkit.callLater(() ->
 		{
-			scrollZone.ensureVisible(lastSpin);
-		});
-});
+			scrollZone.vscrollPos = scrollZone.vscrollMax;
 
-		trace(scrollZone.vscrollPos, scrollZone.vscrollMax, scrollZone.vscrollPageSize, scrollZone.vscrollThumbSize);
+			if (lastSpin != null)
+				Toolkit.callLater(() ->
+				{
+					scrollZone.ensureVisible(lastSpin);
+				});
+		});
 
 		super.create();
 	}

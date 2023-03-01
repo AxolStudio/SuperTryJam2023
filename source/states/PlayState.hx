@@ -11,6 +11,7 @@ import flixel.util.FlxAxes;
 import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
+import ui.DemoEnd;
 import ui.GameButton;
 import ui.GameOverState;
 import ui.GameText;
@@ -253,23 +254,23 @@ class PlayState extends GameState
 
 		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
 
-		add(spinButton = new GameButton((FlxG.width / 2) - 125, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 250, 50, SIZE_36, Colors.BLUE, Colors.BLACK,
+		add(spinButton = new GameButton((FlxG.width / 2) - 150, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 300, 50, SIZE_36, Colors.BLUE, Colors.BLACK,
 			Colors.WHITE, Colors.BLACK));
 		spinButton.active = false;
 
-		add(shopButton = new GameButton(spinButton.x - 260, spinButton.y, "Shop", openShop, 250, 50, SIZE_36, Colors.GREEN, Colors.BLACK, Colors.WHITE,
+		add(shopButton = new GameButton(spinButton.x - 300, spinButton.y, "Shop", openShop, 250, 50, SIZE_24, Colors.GREEN, Colors.BLACK, Colors.WHITE,
 			Colors.BLACK));
 		shopButton.active = false;
 
-		add(upgradeButton = new GameButton(spinButton.x + 260, spinButton.y, "Technologies", openUpgrade, 250, 50, SIZE_36, Colors.VIOLET, Colors.BLACK,
+		add(upgradeButton = new GameButton(spinButton.x + 350, spinButton.y, "Technologies", openUpgrade, 250, 50, SIZE_24, Colors.VIOLET, Colors.BLACK,
 			Colors.WHITE, Colors.BLACK));
 		upgradeButton.active = false;
 
-		add(inventoryButton = new GameButton(upgradeButton.x + 260, upgradeButton.y, "Inventory", openInventory, 250, 50, SIZE_36, Colors.ORANGE,
+		add(inventoryButton = new GameButton(upgradeButton.x + 260, upgradeButton.y, "Inventory", openInventory, 250, 50, SIZE_24, Colors.ORANGE,
 			Colors.BLACK, Colors.WHITE, Colors.BLACK));
 		inventoryButton.active = false;
 
-		add(logButton = new GameButton(shopButton.x - 260, shopButton.y, "Log", openLog, 250, 50, SIZE_36, Colors.MAGENTA, Colors.BLACK, Colors.WHITE,
+		add(logButton = new GameButton(shopButton.x - 260, shopButton.y, "Log", openLog, 250, 50, SIZE_24, Colors.MAGENTA, Colors.BLACK, Colors.WHITE,
 			Colors.BLACK));
 		logButton.active = false;
 
@@ -370,6 +371,8 @@ class PlayState extends GameState
 			txtAge.text = "Age " + Roman.arabic2Roman(age);
 			if (age < 5) // however many ages we have
 				techDisp.addAge(age);
+
+			upgradeButton.active = false;
 		}
 	}
 
@@ -535,7 +538,9 @@ class PlayState extends GameState
 		if (population > 0)
 		{
 			currentMode = "waiting-for-spin";
-			logButton.active = inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+			logButton.active = inventoryButton.active = shopButton.active = spinButton.active = canSpin = true;
+			if (age < 2)
+				upgradeButton.active = true;
 		}
 		else
 		{
@@ -1166,8 +1171,13 @@ class PlayState extends GameState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
 		switch (currentMode)
 		{
+			case "waiting-for-spin":
+				if (age > 1)
+					openSubState(new DemoEnd());
+
 			case "did-spin":
 				checkingIcon = 0;
 				currentMode = "pre-checking";

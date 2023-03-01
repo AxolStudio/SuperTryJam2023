@@ -7,6 +7,6 @@
 [X] fix population display
 [X] show age progress
 [X] add more icon sizes
-[ ] Add log to spins
+[X] Add log to spins
 [X] Add game over and restart
 [ ] Come up with some kind of scoring system

@@ -1,11 +1,18 @@
 package states;
 
+import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import ui.Tooltips;
 
 class GameState extends FlxState
 {
+	override function create():Void
+	{
+		FlxG.autoPause = false;
+		super.create();
+	}
+
 	override function draw()
 	{
 		super.draw();
@@ -28,6 +35,12 @@ class GameState extends FlxState
 
 class GameSubState extends FlxSubState
 {
+	override function create():Void
+	{
+		FlxG.autoPause = false;
+		super.create();
+	}
+
 	override function draw()
 	{
 		super.draw();
