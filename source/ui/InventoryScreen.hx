@@ -1,5 +1,6 @@
 package ui;
 
+import flixel.util.FlxDestroyUtil;
 import haxe.ui.containers.Box;
 import haxe.ui.containers.HBox;
 import haxe.ui.containers.ScrollView;
@@ -20,11 +21,6 @@ class InventoryScreen extends GameSubState
 {
 	public var scrollZone:ScrollView;
 	public var scrollGrid:HBox;
-
-	public function new()
-	{
-		super();
-	}
 
 	override public function create():Void
 	{
@@ -114,6 +110,16 @@ class InventoryScreen extends GameSubState
 	{
 		close();
 	}
+
+	override public function destroy():Void
+	{
+		scrollGrid.destroy();
+		scrollZone.destroy();
+		scrollGrid = null;
+		scrollZone = null;
+
+		super.destroy();
+	}
 }
 
 class InventoryItem extends FlxSpriteGroup
@@ -154,5 +160,15 @@ class InventoryItem extends FlxSpriteGroup
 		count.alignment = "left";
 		count.x = icon.x + icon.width + 2;
 		count.y = icon.y + icon.height - count.height;
+	}
+
+	override public function destroy():Void
+	{
+		icon = FlxDestroyUtil.destroy(icon);
+		timer = FlxDestroyUtil.destroy(timer);
+		wound = FlxDestroyUtil.destroy(wound);
+		count = FlxDestroyUtil.destroy(count);
+
+		super.destroy();
 	}
 }

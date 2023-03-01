@@ -3,6 +3,7 @@ package ui;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxAxes;
+import flixel.util.FlxDestroyUtil;
 import globals.Globals.Colors;
 import states.GameState;
 
@@ -62,9 +63,14 @@ class DemoEnd extends GameSubState
 	private function onRestart():Void
 	{
 		menuButton.active = restartButton.active = false;
-		FlxG.camera.fade(Colors.BLACK, 1, false, () ->
-		{
-			FlxG.resetState();
-		});
+		close();
+	}
+
+	override public function destroy():Void
+	{
+		menuButton = FlxDestroyUtil.destroy(menuButton);
+		restartButton = FlxDestroyUtil.destroy(restartButton);
+
+		super.destroy();
 	}
 }

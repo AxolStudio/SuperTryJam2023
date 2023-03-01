@@ -1,13 +1,12 @@
 package ui;
 
-import axollib.TitleCase.Roman;
-
-import gameObjects.IconSprite;
-import globals.Globals;
 import haxe.ui.containers.Box;
 import haxe.ui.containers.HBox;
 import haxe.ui.containers.ScrollView;
 import haxe.ui.containers.VBox;
+import axollib.TitleCase.Roman;
+import gameObjects.IconSprite;
+import globals.Globals;
 
 class TechDisplay extends ScrollView
 {
@@ -54,7 +53,7 @@ class TechDisplay extends ScrollView
 
 		grid = new HBox();
 
-		grid.width = vbox.width-20;
+		grid.width = vbox.width - 20;
 		grid.padding = 10;
 		grid.styleString = "spacing:10px;";
 		grid.continuous = true;
@@ -79,4 +78,5 @@ class TechDisplay extends ScrollView
 
 		grid.addComponent(box);
 	}
+
 }

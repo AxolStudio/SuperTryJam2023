@@ -43,19 +43,15 @@ class GameText extends FlxBitmapText
 	{
 		FONT_24 = cast FlxBitmapFont.fromAngelCode("assets/fonts/font-24.png", "assets/fonts/font-24.xml");
 		FONT_24.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-24.png", "assets/images/glyphs-24.xml", true, "glyphs-24"));
-		FONT_24.parent.destroyOnNoUse = false;
-		FONT_24.parent.persist = true;
 
 		FONT_36 = cast FlxBitmapFont.fromAngelCode("assets/fonts/font-36.png", "assets/fonts/font-36.xml");
 		FONT_36.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-36.png", "assets/images/glyphs-36.xml", true, "glyphs-36"));
-		FONT_36.parent.destroyOnNoUse = false;
-		FONT_36.parent.persist = true;
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (allowTooltips)
+		if (allowTooltips && visible)
 			checkMouse();
 	}
 
@@ -73,23 +69,35 @@ class GameText extends FlxBitmapText
 			var currFrame:FlxFrame;
 			var charCode:Int;
 			currLetter = -1;
+
+			// for each letter in the text's string...
 			for (j in 0...textLength)
 			{
+				// textDrawData uses 3 slots per letter - the character code, x pos, and y pos
 				dataPos = j * 3;
-				if (mouseX >= textDrawData[dataPos + 1] && mouseY >= textDrawData[dataPos + 2])
+
+				// get the letter's character code
+				charCode = Std.int(textDrawData[dataPos]);
+
+				// if it is one of our special characters...
+				if (charCode >= font.specialStart)
 				{
-					charCode = Std.int(textDrawData[dataPos]);
-					currFrame = font.getCharFrame(charCode);
-					if (mouseX <= textDrawData[dataPos + 1] + currFrame.sourceSize.x
-						&& mouseY <= textDrawData[dataPos + 2] + currFrame.sourceSize.y)
+					// check if the mouse is 'after' the starting pos (x, y) of the letter...
+					if (mouseX >= textDrawData[dataPos + 1] && mouseY >= textDrawData[dataPos + 2])
 					{
-						currLetter = dataPos;
-						if (charCode >= font.specialStart)
+						// get the letter's frame size
+
+						currFrame = font.getCharFrame(charCode);
+						// check that we are also 'before' the end pos(x+width, y+height) of the letter
+						if (mouseX <= textDrawData[dataPos + 1] + currFrame.sourceSize.x
+							&& mouseY <= textDrawData[dataPos + 2] + currFrame.sourceSize.y)
 						{
+							// we are over a letter that is a special character - show a tooltip!
+							currLetter = dataPos;
 							tooltipLetter = currLetter;
 							Tooltips.showTooltip(font.revLookupTable.get(currFrame.name), this);
+							return;
 						}
-						return;
 					}
 				}
 			}

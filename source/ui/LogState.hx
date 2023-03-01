@@ -20,8 +20,6 @@ class LogState extends GameSubState
 
 	override public function create():Void
 	{
-		
-
 		bgColor = Colors.TRANSPARENT;
 
 		var background:FlxSprite = new FlxSprite();
@@ -93,5 +91,16 @@ class LogState extends GameSubState
 	private function onClose():Void
 	{
 		close();
+	}
+
+	override public function destroy():Void
+	{
+		scrollZone.destroy();
+		scrollGrid.destroy();
+
+		scrollZone = null;
+		scrollGrid = null;
+
+		super.destroy();
 	}
 }

@@ -9,7 +9,6 @@ import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil;
 import gameObjects.Icon;
 import gameObjects.Technology;
-import globals.Globals.GlyphType;
 import globals.Globals;
 
 using axollib.TitleCase;
@@ -38,7 +37,18 @@ class Tooltips
 				return;
 
 		// Tooltips.update(0);
-		tooltips.push(new ToolTip(FlxG.mouse.x + 8, FlxG.mouse.y + 8, Source, Target));
+		var t:ToolTip = getFirstAvailable();
+		t.spawn(FlxG.mouse.x + 8, FlxG.mouse.y + 8, Source, Target);
+		tooltips.push(t);
+	}
+
+	public static function getFirstAvailable():ToolTip
+	{
+		for (t in tooltips)
+			if (!t.exists)
+				return t;
+
+		return new ToolTip();
 	}
 
 	public static function hideTooltip(Tooltip:ToolTip):Void
@@ -47,7 +57,7 @@ class Tooltips
 		{
 			tooltips.pop();
 			Tooltip.kill();
-			Tooltip.destroy();
+			// Tooltip.destroy();
 		}
 	}
 }
@@ -68,27 +78,37 @@ class ToolTip extends FlxGroup
 	public var target:FlxObject;
 	public var type:GlyphType;
 
-	public function new(X:Float, Y:Float, Source:String, Target:FlxObject):Void
+	public function new():Void
 	{
 		super();
 
-		target = Target;
-
 		background = new FlxSprite();
-
-		type = Globals.PlayState.GLYPH_TYPES.get(Source);
 
 		icon = new FlxSprite();
 		icon.frames = GraphicsCache.loadGraphicFromAtlas("assets/images/icons-128.png", "assets/images/icons-128.xml", false, "icons-128").atlasFrames;
-		icon.animation.frameName = Source;
 
 		icon.color = Colors.BLACK;
 
-		title = new GameText(0, 0, 264 - 24, Source.toTitleCase(), Colors.BLACK, SIZE_36);
+		title = new GameText(0, 0, 264 - 24, "", Colors.BLACK, SIZE_36);
 		title.alignment = "center";
 
-		text = new GameText(0, 0, 264 - 24, parseDetails(Source), Colors.BLACK, SIZE_24);
+		text = new GameText(0, 0, 264 - 24, "", Colors.BLACK, SIZE_24);
 		text.alignment = FlxTextAlign.LEFT;
+
+		add(background);
+		add(icon);
+		add(text);
+		add(title);
+	}
+
+	public function spawn(X:Float, Y:Float, Source:String, Target:FlxObject):Void
+	{
+		revive();
+		target = Target;
+		type = Globals.PlayState.GLYPH_TYPES.get(Source);
+		icon.animation.frameName = Source;
+		title.text = Source.toTitleCase();
+		text.text = parseDetails(Source);
 
 		background.makeGraphic(264, Math.ceil(icon.height + 32 + text.height + title.height), Colors.BLACK);
 		background.drawRect(2, 2, background.width - 4, background.height - 4, Colors.WHITE);
@@ -110,11 +130,6 @@ class ToolTip extends FlxGroup
 
 		text.x = background.x + 12;
 		text.y = icon.y + icon.height + 4;
-
-		add(background);
-		add(icon);
-		add(text);
-		add(title);
 	}
 
 	public function parseDetails(Source:String):String

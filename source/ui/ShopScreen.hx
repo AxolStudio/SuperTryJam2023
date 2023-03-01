@@ -7,6 +7,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxAxes;
+import flixel.util.FlxDestroyUtil;
 import gameObjects.IconSprite;
 import globals.Globals;
 import states.GameState.GameSubState;
@@ -101,6 +102,18 @@ class ShopScreen extends GameSubState
 		}
 		productionAmount.text = "Production: {{production}}" + Std.string(Globals.PlayState.production);
 	}
+
+	override public function destroy():Void
+	{
+		shopItems = FlxDestroyUtil.destroyArray(shopItems);
+		productionAmount = FlxDestroyUtil.destroy(productionAmount);
+		scrollZone.destroy();
+		scrollGrid.destroy();
+		scrollZone = null;
+		scrollGrid = null;
+
+		super.destroy();
+	}
 }
 
 class ShopItem extends FlxSpriteGroup
@@ -163,5 +176,18 @@ class ShopItem extends FlxSpriteGroup
 		// update buttons of all shop items
 
 		parent.updateButtons();
+	}
+
+	override public function destroy():Void
+	{
+		iconSprite = FlxDestroyUtil.destroy(iconSprite);
+		background = FlxDestroyUtil.destroy(background);
+		cost = FlxDestroyUtil.destroy(cost);
+		buyButton = FlxDestroyUtil.destroy(buyButton);
+		title = FlxDestroyUtil.destroy(title);
+		
+		parent = null;
+
+		super.destroy();
 	}
 }

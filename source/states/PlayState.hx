@@ -545,7 +545,15 @@ class PlayState extends GameState
 		else
 		{
 			currentMode = "game-over";
-			openSubState(new GameOverState());
+			var gameOverState:GameOverState = new GameOverState();
+			gameOverState.closeCallback = function():Void
+			{
+				FlxG.camera.fade(Colors.BLACK, 1, false, () ->
+				{
+					FlxG.resetState();
+				});
+			};
+			openSubState(gameOverState);
 		}
 	}
 
@@ -1176,7 +1184,20 @@ class PlayState extends GameState
 		{
 			case "waiting-for-spin":
 				if (age > 1)
-					openSubState(new DemoEnd());
+				{
+					currentMode = "demo-end";
+					var demoEnd:DemoEnd = new DemoEnd();
+					demoEnd.closeCallback = () ->
+					{
+						FlxG.camera.fade(Colors.BLACK, 1, false, () ->
+						{
+							// GameText.FONT_24 = FlxDestroyUtil.destroy(GameText.FONT_24);
+							// GameText.FONT_36 = FlxDestroyUtil.destroy(GameText.FONT_36);
+							FlxG.resetState();
+						});
+					}
+					openSubState(demoEnd);
+				}
 
 			case "did-spin":
 				checkingIcon = 0;
@@ -1502,5 +1523,10 @@ class PlayState extends GameState
 		population = Value;
 		txtPopulation.text = "{{population}} " + Std.string(population);
 		return population;
+	}
+
+	override public function destroy():Void
+	{
+		super.destroy();
 	}
 }

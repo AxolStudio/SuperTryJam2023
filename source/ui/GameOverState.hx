@@ -1,5 +1,6 @@
 package ui;
 
+import flixel.util.FlxDestroyUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxAxes;
@@ -60,9 +61,14 @@ class GameOverState extends GameSubState
 	private function onRestart():Void
 	{
 		menuButton.active = restartButton.active = false;
-		FlxG.camera.fade(Colors.BLACK, 1, false, () ->
-		{
-			FlxG.resetState();
-		});
+		close();
+	}
+
+	override public function destroy():Void
+	{
+		menuButton = FlxDestroyUtil.destroy(menuButton);
+		restartButton = FlxDestroyUtil.destroy(restartButton);
+
+		super.destroy();
 	}
 }
