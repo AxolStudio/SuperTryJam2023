@@ -219,7 +219,7 @@ class SpinIcon extends FlxSprite
 
 		while (ty >= parent.y + Wheel.WHEEL_HEIGHT)
 		{
-			ty -= Wheel.WHEEL_HEIGHT;
+			ty -= Wheel.WHEEL_HEIGHT + (IconSprite.ICON_SIZE + PlayState.GRID_SPACING);
 		}
 
 		y = ty;
@@ -250,7 +250,7 @@ class SpinIcon extends FlxSprite
 			pos += elapsed * rate;
 			if (rate < 5 && !slowing)
 				rate *= 1.25;
-			else if (pos >= ((parent.ID + 1)) + 2)
+			else if (pos >= ((parent.ID + 1)) + .66)
 			{
 				if (!slowing)
 				{
@@ -269,10 +269,12 @@ class SpinIcon extends FlxSprite
 						icon = Globals.PlayState.getIconName(FlxG.random.int(0, Globals.PlayState.collection.length - 1));
 					}
 
-					trace(parent.ID, ID, pos, y, icon, (parent.ID * 5) + ID - 1);
+					// trace(parent.ID, ID, pos, y, icon, (parent.ID * 5) + ID - 1);
 				}
-				// rate *= .25;
-				if (pos >= ((parent.ID + 1)) + 3.05)
+				rate -= .25;
+				if (rate < .15)
+					rate = .15;
+				if (pos >= ((parent.ID + 1)) + 1.025)
 				{
 					slowing = started = false;
 					pos = 0;
