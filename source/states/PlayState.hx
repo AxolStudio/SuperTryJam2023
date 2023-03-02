@@ -173,6 +173,7 @@ class PlayState extends GameState
 		for (b in 0...BLANKS_PER_AGE)
 		{
 			collection.push(new GridIcon("blank"));
+			postSpin.push("blank");
 		}
 
 		for (n => v in STARTING_ICONS)
@@ -182,8 +183,6 @@ class PlayState extends GameState
 				addNewIcon(n);
 			}
 		}
-
-		add(new FlxSprite((FlxG.width / 2) - GRID_MID - 2, (FlxG.height / 2) - GRID_MID - 2, "assets/images/grid_back.png"));
 
 		var wound:FlxSprite;
 		for (i in 0...25)
@@ -261,6 +260,10 @@ class PlayState extends GameState
 
 		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
 
+		add(spinEffect = new SpinEffect());
+
+		add(new FlxSprite((FlxG.width / 2) - GRID_MID - 2, (FlxG.height / 2) - GRID_MID - 2, "assets/images/grid_back.png"));
+
 		add(spinButton = new GameButton((FlxG.width / 2) - 150, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 300, 50, SIZE_36, Colors.BLUE, Colors.BLACK,
 			Colors.WHITE, Colors.BLACK));
 		spinButton.active = false;
@@ -327,8 +330,6 @@ class PlayState extends GameState
 		#if debug
 		// food = production = science = 1000;
 		#end
-
-		add(spinEffect = new SpinEffect());
 
 		FlxG.camera.fade(Colors.BLACK, 1, true, () ->
 		{
@@ -435,15 +436,9 @@ class PlayState extends GameState
 
 		FlxG.random.shuffle(collection);
 
-		for (i in 0...25)
-		{
-			if (collection[i].wounded)
-				wounds[i].revive();
-			if (collection[i].timer > 0)
-				timerDisplays[i].show(collection[i].timer);
-		}
+		spinEffect.start();
 
-		currentMode = "did-spin";
+		currentMode = "waiting-for-spin-end";
 	}
 
 	public function addRandomResources():Void
@@ -556,8 +551,6 @@ class PlayState extends GameState
 		{
 			currentMode = "waiting-for-spin";
 			logButton.active = inventoryButton.active = shopButton.active = spinButton.active = canSpin = true;
-
-			spinEffect.start();
 
 			if (age < 2)
 				upgradeButton.active = true;
@@ -1219,14 +1212,27 @@ class PlayState extends GameState
 					openSubState(demoEnd);
 				}
 
+			case "waiting-for-spin-end":
+				if (!spinEffect.anySpinning())
+				{
+					currentMode = "did-spin";
+				}
+
 			case "did-spin":
 				checkingIcon = 0;
 				currentMode = "pre-checking";
 
 				for (i in 0...25)
 				{
+					if (collection[i].wounded)
+						wounds[i].revive();
+					if (collection[i].timer > 0)
+						timerDisplays[i].show(collection[i].timer);
+
 					screenIcons[i].icon = collection[i].name;
+					screenIcons[i].visible = true;
 				}
+				spinEffect.visible = false;
 
 			case "pre-checking":
 				timer -= elapsed;

@@ -3,11 +3,9 @@ package ui;
 import axollib.GraphicsCache;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRect;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
+import gameObjects.IconSprite;
 import globals.Globals;
 import states.PlayState;
 
@@ -27,12 +25,28 @@ class SpinEffect extends FlxSpriteGroup
 		}
 		visible = false;
 
-		var test:FlxSprite;
-		add(test = new FlxSprite());
-		test.makeGraphic(FlxG.width, FlxG.height, 0x66990099);
+		// var test:FlxSprite;
+		// add(test = new FlxSprite());
+		// test.makeGraphic(FlxG.width, FlxG.height, 0x66990099);
 
-		clipRect = FlxRect.get((FlxG.width / 2) - PlayState.GRID_MID, (FlxG.height / 2) - PlayState.GRID_MID, PlayState.GRID_SIZE, PlayState.GRID_SIZE);
 		trace(clipRect);
+	}
+
+	public function anySpinning():Bool
+	{
+		var any:Bool = false;
+		for (w in wheels)
+		{
+			for (i in w.icons)
+			{
+				if (i.started)
+				{
+					any = true;
+					break;
+				}
+			}
+		}
+		return any;
 	}
 
 	public function start():Void
@@ -40,13 +54,30 @@ class SpinEffect extends FlxSpriteGroup
 		trace(clipRect);
 
 		var icon:String;
-		for (c in 0...25)
+
+		for (w in 0...wheels.length)
 		{
-			icon = Globals.PlayState.postSpin[c];
+			for (i in 0...wheels[w].icons.length)
+			{
+				if (i > 0 && i < 6)
+				{
+					icon = Globals.PlayState.postSpin[(w * 5) + (i - 1)];
+				}
+				else
+				{
+					icon = Globals.PlayState.getIconName(FlxG.random.int(0, Globals.PlayState.collection.length - 1));
+				}
 
-			trace(c, c / 5, c % 5, icon);
+				trace(w, i, icon, wheels[w].icons[i].y, wheels[w].icons[i].ID);
 
-			wheels[Std.int(c / 5)].icons[Std.int(c % 5)].icon = icon;
+				wheels[w].icons[i].icon = icon;
+				wheels[w].icons[i].pos = 0;
+			}
+		}
+
+		for (s in Globals.PlayState.screenIcons)
+		{
+			s.visible = false;
 		}
 
 		for (i in 0...5)
@@ -54,15 +85,20 @@ class SpinEffect extends FlxSpriteGroup
 
 		visible = true;
 	}
+
+	override public function draw():Void
+	{
+		clipRect = FlxRect.get((FlxG.width / 2) - PlayState.GRID_MID, (FlxG.height / 2) - PlayState.GRID_MID, PlayState.GRID_SIZE, PlayState.GRID_SIZE);
+
+		super.draw();
+	}
 }
 
 class Wheel extends FlxSpriteGroup
 {
 	public var icons:Array<SpinIcon> = [];
 
-	public var timer:Float = -1;
-
-	public var slowingDown:Bool = false;
+	public static inline var WHEEL_HEIGHT:Float = (IconSprite.ICON_SIZE + PlayState.GRID_SPACING) * 7;
 
 	public function new(X:Float, Y:Float, Wheel:Int):Void
 	{
@@ -70,61 +106,73 @@ class Wheel extends FlxSpriteGroup
 
 		ID = Wheel;
 
-		for (i in 0...8)
+		trace(y);
+
+		for (i in 0...7)
 		{
-			var icon = new SpinIcon(0, 2 + (Std.int(i) * (128 + PlayState.GRID_SPACING)), i, this);
+			var icon = new SpinIcon(i, this);
 			icon.icon = "blank";
 			icon.visible = true;
 			icons.push(icon);
 			add(icon);
-		}
 
-		clipRect = FlxRect.get((FlxG.width / 2) - PlayState.GRID_MID, (FlxG.height / 2) - PlayState.GRID_MID, PlayState.GRID_SIZE, PlayState.GRID_SIZE);
-		// clipRect = new FlxRect(0, 0, 128, (128 + PlayState.GRID_SPACING) * 5);
+			trace(icon.parent.ID, icon.ID, icon.pos, icon.icon, icon.y);
+		}
 	}
 
 	public function start(Time:Float):Void
 	{
-		timer = Time;
-		slowingDown = false;
+		trace(y);
 		for (i in icons)
 		{
-			i.velocity.y = 1000;
-		}
-	}
+			trace(i.parent.ID, i.ID, i.y, i.icon);
+			i.start();
 
-	public function slowDown():Void
-	{
-		slowingDown = true;
-		for (i in icons)
-		{
-			i.velocity.y = 0;
-			i.slowStart = i.y;
+			// FlxTween.tween(i, {pos: 1}, .25, {
+			// 	type: FlxTweenType.ONESHOT,
+			// 	ease: FlxEase.sineIn,
+			// 	onComplete: (_) ->
+			// 	{
+			// 		FlxTween.tween(i, {pos: (Time * 4) + 1.5}, Time, {
+			// 			type: FlxTweenType.ONESHOT,
+			// 			ease: FlxEase.linear,
+			// 			onComplete: (_) ->
+			// 			{
+			// 				var icon:String = "";
+			// 				var iconID:Int = -1;
 
-			FlxTween.num(0, 128 * 7, 1, {type: FlxTweenType.ONESHOT, ease: FlxEase.backOut}, (Value:Float) ->
-			{
-				i.y = ((i.slowStart + Value) % (128 * 7));
-			});
+			// 				if (i.ID > 0 && i.ID < 6)
+			// 				{
+			// 					iconID = (i.parent.ID * 5) + i.ID - 1;
+
+			// 					icon = Globals.PlayState.collection[iconID].name;
+			// 				}
+			// 				else
+			// 				{
+			// 					icon = Globals.PlayState.getIconName(FlxG.random.int(0, Globals.PlayState.collection.length - 1));
+			// 				}
+
+			// 				i.icon = icon;
+
+			// 				trace(i.parent.ID, i.ID, i.y, i.icon);
+
+			// 				FlxTween.tween(i, {pos: (Time * 4) + 2}, .25, {
+			// 					type: FlxTweenType.ONESHOT,
+			// 					ease: FlxEase.backOut,
+			// 					onComplete: (_) -> {
+			// 						// i.ending = true;
+			// 					}
+			// 				});
+			// 			}
+			// 		});
+			// 	}
+			// });
 		}
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-
-		if (slowingDown) {}
-		else if (timer > -1)
-		{
-			timer -= elapsed;
-			if (timer < 0)
-			{
-				timer = -1;
-				for (i in icons)
-				{
-					i.ending = true;
-				}
-			}
-		}
 	}
 }
 
@@ -132,15 +180,19 @@ class SpinIcon extends FlxSprite
 {
 	public var parent:Wheel;
 
-	public var icon(never, set):String;
+	public var icon(get, set):String;
 
-	public var ending(default, set):Bool = false;
+	public var started:Bool = false;
 
-	public var slowStart:Float = -1;
+	public var pos(default, set):Float = 0;
 
-	public function new(X:Float, Y:Float, Id:Int, Parent:Wheel):Void
+	public var rate:Float = .1;
+
+	public var slowing:Bool = false;
+
+	public function new(Id:Int, Parent:Wheel):Void
 	{
-		super(X, Y);
+		super(0, 0);
 
 		ID = Id;
 
@@ -149,8 +201,30 @@ class SpinIcon extends FlxSprite
 		frames = GraphicsCache.loadGraphicFromAtlas('assets/images/icons-128.png', 'assets/images/icons-128.xml', false, 'icons-icons-128').atlasFrames;
 
 		icon = "blank";
+	}
 
-		clipRect = FlxRect.get((FlxG.width / 2) - PlayState.GRID_MID, (FlxG.height / 2) - PlayState.GRID_MID, PlayState.GRID_SIZE, PlayState.GRID_SIZE);
+	public function start():Void
+	{
+		pos = 0;
+		rate = .1;
+		started = true;
+		slowing = false;
+	}
+
+	private function set_pos(Value:Float):Float
+	{
+		pos = Value;
+
+		var ty:Float = parent.y + ((ID - 1) * (IconSprite.ICON_SIZE + PlayState.GRID_SPACING)) + (pos * Wheel.WHEEL_HEIGHT);
+
+		while (ty >= parent.y + Wheel.WHEEL_HEIGHT)
+		{
+			ty -= Wheel.WHEEL_HEIGHT;
+		}
+
+		y = ty;
+
+		return pos;
 	}
 
 	private function set_icon(Value:String):String
@@ -160,39 +234,58 @@ class SpinIcon extends FlxSprite
 		else
 			color = Colors.BLACK;
 
-		color = Colors.ORANGE;
-		alpha = .66;
+		// color = Colors.ORANGE;
+		// alpha = .66;
 
 		animation.frameName = Value;
 
-		return Value;
+		return animation.frameName;
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-
-		if (velocity.y > 0 && y > 2 + (128 + PlayState.GRID_SPACING) * 6)
+		if (started)
 		{
-			y = 2;
-			// velocity.y = 0;
-			if (!ending || ID > 5)
-				icon = Globals.PlayState.collection[FlxG.random.int(0, Globals.PlayState.collection.length - 1)].name;
-			else if (ending && ID <= 5)
+			pos += elapsed * rate;
+			if (rate < 5 && !slowing)
+				rate *= 1.25;
+			else if (pos >= ((parent.ID + 1)) + 2)
 			{
-				icon = Globals.PlayState.collection[ID + (parent.ID * 5)].name;
+				if (!slowing)
+				{
+					slowing = true;
+
+					var iconID:Int = -1;
+
+					if (ID > 0 && ID < 6)
+					{
+						iconID = (parent.ID * 5) + ID - 1;
+
+						icon = Globals.PlayState.collection[iconID].name;
+					}
+					else
+					{
+						icon = Globals.PlayState.getIconName(FlxG.random.int(0, Globals.PlayState.collection.length - 1));
+					}
+
+					trace(parent.ID, ID, pos, y, icon, (parent.ID * 5) + ID - 1);
+				}
+				// rate *= .25;
+				if (pos >= ((parent.ID + 1)) + 3.05)
+				{
+					slowing = started = false;
+					pos = 0;
+					trace(parent.ID, ID, pos, y, icon);
+				}
 			}
-			if (ID == 7)
-			{
-				parent.slowDown();
-			}
+
+			// trace(parent.ID, ID, y, icon);
 		}
 	}
 
-	private function set_ending(Value:Bool):Bool
+	private function get_icon():String
 	{
-		ending = Value;
-
-		return ending;
+		return animation.frameName;
 	}
 }
