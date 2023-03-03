@@ -21,7 +21,7 @@
   },
   {
     "name": "child",
-    "cost": 5,
+    "cost": 10,
     "effect": ["timer:1?replace:human"],
     "death": [],
     "description": "After 1 Spins, becomes a {{human}}. Can not Work. Cost 1 {{food}} when Spun.",
@@ -33,8 +33,8 @@
     "name": "berry bush",
     "cost": 5,
     "effect": ["work?die"],
-    "death": ["gen:3$food"],
-    "description": "Dies when Worked. Generates 3 {{food}} on Death.",
+    "death": ["gen:5$food"],
+    "description": "Dies when Worked. Generates 5 {{food}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
@@ -113,8 +113,8 @@
     "name": "tree",
     "cost": 0,
     "effect": ["work?gen:2$food", "work?gen:1$prod"],
-    "death": ["gen:4$food", "gen:4$prod", "create:log*1-3", "create:sapling*1-2"],
-    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 4 {{food}}, 4 {{production}} and Creates 1-3 {{log}} and 1-2 {{sapling}} on Death.",
+    "death": ["gen:4$food", "gen:16$prod",  "create:sapling*0-2"],
+    "description": "Generates 2 {{food}} and 1 {{production}} when Worked. Generates 4 {{food}}, 16 {{production}} and Creates between 0 and 2 {{sapling}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
@@ -173,8 +173,8 @@
     "name": "meat",
     "cost": 0,
     "effect": ["work?die"],
-    "death": ["gen:5$food"],
-    "description": "Dies when Worked. Generates 5 {{food}} on Death.",
+    "death": ["gen:10$food"],
+    "description": "Dies when Worked. Generates 10 {{food}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
@@ -183,15 +183,15 @@
     "name": "boulder",
     "cost": 0,
     "effect": ["work?gen:2$prod"],
-    "death": ["gen:4$prod", "create:rock*1-3"],
-    "description": "Generates 2 {{production}} when Worked. Generates 4 {{production}} and Creates 1-3 {{rock}} on Death.",
+    "death": ["gen:16$prod"],
+    "description": "Generates 2 {{production}} when Worked. Generates 16 {{production}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
   },
   {
     "name": "axe",
-    "cost": 10,
+    "cost": 15,
     "effect": ["work?kill:tree/log/wood"],
     "death": [],
     "description": "Kills Touching {{tree}} {{log}} {{wood}} when Worked.",
@@ -211,7 +211,7 @@
   },
   {
     "name": "pickaxe",
-    "cost": 10,
+    "cost": 15,
     "effect": ["work?kill:rock/boulder"],
     "death": [],
     "description": "Kills Touching {{rock}} {{boulder}} when Worked.",
@@ -231,7 +231,7 @@
   },
   {
     "name": "spear",
-    "cost": 10,
+    "cost": 15,
     "effect": ["work?kill:hare/deer/wolf/boar/bear/mammoth"],
     "death": [],
     "description": "Kills Touching {{hare}} {{deer}} {{wolf}} {{boar}} {{bear}} {{mammoth}} when Worked.",
@@ -240,11 +240,21 @@
     "food": 0
   },
   {
-    "name": "canoe",
-    "cost": 10,
-    "effect": ["touch:blank?gen:5$sci", "work?kill:fish"],
+    "name": "club",
+    "cost": 5,
+    "effect": ["work?kill:hare", "work?wound:deer/wolf/boar/bear/mammoth"],
     "death": [],
-    "description": "Generates 5 {{science}} when Touching {{blank}}. Kills Touching {{fish}} when Worked.",
+    "description": "Kills Touching {{hare}} and Wounds Touching {{deer}} {{wolf}} {{boar}} {{bear}} {{mammoth}} when Worked.",
+    "workmultiplier": 0,
+    "pop": 0,
+    "food": 0
+  },
+  {
+    "name": "canoe",
+    "cost": 20,
+    "effect": ["touch:blank?gen:25$sci", "work?kill:fish"],
+    "death": [],
+    "description": "Generates 25 {{science}} when Touching {{blank}}. Kills Touching {{fish}} when Worked.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
@@ -253,8 +263,8 @@
     "name": "meal",
     "cost": 0,
     "effect": ["work?die"],
-    "death": ["gen:15$food"],
-    "description": "Dies when Worked. Generates 15 {{food}} on Death.",
+    "death": ["gen:25$food"],
+    "description": "Dies when Worked. Generates 25 {{food}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
@@ -340,5 +350,16 @@
     "workmultiplier": 3,
     "pop": 75,
     "food": 125
+  },
+  {
+    "name":"shrine",
+    "cost":10,
+    "effect":["spin?convert:10$food|5$faith"],
+    "death":[],
+    "description":"Converts 10 {{food}} and 5 {{faith}} when Spun.",
+    "workmultiplier":0,
+    "pop":0,
+    "food":0
+    
   }
 ]

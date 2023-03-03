@@ -24,7 +24,7 @@ class InfoIcon extends GameText
 		kill();
 	}
 
-	public function spawn(Source:IconSprite, Type:String, Amount:Int = 1, FromIcon:Bool = true):Void
+	public function spawn(Source:IconSprite, Type:String, Amount:Int = 1, FromIcon:Bool = true, ?Callback:Void->Void):Void
 	{
 		source = Source;
 		text = '+ {{$Type}}' + (Amount > 1 ? ' x $Amount' : '');
@@ -62,7 +62,16 @@ class InfoIcon extends GameText
 							startDelay: TIME_STEP,
 							onComplete: (_) ->
 							{
-								FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {type: FlxTweenType.ONESHOT, startDelay: .1, onComplete: (_) -> kill()});
+								FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
+									type: FlxTweenType.ONESHOT,
+									startDelay: .1,
+									onComplete: (_) ->
+									{
+										if (Callback != null)
+											Callback();
+										kill();
+									}
+								});
 							}
 						});
 					}
@@ -82,7 +91,16 @@ class InfoIcon extends GameText
 								startDelay: TIME_STEP,
 								onComplete: (_) ->
 								{
-									FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {type: FlxTweenType.ONESHOT, startDelay: .1, onComplete: (_) -> kill()});
+									FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
+										type: FlxTweenType.ONESHOT,
+										startDelay: .1,
+										onComplete: (_) ->
+										{
+											if (Callback != null)
+												Callback();
+											kill();
+										}
+									});
 								}
 							});
 						}
@@ -101,7 +119,12 @@ class InfoIcon extends GameText
 					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .33, {
 						type: FlxTweenType.ONESHOT,
 						startDelay: TIME_STEP,
-						onComplete: (_) -> kill()
+						onComplete: (_) ->
+						{
+							if (Callback != null)
+								Callback();
+							kill();
+						}
 					});
 				}
 			});
@@ -120,6 +143,8 @@ class InfoIcon extends GameText
 				return Globals.PlayState.txtScience;
 			case "population":
 				return Globals.PlayState.txtPopulation;
+			case "faith":
+				return Globals.PlayState.txtFaith;
 			default:
 				return null;
 		}
@@ -138,6 +163,8 @@ class InfoIcon extends GameText
 				return Colors.CYAN;
 			case "population":
 				return Colors.DARKBLUE;
+			case "faith":
+				return Colors.VIOLET;
 			default:
 				return Colors.WHITE;
 		}

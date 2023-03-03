@@ -51,11 +51,14 @@ class PlayState extends GameState
 	public var txtFood:GameText;
 	public var txtProduction:GameText;
 	public var txtScience:GameText;
+	public var txtPopulation:GameText;
+	public var txtFaith:GameText;
 
 	public var food(default, set):Float = 0;
 	public var production(default, set):Float = 0;
 	public var science(default, set):Float = 0;
 	public var population(default, set):Float = 0;
+	public var faith(default, set):Float = 0;
 
 	public var willWound:Array<Int> = [];
 	public var preventedWound:Array<Int> = [];
@@ -68,8 +71,6 @@ class PlayState extends GameState
 	public var currentMode:String = "setting-up";
 
 	public var whosAdding:Array<String> = [];
-
-	public var txtPopulation:GameText;
 
 	public var checkingIcon:Int = -1;
 
@@ -107,7 +108,7 @@ class PlayState extends GameState
 
 	public var newShop:FlxSprite;
 
-	public var STARTING_ICONS:Map<String, Int> = ["human" => 5, "tree" => 2, "boulder" => 2, "berry bush" => 10];
+	public var STARTING_ICONS:Map<String, Int> = ["human" => 5, "tree" => 2, "boulder" => 2, "berry bush" => 5, "shrine" => 1];
 	public var WILD_ANIMALS:Array<String> = ["hare", "deer", "wolf", "bear", "mammoth"];
 	public var WILD_ANIMAL_WEIGHTS:Array<Float> = [48, 38, 8, 4, 2];
 
@@ -125,6 +126,8 @@ class PlayState extends GameState
 	public var spinEffect:SpinEffect;
 
 	public var postSpin:Array<String> = [];
+
+	public var conversions:Array<String> = [];
 
 	override public function create()
 	{
@@ -169,6 +172,7 @@ class PlayState extends GameState
 		GLYPH_TYPES.set("food", GlyphType.RESOURCE);
 		GLYPH_TYPES.set("production", GlyphType.RESOURCE);
 		GLYPH_TYPES.set("science", GlyphType.RESOURCE);
+		GLYPH_TYPES.set("faith", GlyphType.RESOURCE);
 
 		for (b in 0...BLANKS_PER_AGE)
 		{
@@ -258,9 +262,9 @@ class PlayState extends GameState
 			add(timerDisplay);
 		}
 
-		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
-
 		add(spinEffect = new SpinEffect());
+
+		add(fakeIcons = new FlxTypedGroup<FakeIcon>());
 
 		add(new FlxSprite((FlxG.width / 2) - GRID_MID - 2, (FlxG.height / 2) - GRID_MID - 2, "assets/images/grid_back.png"));
 
@@ -311,6 +315,8 @@ class PlayState extends GameState
 			SIZE_36));
 		add(txtScience = new GameText(10, txtProduction.y + txtProduction.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{science}} 0",
 			Colors.BLACK, SIZE_36));
+		add(txtFaith = new GameText(10, txtScience.y + txtScience.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{faith}} 0", Colors.BLACK,
+			SIZE_36));
 
 		add(techLabel = new GameText(0, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Technologies Learned", Colors.BLACK, SIZE_36));
 		techLabel.alignment = "center";
@@ -326,9 +332,8 @@ class PlayState extends GameState
 		food = 10;
 
 		updatePop();
-
 		#if debug
-		// food = production = science = 1000;
+		food = production = science = 5000;
 		#end
 
 		FlxG.camera.fade(Colors.BLACK, 1, true, () ->
@@ -418,6 +423,8 @@ class PlayState extends GameState
 		iconsToDelete = [];
 		toKill = [];
 		toRemove = [];
+		conversions = [];
+
 		ate = pop = 0;
 
 		for (i in 0...25)
@@ -761,12 +768,12 @@ class PlayState extends GameState
 				{
 					icons = icons.concat(getIconsOfType(IconPos, t));
 				}
-				if (icons.length >= 0)
+				if (icons.length > 0)
 				{
 					FlxG.random.shuffle(icons);
 
 					var target:Int = icons[0];
-					var effect:String = targetEffects.get(collection[icons[0]].name);
+					var effect:String = targetEffects.get(collection[target].name);
 					if (effect == "wound")
 					{
 						logResponse = "sniped a {{" + getIconName(target) + "}}, wounding it!";
@@ -793,11 +800,13 @@ class PlayState extends GameState
 						});
 					}
 				}
+			case "convert":
+				conversions.push(Std.string(IconPos) + "!" + split[1]);
 		}
 		return logResponse;
 	}
 
-	public function removeResource(IconPos:Int, Type:String, Amount:Int):Void
+	public function removeResource(IconPos:Int, Type:String, Amount:Int, ?Callback:Void->Void):Void
 	{
 		var rg:InfoIcon = addedIcons.getFirstAvailable();
 		if (rg == null)
@@ -811,11 +820,12 @@ class PlayState extends GameState
 			case "prod": "production";
 			case "sci": "science";
 			case "population": "population";
+			case "faith": "faith";
 			default: null;
-		}, Amount, false);
+		}, Amount, false, Callback);
 	}
 
-	public function showResGen(IconPos:Int, Type:String, Amount:Int):Void
+	public function showResGen(IconPos:Int, Type:String, Amount:Int, ?Callback:Void->Void):Void
 	{
 		var rg:InfoIcon = addedIcons.getFirstAvailable();
 		if (rg == null)
@@ -829,8 +839,9 @@ class PlayState extends GameState
 			case "prod": "production";
 			case "sci": "science";
 			case "population": "population";
+			case "faith": "faith";
 			default: null;
-		}, Amount, true);
+		}, Amount, true, Callback);
 	}
 
 	public function getIconsOfType(IconPos:Int, Type:String, ?FullCollection:Bool = false):Array<Int>
@@ -1343,7 +1354,8 @@ class PlayState extends GameState
 					{
 						trace(starved + " humans starved to death.");
 						checkingIcon = 0;
-						currentMode = "merging";
+						timer = 0;
+						currentMode = "conversions";
 						addLog('$pop people consumed $ate {{food}}.');
 					}
 					else
@@ -1353,9 +1365,111 @@ class PlayState extends GameState
 					}
 				}
 
+			case "conversions":
+				if (conversions.length > 0)
+				{
+					timer -= elapsed;
+					if (timer <= 0)
+					{
+						checkConversions();
+					}
+				}
+				else
+				{
+					currentMode = "merging";
+					checkingIcon = 0;
+					timer = 0;
+				}
+
 			case "merging":
 				mergeIcons();
 				finishChecking();
+		}
+	}
+
+	public function checkConversions():Void
+	{
+		var c:String = conversions.pop();
+		var split:Array<String> = c.split("!");
+		var icon:Int = Std.parseInt(split[0]);
+		var effects:Array<String> = split[1].split("|");
+		var from:Array<String> = effects[0].split("$");
+		var to:Array<String> = effects[1].split("$");
+		var fromType:String = from[1];
+		var fromAmount:Int = Std.parseInt(from[0]);
+		var toType:String = to[1];
+		var toAmount:Int = Std.parseInt(to[0]);
+
+		var enough:Bool = false;
+
+		switch (fromType)
+		{
+			case "food":
+				if (food >= fromAmount)
+				{
+					food -= fromAmount;
+					enough = true;
+				}
+
+			case "pop":
+				if (population >= fromAmount)
+				{
+					population -= fromAmount;
+					enough = true;
+				}
+			case "sci":
+				if (science >= fromAmount)
+				{
+					science -= fromAmount;
+					enough = true;
+				}
+			case "prod":
+				if (production >= fromAmount)
+				{
+					production -= fromAmount;
+					enough = true;
+				}
+			case "faith":
+				if (faith >= fromAmount)
+				{
+					faith -= fromAmount;
+					enough = true;
+				}
+			default:
+		}
+
+		if (enough)
+		{
+			switch (toType)
+			{
+				case "food":
+					food += toAmount;
+				case "pop":
+					population += toAmount;
+				case "sci":
+					science += toAmount;
+				case "prod":
+					production += toAmount;
+				case "faith":
+					faith += toAmount;
+				default:
+			}
+
+			removeResource(icon, fromType, fromAmount, () ->
+			{
+				showResGen(icon, toType, toAmount);
+			});
+
+			addLog("A {{" + getIconName(icon) + '}} converted $fromAmount {{$fromType}} into $toAmount {{$toType}}.');
+
+			timer = .05;
+		}
+		else
+		{
+			addLog("A {{"
+				+ getIconName(icon)
+				+ '}} could not convert $fromAmount {{$fromType}} to $toAmount {{$toType}} because there was not enough {{$fromType}}.');
+			timer = 0;
 		}
 	}
 
@@ -1549,6 +1663,13 @@ class PlayState extends GameState
 		population = Value;
 		txtPopulation.text = "{{population}} " + Std.string(population);
 		return population;
+	}
+
+	private function set_faith(Value:Float):Float
+	{
+		faith = Value;
+		txtFaith.text = "{{faith}} " + Std.string(faith);
+		return faith;
 	}
 
 	override public function destroy():Void

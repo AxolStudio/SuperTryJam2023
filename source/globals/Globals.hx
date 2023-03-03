@@ -10,7 +10,7 @@ class Globals
 
 	public static var initialized:Bool = false;
 
-	public static var RESOURCES:Array<String> = ["food", "production", "science", "population"];
+	public static var RESOURCES:Array<String> = ["food", "production", "science", "population", "faith"];
 
 	public static function initGame():Void
 	{
@@ -57,7 +57,8 @@ class Globals
 		"population" => "The number of Human Elements in your Collection",
 		"production" => "The amount of Industry your civilization has produced. Used to purchase new Elements",
 		"food" => "The amount of food your civilization has stored. Human and Child Elements must eat each Spin or else they will Die.",
-		"science" => "The amount of knowledge your civilization has collected. Used to purchase new Technologies."
+		"science" => "The amount of knowledge your civilization has collected. Used to purchase new Technologies.",
+		"faith" => "The amount of faith your civilization has generated. Given to the Deity to keep It happy."
 	];
 }
 

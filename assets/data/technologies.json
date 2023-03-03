@@ -2,7 +2,7 @@
   {
     "name": "horticulture",
     "age": 1,
-    "science": 15,
+    "science": 20,
     "effect": ["i=berry bush=d!gen:3$food", "i=berry bush=d!chance:25?create:berry bush"],
     "requires": [],
     "description": "{{berry bush}} Generate an additional 3 {{food}} and have a 25% chance to create a new {{berry bush}} on Death"
@@ -24,14 +24,6 @@
     "description": "Adds {{pickaxe}} to the Element Shop."
   },
   {
-    "name": "torches",
-    "age": 1,
-    "science": 20,
-    "effect": ["u=torch"],
-    "requires": ["fire"],
-    "description": "Adds {{torch}} to the Element Shop."
-  },
-  {
     "name": "fire",
     "age": 1,
     "science": 25,
@@ -43,14 +35,14 @@
     "name": "weaponry",
     "age": 1,
     "science": 5,
-    "effect": ["u=spear"],
+    "effect": ["u=club"],
     "requires": [],
-    "description": "Adds {{spear}} to the Element Shop."
+    "description": "Adds {{club}} to the Element Shop."
   },
   {
     "name": "archery",
     "age": 1,
-    "science": 25,
+    "science": 50,
     "effect": ["u=sling"],
     "requires": ["weaponry"],
     "description": "Adds {{sling}} to the Element Shop."
@@ -58,7 +50,7 @@
   {
     "name": "exploration",
     "age": 1,
-    "science": 25,
+    "science": 50,
     "effect": ["u=canoe"],
     "requires": ["logging"],
     "description": "Adds {{canoe}} to the Element Shop."
@@ -66,7 +58,7 @@
   {
     "name": "fishing",
     "age": 1,
-    "science": 20,
+    "science": 50,
     "effect": ["e=fish"],
     "requires": ["exploration"],
     "description": "{{fish}} can now appear in the Grid."
@@ -74,7 +66,7 @@
   {
     "name": "husbandry",
     "age": 2,
-    "science": 50,
+    "science": 200,
     "effect": ["u=pig", "u=sheep", "u=cow"],
     "requires": [],
     "description": "Adds {{pig}} {{sheep}} {{cow}} to the Element Shop. {{boar}} {{bear}} {{mammoth}} no longer spawn each spin."
@@ -82,9 +74,18 @@
   {
     "name": "construction",
     "age": 1,
-    "science": 50,
+    "science": 150,
     "effect": ["e=construction"],
     "requires": ["logging", "mining", "fire", "weaponry"],
     "description": "Allows 3 {{family}} Element to merge into 1 {{hut}} and 3 {{hut}} Elements to merge into 1 {{tribe}} Element."
+  },
+  {
+    "name":"stone-tools",
+    "age": 1,
+    "science": 50,
+    "effect": ["u=spear"],
+    "requires": ["weaponry"],
+    "description": "Adds {{spear}} to the Element Shop."
+
   }
 ]
