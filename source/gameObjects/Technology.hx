@@ -36,6 +36,21 @@ class Technology
 
 			switch (type)
 			{
+				case "r": // replace an Icon's effects
+					var details:Array<String> = split[2].split("!");
+					var which:String = details[0];
+					var change:String = details[1];
+
+					var icon:Icon = Globals.PlayState.IconList.get(target);
+
+					if (which == "e")
+					{
+						icon.effect = [change];
+					}
+					else if (which == "d")
+					{
+						icon.death = [change];
+					}
 				case "i": // change an icon's effects
 					var details:Array<String> = split[2].split("!");
 					var which:String = details[0];

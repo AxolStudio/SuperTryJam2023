@@ -108,7 +108,7 @@ class PlayState extends GameState
 
 	public var newShop:FlxSprite;
 
-	public var STARTING_ICONS:Map<String, Int> = ["human" => 5, "tree" => 2, "boulder" => 2, "berry bush" => 5, "shrine" => 1];
+	public var STARTING_ICONS:Map<String, Int> = ["human" => 5, "tree" => 2, "boulder" => 2, "berry bush" => 5];
 	public var WILD_ANIMALS:Array<String> = ["hare", "deer", "wolf", "bear", "mammoth"];
 	public var WILD_ANIMAL_WEIGHTS:Array<Float> = [48, 38, 8, 4, 2];
 
@@ -173,6 +173,9 @@ class PlayState extends GameState
 		GLYPH_TYPES.set("production", GlyphType.RESOURCE);
 		GLYPH_TYPES.set("science", GlyphType.RESOURCE);
 		GLYPH_TYPES.set("faith", GlyphType.RESOURCE);
+		
+		GLYPH_TYPES.set("shrine", GlyphType.MISC);
+		GLYPH_TYPES.set("spin count", GlyphType.MISC);
 
 		for (b in 0...BLANKS_PER_AGE)
 		{
@@ -658,16 +661,50 @@ class PlayState extends GameState
 				showResGen(IconPos, details[1], amount);
 
 			case "die": // remove this icon from the collection
+				if (!iconsToKill.contains(IconPos))
+				{
+					iconsToKill.push(IconPos);
 
-				iconsToKill.push(IconPos);
-
-				logResponse = " died!";
+					logResponse = "died!";
+				}
+				else
+					logResponse = "";
 
 			case "wound": // wound all humans touching this tile - UNLESS it is prevented from doing so...
 
-				willWound.push(Source);
+				// willWound.push(Source);
 
-				logResponse = "wounded a {{" + getIconName(Source) + "}}";
+				var types:Array<String> = split[1].split("/");
+				var any:Bool = false;
+				var nCounts:Map<String, Int> = [];
+				var thisWounds:Array<Int> = [];
+
+				for (t in types)
+				{
+					var neighbors:Array<Int> = getNeighborsOfType(IconPos, t);
+
+					for (n in neighbors)
+					{
+						any = true;
+						if (!thisWounds.contains(n))
+						{
+							thisWounds.push(n);
+							if (nCounts.exists(collection[n].name))
+								nCounts[collection[n].name]++;
+							else
+								nCounts[collection[n].name] = 1;
+						}
+					}
+				}
+
+				if (any)
+				{
+					willWound = willWound.concat(thisWounds);
+					for (k => v in nCounts)
+						logResponse += (logResponse != "" ? ', ' : '') + '$v {{$k}}';
+
+					logResponse = "wounded " + logResponse + ".";
+				}
 
 			case "protect":
 				var types:Array<String> = split[1].split("/");
@@ -1028,13 +1065,15 @@ class PlayState extends GameState
 		{
 			case "spin": // just do the effect!
 				logResponse = doEffect(IconPos, DoEffect, null, Math.max(1, IconList.get(collection[IconPos].name).workMultiplier));
-				addLog("A {{" + getIconName(IconPos) + "}} " + logResponse);
+				if (logResponse != "")
+					addLog("A {{" + getIconName(IconPos) + "}} " + logResponse);
 			case "work": // a human is touching this tile
 				for (n in getNeighborsWork(IconPos))
 				{
 					screenIcons[n].activate();
 					logResponse = doEffect(IconPos, DoEffect, n, Math.max(1, IconList.get(collection[n].name).workMultiplier));
-					addLog("A {{" + getIconName(IconPos) + "}} was worked by a {{" + getIconName(n) + "}} and" + logResponse);
+					if (logResponse != "")
+						addLog("A {{" + getIconName(IconPos) + "}} was worked by a {{" + getIconName(n) + "}} and " + logResponse);
 				}
 				doPause = true;
 			case "pair": // a pair of tiles of this type are touching

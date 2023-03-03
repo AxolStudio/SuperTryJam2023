@@ -148,6 +148,9 @@ class ToolTip extends FlxGroup
 
 			case RESOURCE:
 				details = Globals.RESOURCE_DETAILS.get(Source);
+
+			case MISC:
+				details = Globals.MISC_DETAILS.get(Source);
 		}
 
 		return details;

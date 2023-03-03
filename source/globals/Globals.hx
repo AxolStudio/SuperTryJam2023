@@ -60,6 +60,11 @@ class Globals
 		"science" => "The amount of knowledge your civilization has collected. Used to purchase new Technologies.",
 		"faith" => "The amount of faith your civilization has generated. Given to the Deity to keep It happy."
 	];
+
+	public static var MISC_DETAILS:Map<String, String> = [
+		"shrine" => "Converts 10% of your {{food}} into {{faith}} after every Spin.",
+		"spin count" => "The Deity will return in this many Spins to collect {{faith}}."
+	];
 }
 
 enum GlyphType
@@ -67,6 +72,7 @@ enum GlyphType
 	ICON;
 	TECHNOLOGY;
 	RESOURCE;
+	MISC;
 }
 
 abstract Colors(Int) from Int from UInt to Int to UInt
