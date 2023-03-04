@@ -13,6 +13,8 @@ class GameText extends FlxBitmapText
 	public static var FONT_24:FlxBitmapFont;
 	public static var FONT_36:FlxBitmapFont;
 
+	public static var GOD_FONT:FlxBitmapFont;
+
 	public var currLetter:Int = -1;
 	public var tooltipLetter:Int = -1;
 
@@ -27,6 +29,7 @@ class GameText extends FlxBitmapText
 		{
 			case SIZE_24: FONT_24;
 			case SIZE_36: FONT_36;
+			case GOD_TALK: GOD_FONT;
 		}
 
 		super(font);
@@ -46,6 +49,9 @@ class GameText extends FlxBitmapText
 
 		FONT_36 = cast FlxBitmapFont.fromAngelCode("assets/fonts/font-36.png", "assets/fonts/font-36.xml");
 		FONT_36.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-36.png", "assets/images/glyphs-36.xml", true, "glyphs-36"));
+
+		GOD_FONT = cast FlxBitmapFont.fromAngelCode("assets/fonts/god-font-36.png", "assets/fonts/god-font-36.xml");
+		// GOD_FONT.appendFrames(GraphicsCache.loadAtlasFrames("assets/images/glyphs-36.png", "assets/images/glyphs-36.xml", true, "god-glyphs-36"));
 	}
 
 	override function update(elapsed:Float)
@@ -109,4 +115,5 @@ enum WhichFont
 {
 	SIZE_24;
 	SIZE_36;
+	GOD_TALK;
 }

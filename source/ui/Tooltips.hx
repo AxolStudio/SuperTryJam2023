@@ -18,6 +18,8 @@ class Tooltips
 {
 	public static var tooltips:Array<ToolTip> = [];
 
+	public static var allowed:Bool = true;
+
 	public static function draw():Void
 	{
 		for (t in tooltips)
@@ -32,6 +34,9 @@ class Tooltips
 
 	public static function showTooltip(Source:String, Target:FlxObject):Void
 	{
+		if (!allowed)
+			return;
+
 		if (tooltips.length > 0)
 			if (tooltips[tooltips.length - 1].target == Target)
 				return;

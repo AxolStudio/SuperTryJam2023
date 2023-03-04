@@ -15,6 +15,7 @@ import ui.DemoEnd;
 import ui.GameButton;
 import ui.GameOverState;
 import ui.GameText;
+import ui.GodTalk;
 import ui.InfoIcon;
 import ui.InventoryScreen;
 import ui.LogState;
@@ -22,12 +23,14 @@ import ui.ShopScreen;
 import ui.SpinEffect;
 import ui.TechDisplay;
 import ui.TimerDisplay;
+import ui.Tooltips;
 import ui.UpgradeScreen;
 
 using StringTools;
 
 @:build(macros.IconsBuilder.build()) // IconList
 @:build(macros.TechnologiesBuilder.build()) // TechnologiesList
+@:build(macros.GodTalkBuilder.build()) // GodSpeeches
 class PlayState extends GameState
 {
 	public static inline var BLANKS_PER_AGE:Int = 25;
@@ -154,6 +157,8 @@ class PlayState extends GameState
 	public function initializeGame()
 	{
 		bgColor = Colors.WHITE;
+
+		Tooltips.allowed = false;
 
 		Globals.PlayState = this;
 		Globals.initGame();
@@ -343,12 +348,47 @@ class PlayState extends GameState
 		#end
 
 		spinsLeft = 5;
+		var gT:GodTalk = new GodTalk("intro");
 
-		FlxG.camera.fade(Colors.BLACK, 1, true, () ->
+		var blackOut:FlxSprite = new FlxSprite();
+		blackOut.makeGraphic(FlxG.width, FlxG.height, Colors.BLACK);
+		add(blackOut);
+
+		var earth:FlxSprite = new FlxSprite("assets/images/earth.jpg");
+
+		earth.alpha = 0;
+		earth.screenCenter();
+		earth.y = FlxG.height - earth.height;
+		add(earth);
+
+		gT.closeCallback = () ->
 		{
-			currentMode = "waiting-for-spin";
+			blackOut.kill();
+			FlxTween.tween(earth, {alpha: 0}, 1, {
+				type: FlxTweenType.ONESHOT,
+				onComplete: (_) ->
+				{
+					currentMode = "waiting-for-spin";
+					// show next text?
 
-			logButton.active = inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+					gT = new GodTalk("intro-2");
+					gT.closeCallback = () ->
+					{
+						Tooltips.allowed = true;
+						logButton.active = inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
+					};
+					openSubState(gT);
+				}
+			});
+		};
+
+		FlxTween.tween(earth, {alpha: 1}, 1, {
+			startDelay: 0.5,
+			type: FlxTweenType.ONESHOT,
+			onComplete: (_) ->
+			{
+				openSubState(gT);
+			}
 		});
 	}
 
@@ -414,6 +454,8 @@ class PlayState extends GameState
 	{
 		if (!spinButton.active || !canSpin)
 			return;
+
+		Tooltips.allowed = false;
 
 		spinCount++;
 
@@ -566,6 +608,8 @@ class PlayState extends GameState
 		{
 			currentMode = "waiting-for-spin";
 			logButton.active = inventoryButton.active = shopButton.active = spinButton.active = canSpin = true;
+
+			Tooltips.allowed = true;
 
 			if (age < 2)
 				upgradeButton.active = true;
