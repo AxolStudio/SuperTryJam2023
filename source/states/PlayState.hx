@@ -129,6 +129,8 @@ class PlayState extends GameState
 
 	public var conversions:Array<String> = [];
 
+	public var spinsLeft:Int = 0;
+
 	override public function create()
 	{
 		initializeGame();
@@ -173,7 +175,7 @@ class PlayState extends GameState
 		GLYPH_TYPES.set("production", GlyphType.RESOURCE);
 		GLYPH_TYPES.set("science", GlyphType.RESOURCE);
 		GLYPH_TYPES.set("faith", GlyphType.RESOURCE);
-		
+
 		GLYPH_TYPES.set("shrine", GlyphType.MISC);
 		GLYPH_TYPES.set("spin count", GlyphType.MISC);
 
@@ -335,9 +337,12 @@ class PlayState extends GameState
 		food = 10;
 
 		updatePop();
+
 		#if debug
 		food = production = science = 5000;
 		#end
+
+		spinsLeft = 5;
 
 		FlxG.camera.fade(Colors.BLACK, 1, true, () ->
 		{

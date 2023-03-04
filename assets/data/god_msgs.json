@@ -1,3 +1,26 @@
 [
-    
+    {
+
+        "when": "intro-1",
+        "text":"Harken, young angel, and be welcome to the vast expanse of the universe. I am thy Creator, the Maker of all things. This is but one of my creations: the planet Earth. A mostly trivial orb of molten iron enrobed in a thin veil of soil and water that has managed to nurture some intricate organic formations that I have named Life."
+
+    },
+    {
+        "when": "intro-2",
+        "text": "Amidst the multitude of creatures that inhabit this world, mine most cherished are a diminutive salamander adorned with external gills. However, the most captivating are a peculiar type of hairless primate who have begun to evolve sentience. I have named them humans. And these humans, akin to all sentient beings in the expanse of the universe, are exceedingly exceptional, for they possess the power to generate a one-of-a-kind and highly significant force that holds great importance to Me - Faith."
+    },
+    {
+        "when": "intro-3",
+        "text": "For, it is the way of every sentient being to flourish into a prosperous civilization. But lo, this feat is not easily attained. It requires a resolute yet compassionate hand to lead sentient life towards its fate. Some might call it a gamble. I offer thee this task: select a meager gathering of primitive humans and mold them into a paragon of a worldwide civilization who art devoted to Me. Thy success in this endeavor shall please Me greatly, and thy failure shall not go unnoticed. Therefore, take heed and proceed with care."
+    }
+,
+    {
+        "when": "intro-4",
+        "text": "Behold, I present unto thee an artificial rendering of the Earth that I have forged for thee. These great wheels shall signify the unpredictable nature of the cosmos. Thou must endeavor to harmonize the result of each revolution to generate the resources needed to sustain thy civilization - and to guide it towards prosperity throughout the manifold phases of its maturation. Know thou this: should all of thy humans meet their demise, thou shalt fail in thy undertaking."
+    },
+    {
+        "when": "intro-5",
+        "text": "Verily, in five turns I shall return to inspect thy advancement."
+    }
+
 ]
