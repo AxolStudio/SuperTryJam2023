@@ -2,11 +2,11 @@ package ui;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup;
 import flixel.tweens.FlxTween;
 import globals.Globals;
 import states.GameState.GameSubState;
 
+using StringTools;
 using flixel.util.FlxSpriteUtil;
 
 class GodTalk extends GameSubState
@@ -48,7 +48,7 @@ class GodTalk extends GameSubState
 		advance.color = Colors.BLACK;
 		advance.kill();
 
-		speech.showText(Globals.PlayState.GodSpeeches[whichText][textPart], finishText);
+		speech.showText(parse(Globals.PlayState.GodSpeeches[whichText].texts[textPart]), finishText);
 
 		super.create();
 	}
@@ -76,13 +76,17 @@ class GodTalk extends GameSubState
 		advance.kill();
 		FlxTween.cancelTweensOf(advance);
 
-		if (Globals.PlayState.GodSpeeches[whichText].length > textPart)
+		if (Globals.PlayState.GodSpeeches[whichText].texts.length > textPart)
 		{
-			speech.showText(Globals.PlayState.GodSpeeches[whichText][textPart], finishText);
+			speech.showText(parse(Globals.PlayState.GodSpeeches[whichText].texts[textPart]), finishText);
 		}
 		else
 		{
 			close();
 		}
+	}
+	public function parse(Text:String):String
+	{
+		return Text.replace("$need", Std.string(Globals.PlayState.shrine.neededAmt));
 	}
 }

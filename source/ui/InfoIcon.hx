@@ -10,7 +10,7 @@ class InfoIcon extends GameText
 {
 	public static var Delays:Map<IconSprite, Int> = [];
 
-	public static inline var TIME_STEP:Float = 0.25;
+	public static inline var TIME_STEP:Float = .5;
 
 	public var source:IconSprite = null;
 
@@ -22,6 +22,72 @@ class InfoIcon extends GameText
 		autoSize = true;
 		allowTooltips = false;
 		kill();
+	}
+
+	public function transfer(Source:String, Destination:String, Amount:Int = 1, ?Callback:Void->Void):Void
+	{
+		text = '+ {{$Source}}' + (Amount > 1 ? ' x $Amount' : '');
+
+		var delayAmt:Int = 0;
+
+		drawFrame();
+		alpha = 0;
+
+		var from:GameText = getTarget(Source);
+
+		color = resourceColors(Source);
+
+		if (Destination != "")
+		{
+			var target:GameText = getTarget(Destination);
+
+			reset(from.x + (from.width / 2) - (width / 2), from.y + (from.height / 2) - (height / 2));
+			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
+				startDelay: delayAmt * TIME_STEP * 2,
+				type: FlxTweenType.ONESHOT,
+				onComplete: (_) ->
+				{
+					FlxTween.tween(this, {x: target.x + (target.width / 2) - (width / 2), y: target.y + (target.height / 2) - (height / 2)}, TIME_STEP * .33, {
+						type: FlxTweenType.ONESHOT,
+						startDelay: TIME_STEP,
+						onComplete: (_) ->
+						{
+							FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
+								type: FlxTweenType.ONESHOT,
+								startDelay: TIME_STEP,
+								onComplete: (_) ->
+								{
+									if (Callback != null)
+										Callback();
+									kill();
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+		else
+		{
+			reset(from.x + (from.width / 2) - (width / 2), from.y + (from.height / 2) - (height / 2));
+			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
+				type: FlxTweenType.ONESHOT,
+				startDelay: delayAmt * TIME_STEP * 2,
+				onComplete: (_) ->
+				{
+					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .33, {
+						type: FlxTweenType.ONESHOT,
+						startDelay: TIME_STEP,
+						onComplete: (_) ->
+						{
+							if (Callback != null)
+								Callback();
+							kill();
+						}
+					});
+				}
+			});
+		}
 	}
 
 	public function spawn(Source:IconSprite, Type:String, Amount:Int = 1, FromIcon:Bool = true, ?Callback:Void->Void):Void
@@ -57,23 +123,24 @@ class InfoIcon extends GameText
 					type: FlxTweenType.ONESHOT,
 					onComplete: (_) ->
 					{
-						FlxTween.tween(this, {x: target.x, y: target.y + (target.height / 2) - (height / 2)}, TIME_STEP * .33, {
-							type: FlxTweenType.ONESHOT,
-							startDelay: TIME_STEP,
-							onComplete: (_) ->
-							{
-								FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
-									type: FlxTweenType.ONESHOT,
-									startDelay: .1,
-									onComplete: (_) ->
-									{
-										if (Callback != null)
-											Callback();
-										kill();
-									}
-								});
-							}
-						});
+						FlxTween.tween(this, {x: target.x + (target.width / 2) - (width / 2), y: target.y + (target.height / 2) - (height / 2)},
+							TIME_STEP * .33, {
+								type: FlxTweenType.ONESHOT,
+								startDelay: TIME_STEP,
+								onComplete: (_) ->
+								{
+									FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
+										type: FlxTweenType.ONESHOT,
+										startDelay: TIME_STEP,
+										onComplete: (_) ->
+										{
+											if (Callback != null)
+												Callback();
+											kill();
+										}
+									});
+								}
+							});
 					}
 				});
 			}
@@ -144,7 +211,7 @@ class InfoIcon extends GameText
 			case "population":
 				return Globals.PlayState.txtPopulation;
 			case "faith":
-				return Globals.PlayState.txtFaith;
+				return Globals.PlayState.shrine.faithAmount;
 			default:
 				return null;
 		}

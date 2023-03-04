@@ -24,7 +24,7 @@ class TechDisplay extends ScrollView
 		percentContentWidth = 100;
 
 		vbox = new VBox();
-		vbox.width = width;
+		vbox.width = width - 20;
 		vbox.padding = 10;
 		vbox.styleString = "spacing:10px;";
 
@@ -78,5 +78,4 @@ class TechDisplay extends ScrollView
 
 		grid.addComponent(box);
 	}
-
 }

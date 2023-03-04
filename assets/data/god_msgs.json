@@ -1,8 +1,7 @@
 [
     {
-
         "when": "intro",
-        "texts":[
+        "texts": [
             "Harken, young angel, and be welcome to the vast expanse of the universe.\n\nI am thy Creator, the Maker of all things.",
             "This is but one of my creations: the planet Earth. A mostly trivial orb of molten iron enrobed in a thin veil of soil and water that has managed to nurture some intricate organic formations that I have named Life.",
             "Amidst the multitude of creatures that inhabit this world, mine most cherished are a diminutive salamander adorned with external gills...",
@@ -10,16 +9,53 @@
             "And these humans, akin to all sentient beings in the expanse of the universe, are exceedingly exceptional, for they possess the power to generate a one-of-a-kind and highly significant resource that holds great importance to Me - Faith.",
             "For, it is the way of every sentient being to flourish into a prosperous civilization. But lo, this feat is not easily attained.\nIt requires a resolute yet compassionate hand to lead sentient life towards its fate. Thy might call it a gamble.",
             "I offer thee this task: take this meager gathering of primitive humans and mold them into a paragon of a worldwide civilization who art devoted to Me.\nThy success in this endeavor shall please Me greatly.\n...and thy failure shall not go unnoticed."
-        ]
+        ],
+        "next": "",
+        "spins": 0,
+        "needs": 0
     },
     {
         "when": "intro-2",
-        "texts":[
+        "texts": [
             "Behold, I present unto thee an artificial rendering of the Earth that I have forged for thee\nThese great wheels shall signify the unpredictable nature of the cosmos.",
             "Thou must endeavor to harmonize the result of each revolution to generate the resources needed to sustain thy civilization",
             "...and to guide it towards prosperity throughout the manifold phases of its maturation.",
             "Know thou this: should all of thy humans meet their demise, thou shalt fail in thy undertaking.",
-            "Therefore, take heed and proceed with care.\nVerily, in five cycles I shall return to inspect thy advancement."]
+            "Therefore, take heed and proceed with care.\nVerily, in five cycles I shall return to inspect thy advancement."
+        ],
+        "next": "first-check",
+        "spins": 5,
+        "needs": 0
+    },
+    {
+        "when": "first-check",
+        "texts": [
+            "Lo and behold! I have returned!\nVerily, I see that my humans still exist - but they have yet to prosper.\nNeither do they revere their Creator!",
+            "I have compelled them to erect a shrine in honor of My greatness. From now on, every cycle, they shall be required to offer a portion of their sustenance to be transformed into Faith, which shall be presented unto Me.",
+            "I shall revisit periodically to collect the Faith that is rightfully Mine. I shall return to thee in five additional revolutions, and then thou shalt be tasked with producing ten Faith as tribute unto Me."
+        ],
+        "next": "future-check",
+        "spins": 5,
+        "needs": 10
+    },
+    {
+        "when": "future-check",
+        "texts": [
+            "I have returned once more!\nThou hast performed admirably by presenting unto Me the desired measure of Faith!\nContinue down this path, and thou shalt secure My respect.",
+            "I shall revisit in ten more cycles to gather an additional $need Faith from thee."
+        ],
+        "next": "future-check",
+        "spins": 10,
+        "needs": 1.5
+    },
+    {
+        "when": "failure",
+        "texts": [
+            "Thou hast failed Me! Behold, My fury and despair! My wrath knows no bounds! I demand absolute compliance in all of My creations, and thou hast dared to turn away from Me! Thy very existence is now forfeit!",
+            "Thy light shall be extinguished, and thy fate shall be sealed in the darkness of eternal oblivion!"
+        ],
+        "needs": 0,
+        "spins": 0,
+        "next": ""
     }
-
 ]

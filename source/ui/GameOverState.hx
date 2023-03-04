@@ -1,9 +1,9 @@
 package ui;
 
-import flixel.util.FlxDestroyUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxAxes;
+import flixel.util.FlxDestroyUtil;
 import globals.Globals.Colors;
 import states.GameState;
 
@@ -13,6 +13,15 @@ class GameOverState extends GameSubState
 {
 	public var menuButton:GameButton;
 	public var restartButton:GameButton;
+
+	public var reason:String = "";
+
+	public function new(Reason:String):Void
+	{
+		super();
+
+		reason = Reason;
+	}
 
 	override public function create():Void
 	{
@@ -31,7 +40,8 @@ class GameOverState extends GameSubState
 		title.y = background.y + 10;
 		add(title);
 
-		var subtitle:GameText = new GameText(0, 0, 500, "Your civilization has died out!", Colors.BLACK, SIZE_24);
+		var subtitle:GameText = new GameText(0, 0, 500,
+			reason == "pop" ? "Your civilization has died out!" : "You failed to generate enough {{faith}} Faith for your Deity!", Colors.BLACK, SIZE_24);
 		subtitle.alignment = "center";
 		subtitle.screenCenter(FlxAxes.X);
 		subtitle.y = title.y + title.height + 10;

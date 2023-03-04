@@ -8,6 +8,7 @@ import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxAxes;
+import gameObjects.GodSpeeches;
 import gameObjects.Icon;
 import gameObjects.IconSprite;
 import globals.Globals;
@@ -20,6 +21,7 @@ import ui.InfoIcon;
 import ui.InventoryScreen;
 import ui.LogState;
 import ui.ShopScreen;
+import ui.ShrineUI;
 import ui.SpinEffect;
 import ui.TechDisplay;
 import ui.TimerDisplay;
@@ -27,6 +29,7 @@ import ui.Tooltips;
 import ui.UpgradeScreen;
 
 using StringTools;
+using flixel.util.FlxSpriteUtil;
 
 @:build(macros.IconsBuilder.build()) // IconList
 @:build(macros.TechnologiesBuilder.build()) // TechnologiesList
@@ -55,13 +58,12 @@ class PlayState extends GameState
 	public var txtProduction:GameText;
 	public var txtScience:GameText;
 	public var txtPopulation:GameText;
-	public var txtFaith:GameText;
 
-	public var food(default, set):Float = 0;
-	public var production(default, set):Float = 0;
-	public var science(default, set):Float = 0;
-	public var population(default, set):Float = 0;
-	public var faith(default, set):Float = 0;
+	public var food(default, set):Int = 0;
+	public var production(default, set):Int = 0;
+	public var science(default, set):Int = 0;
+	public var population(default, set):Int = 0;
+	public var faith(default, set):Int = 0;
 
 	public var willWound:Array<Int> = [];
 	public var preventedWound:Array<Int> = [];
@@ -132,7 +134,11 @@ class PlayState extends GameState
 
 	public var conversions:Array<String> = [];
 
-	public var spinsLeft:Int = 0;
+	public var spinsLeft(default, set):Int = 0;
+
+	public var shrine:ShrineUI;
+
+	public var nextMsg:String = "";
 
 	override public function create()
 	{
@@ -305,35 +311,50 @@ class PlayState extends GameState
 
 		age = 1;
 
-		add(txtAge = new GameText(0, 10, 100, "Age " + Roman.arabic2Roman(age), Colors.BLACK, SIZE_36));
-		txtAge.alignment = "center";
-		txtAge.screenCenter(FlxAxes.X);
-
-		add(ageProgress = new FlxBar(0, txtAge.y + txtAge.height + 10, FlxBarFillDirection.LEFT_TO_RIGHT, Std.int(GRID_SIZE), 20, this, "ageProgression", 0,
-			100, true));
+		add(ageProgress = new FlxBar(0, Std.int((FlxG.height / 2) - GRID_MID) - 58, FlxBarFillDirection.LEFT_TO_RIGHT, Std.int(GRID_SIZE), 48, this,
+			"ageProgression", 0, 100, true));
 		ageProgress.createGradientBar([Colors.GRAY], [Colors.CYAN, Colors.DARKBLUE], 1, 180, true, Colors.BLACK);
 		ageProgress.screenCenter(FlxAxes.X);
 
-		add(resourceLabel = new GameText(10, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Resources", Colors.BLACK, SIZE_36));
+		add(txtAge = new GameText(0, 20, 100, "Age " + Roman.arabic2Roman(age), Colors.BLACK, SIZE_36));
+		txtAge.alignment = "center";
+		txtAge.screenCenter(FlxAxes.X);
+		// txtAge.y = ageProgress.y + (ageProgress.height / 2) - (txtAge.height / 2);
+
+		add(resourceLabel = new GameText(20, Std.int((FlxG.height / 2) - GRID_MID), Std.int((FlxG.width / 2) - GRID_MID - 40), "Resources", Colors.BLACK,
+			SIZE_36));
 		resourceLabel.alignment = "center";
 
-		add(txtPopulation = new GameText(10, resourceLabel.y + resourceLabel.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{population}} 0",
-			Colors.BLACK, SIZE_36));
-		add(txtFood = new GameText(10, txtPopulation.y + txtPopulation.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{food}} 0", Colors.BLACK,
-			SIZE_36));
-		add(txtProduction = new GameText(10, txtFood.y + txtFood.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{production}} 0", Colors.BLACK,
-			SIZE_36));
-		add(txtScience = new GameText(10, txtProduction.y + txtProduction.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{science}} 0",
-			Colors.BLACK, SIZE_36));
-		add(txtFaith = new GameText(10, txtScience.y + txtScience.height + 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "{{faith}} 0", Colors.BLACK,
-			SIZE_36));
+		var resBack:FlxSprite = new FlxSprite();
+		resBack.makeGraphic(Std.int((FlxG.width / 2) - GRID_MID - 40), Std.int(GRID_SIZE - resourceLabel.height - 10), Colors.BLACK);
+		resBack.drawRect(2, 2, resBack.width - 4, resBack.height - 4, Colors.WHITE);
+		resBack.x = resourceLabel.x;
+		resBack.y = resourceLabel.y + resourceLabel.height + 10;
+		add(resBack);
 
-		add(techLabel = new GameText(0, 10, Std.int((FlxG.width / 2) - GRID_MID - 10), "Technologies Learned", Colors.BLACK, SIZE_36));
+		shrine = new ShrineUI();
+		shrine.x = (((FlxG.width / 2) - GRID_MID) / 2) - 128;
+		shrine.y = (FlxG.height / 2) + GRID_MID - shrine.height - 20;
+		shrine.visible = false;
+		add(shrine);
+
+		add(txtPopulation = new GameText(40, resourceLabel.y + resourceLabel.height + 20, Std.int((FlxG.width / 2) - GRID_MID - 80), "0 {{population}}",
+			Colors.BLACK, SIZE_36));
+		add(txtFood = new GameText(40, txtPopulation.y + txtPopulation.height + 20, Std.int((FlxG.width / 2) - GRID_MID - 80), "0 {{food}}", Colors.BLACK,
+			SIZE_36));
+		add(txtProduction = new GameText(40, txtFood.y + txtFood.height + 20, Std.int((FlxG.width / 2) - GRID_MID - 80), "0 {{production}}", Colors.BLACK,
+			SIZE_36));
+		add(txtScience = new GameText(40, txtProduction.y + txtProduction.height + 20, Std.int((FlxG.width / 2) - GRID_MID - 80), "0 {{science}}",
+			Colors.BLACK, SIZE_36));
+		txtProduction.alignment = txtScience.alignment = txtFood.alignment = txtPopulation.alignment = "right";
+
+		add(techLabel = new GameText(0, Std.int((FlxG.height / 2) - GRID_MID), Std.int((FlxG.width / 2) - GRID_MID - 40), "Technologies Learned",
+			Colors.BLACK, SIZE_36));
 		techLabel.alignment = "center";
-		techLabel.x = FlxG.width - techLabel.width - 10;
+		techLabel.x = Std.int((FlxG.width / 2) + GRID_MID) + 20;
 
-		techDisp = new TechDisplay((FlxG.width / 2) - GRID_MID - 20, FlxG.height - 120 - techLabel.height);
-		techDisp.x = FlxG.width - techDisp.width - 10;
+		techDisp = new TechDisplay((FlxG.width / 2) - GRID_MID - 40, GRID_SIZE - techLabel.height - 10);
+		techDisp.x = FlxG.width - techDisp.width - 20;
 		techDisp.y = techLabel.y + techLabel.height + 10;
 		add(techDisp);
 
@@ -374,6 +395,7 @@ class PlayState extends GameState
 					gT = new GodTalk("intro-2");
 					gT.closeCallback = () ->
 					{
+						nextMsg = "first-check";
 						Tooltips.allowed = true;
 						logButton.active = inventoryButton.active = upgradeButton.active = shopButton.active = spinButton.active = canSpin = true;
 					};
@@ -604,20 +626,41 @@ class PlayState extends GameState
 		trace("collection", collTmp);
 
 		updatePop();
+
 		if (population > 0)
 		{
-			currentMode = "waiting-for-spin";
-			logButton.active = inventoryButton.active = shopButton.active = spinButton.active = canSpin = true;
-
-			Tooltips.allowed = true;
-
-			if (age < 2)
-				upgradeButton.active = true;
+			spinsLeft--;
+			if (spinsLeft > 0)
+			{
+				readyForNext();
+			}
+			else
+			{
+				if (shrine.visible)
+				{
+					if (faith < shrine.neededAmt)
+					{
+						failure();
+					}
+					else
+					{
+						showResTransfer("faith", "", shrine.neededAmt, () ->
+						{
+							faith -= shrine.neededAmt;
+							vistFromGod();
+						});
+					}
+				}
+				else
+				{
+					vistFromGod();
+				}
+			}
 		}
 		else
 		{
 			currentMode = "game-over";
-			var gameOverState:GameOverState = new GameOverState();
+			var gameOverState:GameOverState = new GameOverState("pop");
 			gameOverState.closeCallback = function():Void
 			{
 				FlxG.camera.fade(Colors.BLACK, 1, false, () ->
@@ -627,6 +670,72 @@ class PlayState extends GameState
 			};
 			openSubState(gameOverState);
 		}
+	}
+
+	public function failure():Void
+	{
+		var gT:GodTalk = new GodTalk("failure");
+		var fire:FlxSprite = new FlxSprite("assets/images/fire.jpg");
+		fire.screenCenter();
+		fire.alpha = 0;
+		add(fire);
+
+		gT.closeCallback = () ->
+		{
+			currentMode = "game-over";
+			var gameOverState:GameOverState = new GameOverState("faith");
+			gameOverState.closeCallback = function():Void
+			{
+				FlxG.camera.fade(Colors.BLACK, 1, false, () ->
+				{
+					FlxG.resetState();
+				});
+			};
+			openSubState(gameOverState);
+		}
+		FlxTween.tween(fire, {alpha: 1}, .66, {
+			type: FlxTweenType.ONESHOT,
+			onComplete: (_) ->
+			{
+				openSubState(gT);
+			}
+		});
+	}
+
+	public function vistFromGod():Void
+	{
+		if (nextMsg == "first-check")
+			shrine.visible = true;
+
+		var msg:GodSpeeches = GodSpeeches.get(nextMsg);
+
+		spinsLeft = msg.spins;
+		if (nextMsg == "future-check")
+			shrine.neededAmt =  Std.int(shrine.neededAmt * msg.needs);
+		else
+			shrine.neededAmt = Std.int(msg.needs);
+
+		nextMsg = msg.next;
+
+		var gT:GodTalk = new GodTalk(nextMsg);
+
+		gT.closeCallback = () ->
+		{
+			readyForNext();
+		}
+
+		openSubState(gT);
+	}
+
+	public function readyForNext():Void
+	{
+		currentMode = "waiting-for-spin";
+		logButton.active = inventoryButton.active = shopButton.active = spinButton.active = canSpin = true;
+
+		Tooltips.allowed = true;
+
+		if (age < 2)
+			upgradeButton.active = true;
 	}
 
 	public function parseEffect(IconPos:Int, Effect:String):Void
@@ -928,6 +1037,33 @@ class PlayState extends GameState
 			case "faith": "faith";
 			default: null;
 		}, Amount, true, Callback);
+	}
+
+	public function showResTransfer(TypeFrom:String, TypeTo:String, Amount:Int, ?Callback:Void->Void):Void
+	{
+		var rg:InfoIcon = addedIcons.getFirstAvailable();
+		if (rg == null)
+		{
+			rg = new InfoIcon();
+			addedIcons.add(rg);
+		}
+		rg.transfer(switch (TypeFrom)
+		{
+			case "food": "food";
+			case "prod": "production";
+			case "sci": "science";
+			case "population": "population";
+			case "faith": "faith";
+			default: null;
+		}, switch (TypeTo)
+			{
+				case "food": "food";
+				case "prod": "production";
+				case "sci": "science";
+				case "population": "population";
+				case "faith": "faith";
+				default: "";
+			}, Amount, Callback);
 	}
 
 	public function getIconsOfType(IconPos:Int, Type:String, ?FullCollection:Bool = false):Array<Int>
@@ -1445,6 +1581,8 @@ class PlayState extends GameState
 						timer = 0;
 						currentMode = "conversions";
 						addLog('$pop people consumed $ate {{food}}.');
+						if (shrine.visible)
+							convertFaithToShrine();
 					}
 					else
 					{
@@ -1557,6 +1695,25 @@ class PlayState extends GameState
 			addLog("A {{"
 				+ getIconName(icon)
 				+ '}} could not convert $fromAmount {{$fromType}} to $toAmount {{$toType}} because there was not enough {{$fromType}}.');
+			timer = 0;
+		}
+	}
+
+	public function convertFaithToShrine():Void
+	{
+		var amt:Int = Std.int(food / 10);
+		if (amt > 0)
+		{
+			food -= amt;
+			addLog('$amt {{food}} was converted into $amt {{faith}}.');
+			showResTransfer("food", "faith", amt, () ->
+			{
+				faith += amt;
+				timer = .05;
+			});
+		}
+		else
+		{
 			timer = 0;
 		}
 	}
@@ -1725,43 +1882,49 @@ class PlayState extends GameState
 		checkingIcon++;
 	}
 
-	private function set_food(Value:Float):Float
+	private function set_food(Value:Int):Int
 	{
 		food = Value;
-		txtFood.text = "{{food}} " + Std.string(food);
+		txtFood.text = '$food {{food}}';
 		return food;
 	}
 
-	private function set_production(Value:Float):Float
+	private function set_production(Value:Int):Int
 	{
 		production = Value;
-		txtProduction.text = "{{production}} " + Std.string(production);
+		txtProduction.text = '$production {{production}}';
 		return production;
 	}
 
-	private function set_science(Value:Float):Float
+	private function set_science(Value:Int):Int
 	{
 		science = Value;
-		txtScience.text = "{{science}} " + Std.string(science);
+		txtScience.text = '$science {{science}}';
 		return science;
 	}
 
-	private function set_population(Value:Float):Float
+	private function set_population(Value:Int):Int
 	{
 		population = Value;
-		txtPopulation.text = "{{population}} " + Std.string(population);
+		txtPopulation.text = '$population {{population}}';
 		return population;
 	}
 
-	private function set_faith(Value:Float):Float
+	private function set_faith(Value:Int):Int
 	{
 		faith = Value;
-		txtFaith.text = "{{faith}} " + Std.string(faith);
+		shrine.faith = faith;
 		return faith;
 	}
 
 	override public function destroy():Void
 	{
 		super.destroy();
+	}
+	private function set_spinsLeft(Value:Int):Int
+	{
+		spinsLeft = Value;
+		shrine.spins = spinsLeft;
+		return spinsLeft;
 	}
 }
