@@ -365,7 +365,7 @@ class PlayState extends GameState
 		updatePop();
 
 		#if debug
-		food = production = science = 5000;
+		// food = production = science = 5000;
 		#end
 
 		spinsLeft = 5;
@@ -629,6 +629,7 @@ class PlayState extends GameState
 
 		if (population > 0)
 		{
+			currentMode = "visit-from-god";
 			spinsLeft--;
 			if (spinsLeft > 0)
 			{
@@ -709,7 +710,7 @@ class PlayState extends GameState
 
 		var msg:GodSpeeches = GodSpeeches.get(nextMsg);
 
-		spinsLeft = msg.spins;
+		shrine.spinsNeeded = spinsLeft = msg.spins;
 		if (nextMsg == "future-check")
 			shrine.neededAmt =  Std.int(shrine.neededAmt * msg.needs);
 		else
@@ -1722,6 +1723,11 @@ class PlayState extends GameState
 	{
 		// 3 humans will merge into 1 family
 		checkForMergableIcons("human", "family", 3);
+		if (constructionEnabled)
+		{
+			checkForMergableIcons("family", "hut", 3);
+			checkForMergableIcons("hut", "tribe", 3);
+		}
 	}
 
 	public function newFunc():Void

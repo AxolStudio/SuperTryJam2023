@@ -46,7 +46,7 @@
         ],
         "next": "future-check",
         "spins": 10,
-        "needs": 1.5
+        "needs": 2
     },
     {
         "when": "failure",

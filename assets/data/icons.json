@@ -21,7 +21,7 @@
   },
   {
     "name": "child",
-    "cost": 10,
+    "cost": 15,
     "effect": ["timer:1?replace:human"],
     "death": [],
     "description": "After 1 Spins, becomes a {{human}}. Can not Work. Cost 1 {{food}} when Spun.",
@@ -31,10 +31,12 @@
   },
   {
     "name": "berry bush",
-    "cost": 5,
+    "cost": 10,
     "effect": ["work?die"],
-    "death": ["gen:10$food"],
-    "description": "Dies when Worked. Generates 10 {{food}} on Death.",
+    "death": [
+      "gen:5$food"
+    ],
+    "description": "Dies when Worked. Generates 5 {{food}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
@@ -161,7 +163,7 @@
   },
   {
     "name": "campfire",
-    "cost": 15,
+    "cost": 25,
     "effect": ["work?gen:5$sci", "work?change:meat$meal"],
     "death": [],
     "description": "Generates 5 {{science}} when Worked. Replaces Touching {{meat}} to {{meal}} when Worked.",
@@ -173,8 +175,10 @@
     "name": "meat",
     "cost": 0,
     "effect": ["work?die"],
-    "death": ["gen:20$food"],
-    "description": "Dies when Worked. Generates 20 {{food}} on Death.",
+    "death": [
+      "gen:15$food"
+    ],
+    "description": "Dies when Worked. Generates 15 {{food}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0
@@ -221,7 +225,7 @@
   },
   {
     "name": "sling",
-    "cost": 15,
+    "cost": 30,
     "effect": ["work?snipe:hare/deer/boar*kill|wolf/bear/mammoth*wound"],
     "death": [],
     "description": "Random {{hare}} {{deer}} {{boar}} is Killed or Random {{wolf}} {{bear}} {{mammoth}} is Wounded when Worked.",
@@ -231,7 +235,7 @@
   },
   {
     "name": "spear",
-    "cost": 15,
+    "cost": 30,
     "effect": ["work?kill:hare/deer/wolf/boar/bear/mammoth"],
     "death": [],
     "description": "Kills Touching {{hare}} {{deer}} {{wolf}} {{boar}} {{bear}} {{mammoth}} when Worked.",
@@ -241,7 +245,7 @@
   },
   {
     "name": "club",
-    "cost": 5,
+    "cost": 10,
     "effect": ["work?kill:hare", "work?wound:deer/wolf/boar/bear/mammoth"],
     "death": [],
     "description": "Kills Touching {{hare}} and Wounds Touching {{deer}} {{wolf}} {{boar}} {{bear}} {{mammoth}} when Worked.",
@@ -251,7 +255,7 @@
   },
   {
     "name": "canoe",
-    "cost": 20,
+    "cost": 25,
     "effect": ["touch:blank?gen:25$sci", "work?kill:fish"],
     "death": [],
     "description": "Generates 25 {{science}} when Touching {{blank}}. Kills Touching {{fish}} when Worked.",
@@ -263,8 +267,10 @@
     "name": "meal",
     "cost": 0,
     "effect": ["work?die"],
-    "death": ["gen:50$food"],
-    "description": "Dies when Worked. Generates 50 {{food}} on Death.",
+    "death": [
+      "gen:30$food"
+    ],
+    "description": "Dies when Worked. Generates 30 {{food}} on Death.",
     "workmultiplier": 0,
     "pop": 0,
     "food": 0

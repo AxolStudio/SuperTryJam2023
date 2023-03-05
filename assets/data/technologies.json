@@ -2,10 +2,13 @@
   {
     "name": "horticulture",
     "age": 1,
-    "science": 20,
-    "effect": ["r=berry bush=d!gen:5$food", "i=berry bush=d!chance:25?create:berry bush"],
+    "science": 25,
+    "effect": [
+      "r=berry bush=d!gen:10$food",
+      "i=berry bush=d!chance:25?create:berry bush"
+    ],
     "requires": [],
-    "description": "{{berry bush}} Generate an additional 5 {{food}} and have a 25% chance to create a new {{berry bush}} on Death"
+    "description": "{{berry bush}} Generate an 10 {{food}} and have a 25% chance to create a new {{berry bush}} on Death"
   },
   {
     "name": "logging",
@@ -26,7 +29,7 @@
   {
     "name": "fire",
     "age": 1,
-    "science": 25,
+    "science": 100,
     "effect": ["u=campfire"],
     "requires": [],
     "description": "Adds {{campfire}} to the Element Shop."
@@ -34,7 +37,7 @@
   {
     "name": "weaponry",
     "age": 1,
-    "science": 5,
+    "science": 20,
     "effect": ["u=club"],
     "requires": [],
     "description": "Adds {{club}} to the Element Shop."
@@ -42,7 +45,7 @@
   {
     "name": "archery",
     "age": 1,
-    "science": 50,
+    "science": 100,
     "effect": ["u=sling"],
     "requires": ["weaponry"],
     "description": "Adds {{sling}} to the Element Shop."
@@ -50,7 +53,7 @@
   {
     "name": "exploration",
     "age": 1,
-    "science": 25,
+    "science": 50,
     "effect": ["u=canoe"],
     "requires": ["logging"],
     "description": "Adds {{canoe}} to the Element Shop."
@@ -58,7 +61,7 @@
   {
     "name": "fishing",
     "age": 1,
-    "science": 50,
+    "science": 100,
     "effect": ["e=fish"],
     "requires": ["exploration"],
     "description": "{{fish}} can now appear in the Grid."
@@ -82,7 +85,7 @@
   {
     "name":"stone-tools",
     "age": 1,
-    "science": 20,
+    "science": 100,
     "effect": ["u=spear"],
     "requires": ["weaponry"],
     "description": "Adds {{spear}} to the Element Shop."

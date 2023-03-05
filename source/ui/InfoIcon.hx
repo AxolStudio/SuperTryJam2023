@@ -26,7 +26,7 @@ class InfoIcon extends GameText
 
 	public function transfer(Source:String, Destination:String, Amount:Int = 1, ?Callback:Void->Void):Void
 	{
-		text = '+ {{$Source}}' + (Amount > 1 ? ' x $Amount' : '');
+		text = '- {{$Source}}' + (Amount > 1 ? ' x $Amount' : '');
 
 		var delayAmt:Int = 0;
 
@@ -93,7 +93,7 @@ class InfoIcon extends GameText
 	public function spawn(Source:IconSprite, Type:String, Amount:Int = 1, FromIcon:Bool = true, ?Callback:Void->Void):Void
 	{
 		source = Source;
-		text = '+ {{$Type}}' + (Amount > 1 ? ' x $Amount' : '');
+		text = (FromIcon ? "+" : "-") + ' {{$Type}}' + (Amount > 1 ? ' x $Amount' : '');
 
 		var delayAmt:Int = 0;
 
