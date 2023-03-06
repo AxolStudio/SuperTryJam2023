@@ -705,10 +705,13 @@ class PlayState extends GameState
 
 	public function vistFromGod():Void
 	{
-		if (nextMsg == "first-check")
+		var thisMsg:String = nextMsg;
+
+		if (thisMsg == "first-check")
 			shrine.visible = true;
 
-		var msg:GodSpeeches = GodSpeeches.get(nextMsg);
+
+		var msg:GodSpeeches = GodSpeeches.get(thisMsg);
 
 		shrine.spinsNeeded = spinsLeft = msg.spins;
 		if (nextMsg == "future-check")
@@ -718,7 +721,7 @@ class PlayState extends GameState
 
 		nextMsg = msg.next;
 
-		var gT:GodTalk = new GodTalk(nextMsg);
+		var gT:GodTalk = new GodTalk(thisMsg);
 
 		gT.closeCallback = () ->
 		{
