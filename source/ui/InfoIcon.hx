@@ -26,7 +26,7 @@ class InfoIcon extends GameText
 
 	public function transfer(Source:String, Destination:String, Amount:Int = 1, ?Callback:Void->Void):Void
 	{
-		text = '- {{$Source}}' + (Amount > 1 ? ' x $Amount' : '');
+		text = '- {{$Source}} x $Amount';
 
 		var delayAmt:Int = 0;
 
@@ -43,7 +43,7 @@ class InfoIcon extends GameText
 
 			reset(from.x + (from.width / 2) - (width / 2), from.y + (from.height / 2) - (height / 2));
 			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
-				startDelay: delayAmt * TIME_STEP * 2,
+				startDelay: delayAmt * .15,
 				type: FlxTweenType.ONESHOT,
 				onStart: (_) ->
 				{
@@ -51,12 +51,12 @@ class InfoIcon extends GameText
 				},
 				onComplete: (_) ->
 				{
-					FlxTween.tween(this, {x: target.x + (target.width / 2) - (width / 2), y: target.y + (target.height / 2) - (height / 2)}, TIME_STEP * .33, {
+					FlxTween.tween(this, {x: target.x + (target.width / 2) - (width / 2), y: target.y + (target.height / 2) - (height / 2)}, TIME_STEP * .1, {
 						type: FlxTweenType.ONESHOT,
 						startDelay: TIME_STEP,
 						onComplete: (_) ->
 						{
-							FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
+							FlxTween.tween(this, {alpha: 0}, TIME_STEP * .1, {
 								type: FlxTweenType.ONESHOT,
 								startDelay: TIME_STEP,
 								onComplete: (_) ->
@@ -76,14 +76,14 @@ class InfoIcon extends GameText
 			reset(from.x + (from.width / 2) - (width / 2), from.y + (from.height / 2) - (height / 2));
 			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
 				type: FlxTweenType.ONESHOT,
-				startDelay: delayAmt * TIME_STEP * 2,
+				startDelay: delayAmt * .15,
 				onStart: (_) ->
 				{
 					Globals.PlayState.playPrevNote();
 				},
 				onComplete: (_) ->
 				{
-					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .33, {
+					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .1, {
 						type: FlxTweenType.ONESHOT,
 						startDelay: TIME_STEP,
 						onComplete: (_) ->
@@ -101,7 +101,7 @@ class InfoIcon extends GameText
 	public function spawn(Source:IconSprite, Type:String, Amount:Int = 1, FromIcon:Bool = true, ?Callback:Void->Void):Void
 	{
 		source = Source;
-		text = (FromIcon ? "+" : "-") + ' {{$Type}}' + (Amount > 1 ? ' x $Amount' : '');
+		text = (FromIcon ? "+" : "-") + ' {{$Type}} x $Amount';
 
 		var delayAmt:Int = 0;
 
@@ -127,7 +127,7 @@ class InfoIcon extends GameText
 			{
 				reset(Source.x + 64 - (width / 2), Source.y + 64 - (height / 2));
 				FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
-					startDelay: delayAmt * TIME_STEP * 2,
+					startDelay: delayAmt * .15,
 					type: FlxTweenType.ONESHOT,
 					onStart: (_) ->
 					{
@@ -136,12 +136,12 @@ class InfoIcon extends GameText
 					onComplete: (_) ->
 					{
 						FlxTween.tween(this, {x: target.x + (target.width / 2) - (width / 2), y: target.y + (target.height / 2) - (height / 2)},
-							TIME_STEP * .33, {
+							TIME_STEP * .1, {
 								type: FlxTweenType.ONESHOT,
 								startDelay: TIME_STEP,
 								onComplete: (_) ->
 								{
-									FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
+									FlxTween.tween(this, {alpha: 0}, TIME_STEP * .1, {
 										type: FlxTweenType.ONESHOT,
 										startDelay: TIME_STEP,
 										onComplete: (_) ->
@@ -161,7 +161,7 @@ class InfoIcon extends GameText
 				reset(target.x, target.y + (target.height / 2) - (height / 2));
 				FlxTween.tween(this, {alpha: 1, x: source.x + (source.width / 2) - (width / 2), y: source.y + (source.height / 2) - height - 64},
 					TIME_STEP * .33, {
-						startDelay: delayAmt * TIME_STEP * 2,
+						startDelay: delayAmt * .15,
 						type: FlxTweenType.ONESHOT,
 						onStart: (_) ->
 						{
@@ -169,12 +169,12 @@ class InfoIcon extends GameText
 						},
 						onComplete: (_) ->
 						{
-							FlxTween.tween(this, {y: y + 64}, TIME_STEP * .33, {
+							FlxTween.tween(this, {y: y + 64}, TIME_STEP * .1, {
 								type: FlxTweenType.ONESHOT,
 								startDelay: TIME_STEP,
 								onComplete: (_) ->
 								{
-									FlxTween.tween(this, {alpha: 0}, TIME_STEP * .33, {
+									FlxTween.tween(this, {alpha: 0}, TIME_STEP * .1, {
 										type: FlxTweenType.ONESHOT,
 										startDelay: .1,
 										onComplete: (_) ->
@@ -196,14 +196,14 @@ class InfoIcon extends GameText
 			reset(source.x + (source.width / 2) - (width / 2), source.y + (source.height / 2) - (height / 2));
 			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
 				type: FlxTweenType.ONESHOT,
-				startDelay: delayAmt * TIME_STEP * 2,
+				startDelay: delayAmt * .15,
 				onStart: (_) ->
 				{
 					Globals.PlayState.playNextNote();
 				},
 				onComplete: (_) ->
 				{
-					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .33, {
+					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .1, {
 						type: FlxTweenType.ONESHOT,
 						startDelay: TIME_STEP,
 						onComplete: (_) ->

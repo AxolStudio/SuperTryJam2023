@@ -1,7 +1,6 @@
 package globals;
 
 import haxe.ui.Toolkit;
-import flixel.system.FlxSound;
 import flixel.util.FlxColor;
 import states.PlayState;
 
@@ -13,15 +12,6 @@ class Globals
 
 	public static var RESOURCES:Array<String> = ["food", "production", "science", "population", "faith"];
 
-	public static var SND_SPIN:FlxSound;
-	public static var SND_NOTE_01:FlxSound;
-	public static var SND_NOTE_02:FlxSound;
-	public static var SND_NOTE_03:FlxSound;
-	public static var SND_NOTE_04:FlxSound;
-	public static var SND_DIE:FlxSound;
-	public static var SND_GAME_OVER:FlxSound;
-
-	public static var Notes:Array<FlxSound>;
 
 	public static function initGame():Void
 	{
@@ -63,23 +53,11 @@ class Globals
             }
         ");
 
-		loadSounds();
 
 		initialized = true;
 	}
 
-	private static function loadSounds():Void
-	{
-		SND_SPIN = new FlxSound().loadEmbedded("assets/sounds/spin.ogg", false, false);
-		SND_NOTE_01 = new FlxSound().loadEmbedded("assets/sounds/note_01.ogg", false, false);
-		SND_NOTE_02 = new FlxSound().loadEmbedded("assets/sounds/note_02.ogg", false, false);
-		SND_NOTE_03 = new FlxSound().loadEmbedded("assets/sounds/note_03.ogg", false, false);
-		SND_NOTE_04 = new FlxSound().loadEmbedded("assets/sounds/note_04.ogg", false, false);
-		SND_DIE = new FlxSound().loadEmbedded("assets/sounds/die.ogg", false, false);
-		SND_GAME_OVER = new FlxSound().loadEmbedded("assets/sounds/game_over.ogg", false, false);
 
-		Notes = [SND_NOTE_01, SND_NOTE_02, SND_NOTE_03, SND_NOTE_04];
-	}
 
 	public static var RESOURCE_DETAILS:Map<String, String> = [
 		"population" => "The number of Human Elements in your Collection",

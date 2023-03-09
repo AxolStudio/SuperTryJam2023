@@ -11,9 +11,10 @@ class TypingText extends GameText
 	private var newText:String = "";
 	private var timer:Float = -5;
 
+
 	public var whichFont:WhichFont;
 
-	private static inline var LETTERS_PER_SEC:Float = 0.025;
+	private static inline var LETTERS_PER_SEC:Float = 0.015;
 
 	private var curLine:Int = -1;
 
@@ -23,9 +24,17 @@ class TypingText extends GameText
 
 	public var callback:Void->Void = null;
 
-	public function new(X:Float, Y:Float, FieldWidth:Int, ?Color:FlxColor = Colors.BLACK, ?WhichFont:WhichFont = SIZE_24):Void
+	public var soundPrefix:String = "";
+
+	public static var VOWELS:Array<String> = ["a", "e", "i", "o", "u"];
+
+	public var lastWasSound:Bool = false;
+
+	public function new(X:Float, Y:Float, FieldWidth:Int, ?Color:FlxColor = Colors.BLACK, ?WhichFont:WhichFont = SIZE_24, ?SoundPrefix:String = ""):Void
 	{
 		super(X, Y, FieldWidth, "", Color, WhichFont);
+
+		soundPrefix = SoundPrefix;
 
 		whichFont = WhichFont;
 
@@ -83,6 +92,13 @@ class TypingText extends GameText
 					}
 					text += newChar;
 
+					if (soundPrefix != "")
+					{
+						lastWasSound = playSound(VOWELS.indexOf(newChar));
+					}
+					
+					
+
 					if (newChar == "." || newChar == "!" || newChar == "?")
 						timer = LETTERS_PER_SEC * 4;
 					else
@@ -96,6 +112,14 @@ class TypingText extends GameText
 					callback();
 			}
 		}
+	}
+
+	public function playSound(SoundNo:Int):Bool
+	{
+		if (lastWasSound || SoundNo < 0)
+			return false;
+		FlxG.sound.play(soundPrefix + Std.int(SoundNo + 1) + ".ogg", .25, false);
+		return true;
 	}
 
 	public function clearText():Void

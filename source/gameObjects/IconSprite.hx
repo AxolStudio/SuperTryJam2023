@@ -67,7 +67,7 @@ class IconSprite extends FlxSprite
 	public function activate():Void
 	{
 		FlxTween.cancelTweensOf(this);
-		FlxTween.shake(this, 0.05, 0.1, FlxAxes.X);
+		FlxTween.shake(this, 0.05, 0.05, FlxAxes.X);
 	}
 }
 

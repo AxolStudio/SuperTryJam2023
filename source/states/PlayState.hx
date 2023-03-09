@@ -499,7 +499,7 @@ class PlayState extends GameState
 		if (!spinButton.active || !canSpin)
 			return;
 
-		Globals.SND_SPIN.play();
+		FlxG.sound.play("assets/sounds/spin.ogg", 1, false);
 
 		Tooltips.allowed = false;
 
@@ -695,6 +695,7 @@ class PlayState extends GameState
 					FlxG.resetState();
 				});
 			};
+			FlxG.sound.play("assets/sounds/game_over.ogg", 1, false);
 			openSubState(gameOverState);
 		}
 	}
@@ -1391,6 +1392,14 @@ class PlayState extends GameState
 		if (IconPos < 25)
 		{
 			death(IconPos);
+			if (["human", "child", "family"].contains(getIconName(IconPos)))
+			{
+				FlxG.sound.play("assets/sounds/die.ogg", 1, false);
+			}
+			else
+			{
+				playNextNote();
+			}
 		}
 
 		if (def.death != null)
@@ -1479,10 +1488,13 @@ class PlayState extends GameState
 	{
 		super.update(elapsed);
 
-		switch (currentMode)
+		doAllChecks(elapsed);
+	}
+
+	public function doAllChecks(elapsed:Float):Void
 		{
-			case "waiting-for-spin":
-				if (age > 1)
+		if (currentMode == "waiting-for-spin")
+				{if (age > 1)
 				{
 					currentMode = "demo-end";
 					var demoEnd:DemoEnd = new DemoEnd();
@@ -1496,39 +1508,31 @@ class PlayState extends GameState
 						});
 					}
 					openSubState(demoEnd);
-				}
-
-			case "waiting-for-spin-end":
+				}}
+if (currentMode=="waiting-for-spin-end")
+			{
 				if (!spinEffect.anySpinning())
 				{
-					currentMode = "did-spin";
-				}
-
-			case "did-spin":
-				checkingIcon = 0;
-				currentMode = "pre-checking";
-
-				for (i in 0...25)
-				{
-					if (collection[i].wounded)
-						wounds[i].revive();
-					if (collection[i].timer > 0)
-						timerDisplays[i].show(collection[i].timer);
-
-					screenIcons[i].icon = collection[i].name;
-					screenIcons[i].visible = true;
-				}
-				spinEffect.visible = false;
-
-			case "pre-checking":
-				timer -= elapsed;
-				if (timer <= 0)
-				{
-					timer = .05;
 					currentMode = "checking";
-				}
+					checkingIcon = 0;
+					spinEffect.visible = false;
+					timer = .025;
 
-			case "checking":
+					for (i in 0...25)
+					{
+						if (collection[i].wounded)
+							wounds[i].revive();
+
+						if (collection[i].timer > 0)
+							timerDisplays[i].show(collection[i].timer);
+
+						screenIcons[i].icon = collection[i].name;
+						screenIcons[i].visible = true;
+					}
+				}
+		}
+		if (currentMode == "checking")
+		{
 				timer -= elapsed;
 				if (timer <= 0)
 				{
@@ -1537,15 +1541,16 @@ class PlayState extends GameState
 						timer = 0;
 						currentMode = "wounding";
 						checkingIcon = 0;
-						trace("willWound", willWound);
 					}
 					else
 					{
-						timer = .05;
+						timer = .025;
 						checkEffects();
 					}
 				}
-			case "wounding":
+		}
+		if (currentMode == "wounding")
+		{
 				timer -= elapsed;
 				if (timer <= 0)
 				{
@@ -1554,16 +1559,17 @@ class PlayState extends GameState
 						currentMode = "deleting";
 						checkingIcon = 0;
 						timer = 0;
-						trace("deleting", iconsToDelete);
 					}
 					else
 					{
-						timer = .05;
+						timer = .025;
 						checkWounds();
 					}
 				}
 
-			case "deleting":
+		}
+		if (currentMode == "deleting")
+		{
 				timer -= elapsed;
 				if (timer <= 0)
 				{
@@ -1575,12 +1581,14 @@ class PlayState extends GameState
 					}
 					else
 					{
-						timer = .05;
+						timer = .025;
 						checkToDelete();
 					}
 				}
 
-			case "killing":
+		}
+		if (currentMode == "killing")
+		{
 				if (checkingIcon == -1)
 				{
 					if (iconsToKill.length > 0)
@@ -1615,13 +1623,15 @@ class PlayState extends GameState
 						}
 						else
 						{
-							timer = .05;
+							timer = .025;
 							checkToKill();
 						}
 					}
 				}
 
-			case "starving":
+		}
+		if (currentMode == "starving")
+		{
 				timer -= elapsed;
 				if (timer <= 0)
 				{
@@ -1637,12 +1647,14 @@ class PlayState extends GameState
 					}
 					else
 					{
-						timer = .05;
+						timer = .025;
 						checkStarving();
 					}
 				}
 
-			case "conversions":
+		}
+		if (currentMode == "conversions")
+		{
 				if (conversions.length > 0)
 				{
 					timer -= elapsed;
@@ -1658,11 +1670,14 @@ class PlayState extends GameState
 					timer = 0;
 				}
 
-			case "merging":
+		}
+		if (currentMode == "merging")
+		{
 				mergeIcons();
 				finishChecking();
 		}
-	}
+
+		}
 
 	public function checkConversions():Void
 	{
@@ -1801,6 +1816,8 @@ class PlayState extends GameState
 			neighbors = getNeighborsOfType(m, WhichIcons);
 			if (neighbors.length >= AmountNeeded - 1)
 			{
+				playNextNote();
+				
 				screenIcons[m].activate();
 				screenIcons[m].icon = MergeInto;
 
@@ -1868,6 +1885,7 @@ class PlayState extends GameState
 			if (iconsToDelete[checkingIcon] < 25)
 			{
 				death(iconsToDelete[checkingIcon]);
+				playPrevNote();
 			}
 		}
 		// animate!
@@ -1882,6 +1900,7 @@ class PlayState extends GameState
 			FlxTween.cancelTweensOf(shields[willWound[checkingIcon]]);
 			FlxTween.shake(shields[willWound[checkingIcon]], 0.05, 0.1, FlxAxes.X);
 			addLog("A {{" + getIconName(willWound[checkingIcon]) + "}} was protected from a wound!");
+			playNextNote();
 		}
 		else
 		{
@@ -1894,6 +1913,7 @@ class PlayState extends GameState
 				wounds[willWound[checkingIcon]].revive();
 				FlxTween.cancelTweensOf(wounds[willWound[checkingIcon]]);
 				FlxTween.shake(wounds[willWound[checkingIcon]], 0.05, 0.1, FlxAxes.X);
+				playPrevNote();
 			}
 		}
 		checkingIcon++;

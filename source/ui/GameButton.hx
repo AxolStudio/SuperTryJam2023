@@ -1,11 +1,9 @@
 package ui;
 
-import globals.Globals.Colors;
-import flixel.FlxG;
-import flixel.text.FlxText.FlxTextBorderStyle;
-import flixel.ui.FlxButton.FlxTypedButton;
+import flixel.system.FlxSound;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
+import globals.Globals;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -19,6 +17,10 @@ class GameButton extends FlxTypedButton<GameText>
 			?TextColor:FlxColor = Colors.WHITE, ?TextBorderColor:FlxColor = Colors.BLACK, ?DisabledColor:FlxColor = Colors.RED):Void
 	{
 		super(X, Y, OnClick);
+
+		onOver.sound = new FlxSound().loadEmbedded("assets/sounds/button_over.ogg", false, false);
+		onUp.sound = new FlxSound().loadEmbedded("assets/sounds/button_click.ogg", false, false);
+
 
 		disabledColor = DisabledColor;
 		buttonColor = Color;

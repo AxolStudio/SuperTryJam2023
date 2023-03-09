@@ -40,13 +40,16 @@ class GodTalk extends GameSubState
 		background.y = 20;
 		add(background);
 
-		add(speech = new TypingText(Std.int(background.x + 20), Std.int(background.y + 20), Std.int(background.width - 40), Colors.BLACK, GOD_TALK));
+		add(speech = new TypingText(Std.int(background.x + 20), Std.int(background.y + 20), Std.int(background.width - 40), Colors.BLACK, GOD_TALK,
+			"assets/sounds/god_talk_0"));
 
 		add(advance = new FlxSprite("assets/images/advance.png"));
 		advance.x = background.x + background.width - advance.width - 20;
 		advance.y = background.y + background.height - advance.height - 20;
 		advance.color = Colors.BLACK;
 		advance.kill();
+
+		FlxG.sound.play("assets/sounds/god_appear.ogg", 1, false);
 
 		speech.showText(parse(Globals.PlayState.GodSpeeches[whichText].texts[textPart]), finishText);
 
@@ -59,6 +62,7 @@ class GodTalk extends GameSubState
 
 		if (advance.alive && (FlxG.keys.anyJustPressed([SPACE, ENTER, X]) || FlxG.mouse.justPressed))
 		{
+			FlxG.sound.play("assets/sounds/god_advance.ogg", 1, false);
 			nextText();
 		}
 	}
