@@ -249,8 +249,8 @@ class SpinIcon extends FlxSprite
 		{
 			pos += elapsed * rate;
 			if (rate < 5 && !slowing)
-				rate *= 1.25;
-			else if (pos >= ((parent.ID + 1)) + .66)
+				rate *= 5;
+			else if (pos >= ((parent.ID + 1.5)) + .66)
 			{
 				if (!slowing)
 				{
@@ -274,7 +274,7 @@ class SpinIcon extends FlxSprite
 				rate -= .25;
 				if (rate < .15)
 					rate = .15;
-				if (pos >= ((parent.ID + 1)) + 1.025)
+				if (pos >= ((parent.ID + 2)) + 1.025)
 				{
 					slowing = started = false;
 					pos = 0;

@@ -10,7 +10,7 @@ class InfoIcon extends GameText
 {
 	public static var Delays:Map<IconSprite, Int> = [];
 
-	public static inline var TIME_STEP:Float = .5;
+	public static inline var TIME_STEP:Float = .33;
 
 	public var source:IconSprite = null;
 
@@ -45,6 +45,10 @@ class InfoIcon extends GameText
 			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
 				startDelay: delayAmt * TIME_STEP * 2,
 				type: FlxTweenType.ONESHOT,
+				onStart: (_) ->
+				{
+					Globals.PlayState.playPrevNote();
+				},
 				onComplete: (_) ->
 				{
 					FlxTween.tween(this, {x: target.x + (target.width / 2) - (width / 2), y: target.y + (target.height / 2) - (height / 2)}, TIME_STEP * .33, {
@@ -73,6 +77,10 @@ class InfoIcon extends GameText
 			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
 				type: FlxTweenType.ONESHOT,
 				startDelay: delayAmt * TIME_STEP * 2,
+				onStart: (_) ->
+				{
+					Globals.PlayState.playPrevNote();
+				},
 				onComplete: (_) ->
 				{
 					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .33, {
@@ -121,6 +129,10 @@ class InfoIcon extends GameText
 				FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
 					startDelay: delayAmt * TIME_STEP * 2,
 					type: FlxTweenType.ONESHOT,
+					onStart: (_) ->
+					{
+						Globals.PlayState.playNextNote();
+					},
 					onComplete: (_) ->
 					{
 						FlxTween.tween(this, {x: target.x + (target.width / 2) - (width / 2), y: target.y + (target.height / 2) - (height / 2)},
@@ -151,6 +163,10 @@ class InfoIcon extends GameText
 					TIME_STEP * .33, {
 						startDelay: delayAmt * TIME_STEP * 2,
 						type: FlxTweenType.ONESHOT,
+						onStart: (_) ->
+						{
+							Globals.PlayState.playPrevNote();
+						},
 						onComplete: (_) ->
 						{
 							FlxTween.tween(this, {y: y + 64}, TIME_STEP * .33, {
@@ -181,6 +197,10 @@ class InfoIcon extends GameText
 			FlxTween.tween(this, {alpha: 1, y: y - 64}, TIME_STEP * .33, {
 				type: FlxTweenType.ONESHOT,
 				startDelay: delayAmt * TIME_STEP * 2,
+				onStart: (_) ->
+				{
+					Globals.PlayState.playNextNote();
+				},
 				onComplete: (_) ->
 				{
 					FlxTween.tween(this, {alpha: 0, y: y - 64}, TIME_STEP * .33, {
@@ -255,6 +275,7 @@ class InfoIcon extends GameText
 					Delays.remove(source);
 				}
 			}
+			source = null;
 		}
 	}
 }

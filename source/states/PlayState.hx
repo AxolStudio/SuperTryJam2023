@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxAxes;
@@ -140,6 +141,8 @@ class PlayState extends GameState
 
 	public var nextMsg:String = "";
 
+	public var lastNote:Int = -1;
+
 	override public function create()
 	{
 		initializeGame();
@@ -196,6 +199,15 @@ class PlayState extends GameState
 			postSpin.push("blank");
 		}
 
+		add(new FlxSprite("assets/images/background.png"));
+
+		var gridBack:FlxSprite = new FlxSprite();
+		gridBack.makeGraphic(Std.int(GRID_SIZE), Std.int(GRID_SIZE), Colors.BLACK);
+		gridBack.drawRect(2, 2, gridBack.width - 4, gridBack.height - 4, 0xFFFFFFFF);
+		gridBack.replaceColor(0xFFFFFFFF, 0xA8FFFFFF, false);
+		gridBack.screenCenter();
+		add(gridBack);
+
 		for (n => v in STARTING_ICONS)
 		{
 			for (i in 0...v)
@@ -249,6 +261,7 @@ class PlayState extends GameState
 
 		for (i in 0...25)
 		{
+
 			shield = new FlxSprite((FlxG.width / 2)
 				- GRID_MID
 				+ Std.int(i / 5) * 128
@@ -284,7 +297,7 @@ class PlayState extends GameState
 
 		add(new FlxSprite((FlxG.width / 2) - GRID_MID - 2, (FlxG.height / 2) - GRID_MID - 2, "assets/images/grid_back.png"));
 
-		add(spinButton = new GameButton((FlxG.width / 2) - 150, (FlxG.height / 2) + GRID_MID + 50, "Spin!", spin, 300, 50, SIZE_36, Colors.BLUE, Colors.BLACK,
+		add(spinButton = new GameButton((FlxG.width / 2) - 150, (FlxG.height / 2) + GRID_MID + 30, "Spin!", spin, 300, 50, SIZE_36, Colors.BLUE, Colors.BLACK,
 			Colors.WHITE, Colors.BLACK));
 		spinButton.active = false;
 
@@ -316,18 +329,21 @@ class PlayState extends GameState
 		ageProgress.createGradientBar([Colors.GRAY], [Colors.CYAN, Colors.DARKBLUE], 1, 180, true, Colors.BLACK);
 		ageProgress.screenCenter(FlxAxes.X);
 
-		add(txtAge = new GameText(0, 20, 100, "Age " + Roman.arabic2Roman(age), Colors.BLACK, SIZE_36));
+		add(txtAge = new GameText(0, 0, 100, "Age " + Roman.arabic2Roman(age), Colors.WHITE, SIZE_36));
 		txtAge.alignment = "center";
+		txtAge.setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 2);
 		txtAge.screenCenter(FlxAxes.X);
-		// txtAge.y = ageProgress.y + (ageProgress.height / 2) - (txtAge.height / 2);
+		txtAge.y = ageProgress.y + (ageProgress.height / 2) - (txtAge.height / 2);
 
-		add(resourceLabel = new GameText(20, Std.int((FlxG.height / 2) - GRID_MID), Std.int((FlxG.width / 2) - GRID_MID - 40), "Resources", Colors.BLACK,
+		add(resourceLabel = new GameText(20, Std.int((FlxG.height / 2) - GRID_MID), Std.int((FlxG.width / 2) - GRID_MID - 40), "Resources", Colors.WHITE,
 			SIZE_36));
 		resourceLabel.alignment = "center";
+		resourceLabel.setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 2);
 
 		var resBack:FlxSprite = new FlxSprite();
 		resBack.makeGraphic(Std.int((FlxG.width / 2) - GRID_MID - 40), Std.int(GRID_SIZE - resourceLabel.height - 10), Colors.BLACK);
-		resBack.drawRect(2, 2, resBack.width - 4, resBack.height - 4, Colors.WHITE);
+		resBack.drawRect(2, 2, resBack.width - 4, resBack.height - 4, 0xFFFFFFFF);
+		resBack.replaceColor(0xFFFFFFFF, 0xA8FFFFFF, false);
 		resBack.x = resourceLabel.x;
 		resBack.y = resourceLabel.y + resourceLabel.height + 10;
 		add(resBack);
@@ -349,8 +365,9 @@ class PlayState extends GameState
 		txtProduction.alignment = txtScience.alignment = txtFood.alignment = txtPopulation.alignment = "right";
 
 		add(techLabel = new GameText(0, Std.int((FlxG.height / 2) - GRID_MID), Std.int((FlxG.width / 2) - GRID_MID - 40), "Technologies Learned",
-			Colors.BLACK, SIZE_36));
+			Colors.WHITE, SIZE_36));
 		techLabel.alignment = "center";
+		techLabel.setBorderStyle(FlxTextBorderStyle.OUTLINE, Colors.BLACK, 2);
 		techLabel.x = Std.int((FlxG.width / 2) + GRID_MID) + 20;
 
 		techDisp = new TechDisplay((FlxG.width / 2) - GRID_MID - 40, GRID_SIZE - techLabel.height - 10);
@@ -359,6 +376,11 @@ class PlayState extends GameState
 		add(techDisp);
 
 		add(addedIcons = new FlxTypedGroup<InfoIcon>());
+
+		for (a in 0...25)
+		{
+			addedIcons.add(new InfoIcon());
+		}
 
 		food = 10;
 
@@ -385,7 +407,7 @@ class PlayState extends GameState
 		gT.closeCallback = () ->
 		{
 			blackOut.kill();
-			FlxTween.tween(earth, {alpha: 0}, 1, {
+			FlxTween.tween(earth, {alpha: 0}, .33, {
 				type: FlxTweenType.ONESHOT,
 				onComplete: (_) ->
 				{
@@ -404,7 +426,7 @@ class PlayState extends GameState
 			});
 		};
 
-		FlxTween.tween(earth, {alpha: 1}, 1, {
+		FlxTween.tween(earth, {alpha: 1}, .33, {
 			startDelay: 0.5,
 			type: FlxTweenType.ONESHOT,
 			onComplete: (_) ->
@@ -477,7 +499,11 @@ class PlayState extends GameState
 		if (!spinButton.active || !canSpin)
 			return;
 
+		Globals.SND_SPIN.play();
+
 		Tooltips.allowed = false;
+
+		lastNote = -1;
 
 		spinCount++;
 
@@ -694,7 +720,7 @@ class PlayState extends GameState
 			};
 			openSubState(gameOverState);
 		}
-		FlxTween.tween(fire, {alpha: 1}, .66, {
+		FlxTween.tween(fire, {alpha: 1}, .33, {
 			type: FlxTweenType.ONESHOT,
 			onComplete: (_) ->
 			{
@@ -1005,8 +1031,26 @@ class PlayState extends GameState
 		return logResponse;
 	}
 
+	public function playPrevNote():Void
+	{
+		lastNote--;
+		if (lastNote < 0)
+			lastNote = 3;
+
+		FlxG.sound.play('assets/sounds/note_0${lastNote + 1}.ogg', 1, false);
+	}
+
+	public function playNextNote():Void
+	{
+		lastNote++;
+		if (lastNote > 3)
+			lastNote = 0;
+		FlxG.sound.play('assets/sounds/note_0${lastNote + 1}.ogg', 1, false);
+	}
+
 	public function removeResource(IconPos:Int, Type:String, Amount:Int, ?Callback:Void->Void):Void
 	{
+		
 		var rg:InfoIcon = addedIcons.getFirstAvailable();
 		if (rg == null)
 		{
@@ -1026,6 +1070,7 @@ class PlayState extends GameState
 
 	public function showResGen(IconPos:Int, Type:String, Amount:Int, ?Callback:Void->Void):Void
 	{
+		
 		var rg:InfoIcon = addedIcons.getFirstAvailable();
 		if (rg == null)
 		{
@@ -1045,6 +1090,7 @@ class PlayState extends GameState
 
 	public function showResTransfer(TypeFrom:String, TypeTo:String, Amount:Int, ?Callback:Void->Void):Void
 	{
+		
 		var rg:InfoIcon = addedIcons.getFirstAvailable();
 		if (rg == null)
 		{
@@ -1222,6 +1268,7 @@ class PlayState extends GameState
 
 	public function showIconAdd(Icon:IconSprite, NewIcon:String, Amount:Int = 1):Void
 	{
+		
 		var ia:InfoIcon = addedIcons.getFirstAvailable();
 		if (ia == null)
 		{
