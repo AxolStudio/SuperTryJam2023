@@ -53,6 +53,7 @@
 	<include path="axollib/include.xml" />
 
 	<haxelib name="flixel" />
+	<haxelib name="flixel-addons" />
 	<haxelib name="tjson" />
 	<haxelib name="haxeui-core" />
 	<haxelib name="haxeui-flixel" />

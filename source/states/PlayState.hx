@@ -686,7 +686,7 @@ class PlayState extends GameState
 		}
 		else
 		{
-			currentMode = "game-over";
+			currentMode = "game-over-pop";
 			var gameOverState:GameOverState = new GameOverState("pop");
 			gameOverState.closeCallback = function():Void
 			{
@@ -702,6 +702,7 @@ class PlayState extends GameState
 
 	public function failure():Void
 	{
+		currentMode = "game-over-faith";
 		var gT:GodTalk = new GodTalk("failure");
 		var fire:FlxSprite = new FlxSprite("assets/images/fire.jpg");
 		fire.screenCenter();
@@ -710,16 +711,7 @@ class PlayState extends GameState
 
 		gT.closeCallback = () ->
 		{
-			currentMode = "game-over";
-			var gameOverState:GameOverState = new GameOverState("faith");
-			gameOverState.closeCallback = function():Void
-			{
-				FlxG.camera.fade(Colors.BLACK, 1, false, () ->
-				{
-					FlxG.resetState();
-				});
-			};
-			openSubState(gameOverState);
+			currentMode = "game-over-faith-ready";
 		}
 		FlxTween.tween(fire, {alpha: 1}, .33, {
 			type: FlxTweenType.ONESHOT,
@@ -728,6 +720,20 @@ class PlayState extends GameState
 				openSubState(gT);
 			}
 		});
+	}
+
+	public function gameOverFaith():Void
+	{
+		currentMode = "game-over";
+		var gameOverState:GameOverState = new GameOverState("faith");
+		gameOverState.closeCallback = function():Void
+		{
+			FlxG.camera.fade(Colors.BLACK, 1, false, () ->
+			{
+				FlxG.resetState();
+			});
+		};
+		openSubState(gameOverState);
 	}
 
 	public function vistFromGod():Void
@@ -1492,7 +1498,14 @@ class PlayState extends GameState
 	}
 
 	public function doAllChecks(elapsed:Float):Void
+	{
+		if (currentMode == "game-over-faith-ready")
 		{
+			currentMode = "game-over-faith";
+			gameOverFaith();
+			return;
+		}
+		
 		if (currentMode == "waiting-for-spin")
 				{if (age > 1)
 				{
@@ -1501,15 +1514,13 @@ class PlayState extends GameState
 					demoEnd.closeCallback = () ->
 					{
 						FlxG.camera.fade(Colors.BLACK, 1, false, () ->
-						{
-							// GameText.FONT_24 = FlxDestroyUtil.destroy(GameText.FONT_24);
-							// GameText.FONT_36 = FlxDestroyUtil.destroy(GameText.FONT_36);
+					{
 							FlxG.resetState();
 						});
 					}
 					openSubState(demoEnd);
 				}}
-if (currentMode=="waiting-for-spin-end")
+		if (currentMode == "waiting-for-spin-end")
 			{
 				if (!spinEffect.anySpinning())
 				{

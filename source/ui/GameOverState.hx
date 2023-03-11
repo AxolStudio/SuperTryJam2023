@@ -6,6 +6,7 @@ import flixel.util.FlxAxes;
 import flixel.util.FlxDestroyUtil;
 import globals.Globals.Colors;
 import states.GameState;
+import states.TitleState;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -65,7 +66,10 @@ class GameOverState extends GameSubState
 	private function onMenu():Void
 	{
 		menuButton.active = restartButton.active = false;
-		// go to the title state!
+		FlxG.camera.fade(Colors.BLACK, .33, false, () ->
+		{
+			FlxG.switchState(new TitleState());
+		});
 	}
 
 	private function onRestart():Void
