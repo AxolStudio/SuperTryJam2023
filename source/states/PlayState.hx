@@ -688,7 +688,12 @@ class PlayState extends GameState
 		{
 			currentMode = "game-over-pop";
 			var gameOverState:GameOverState = new GameOverState("pop");
-			gameOverState.closeCallback = function():Void
+			gameOverState.MenuCallback = () -> {
+				FlxG.camera.fade(Colors.BLACK, 1, false, () -> {
+					FlxG.switchState(new TitleState());
+				});
+			};
+			gameOverState.closeCallback = () ->
 			{
 				FlxG.camera.fade(Colors.BLACK, 1, false, () ->
 				{
@@ -726,6 +731,11 @@ class PlayState extends GameState
 	{
 		currentMode = "game-over";
 		var gameOverState:GameOverState = new GameOverState("faith");
+		gameOverState.MenuCallback = () -> {
+			FlxG.camera.fade(Colors.BLACK, 1, false, () -> {
+				FlxG.switchState(new TitleState());
+			});
+		};
 		gameOverState.closeCallback = function():Void
 		{
 			FlxG.camera.fade(Colors.BLACK, 1, false, () ->
